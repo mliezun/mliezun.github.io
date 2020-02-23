@@ -162,20 +162,20 @@ methodDecl     → "class"? function;
 funDecl        → "fn" function ;
 function       → IDENTIFIER "(" parameters? ")" block ;
 parameters     → IDENTIFIER ( "," IDENTIFIER )* ;
-varDecl        → "let" IDENTIFIER ("=" expression)? NEWLINE;
+varDecl        → "let" IDENTIFIER ("=" expression)?;
 statement      → exprStmt
                 | forStmt
                 | ifStmt
                 | returnStmt
                 | whileStmt
                 | exprStmt;
-exprStmt       → expression NEWLINE;
-forStmt        → "for"  (classicFor | newFor) NEWLINE statement;
+exprStmt       → expression;
+forStmt        → "for"  (classicFor | newFor) statement;
 classicFor     → (varDecl | exprStmt | ",") expression? "," expression?;
 newFor         → IDENTIFIER ("," IDENTIFIER)? "in" expression;
-ifStmt         → "if" expression NEWLINE statement (("elif" expression NEWLINE statement) | ("else" NEWLINE statement))?;
-returnStmt     → "return" expression? NEWLINE ;
-whileStmt      → "while" expression NEWLINE statement;
+ifStmt         → "if" expression statement ("elif" expression statement)* ("else" statement)?;
+returnStmt     → "return" expression? ;
+whileStmt      → "while" expression statement;
 block          → "begin" declaration* "end";
 ```
 
