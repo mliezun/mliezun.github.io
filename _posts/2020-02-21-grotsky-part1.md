@@ -127,8 +127,9 @@ Let's build a syntax definition in backus naur format that will be easy to parse
 
 ```
 expression      → list | dictionary | assignment;
-list            → "[" (expression ","?)* "]";
-dictionary      → "{" (keyval ","?)* "}";
+list            → "[" arguments? "]";
+dictionary      → "{" dict_elements? "}";
+dict_elements   → keyval ("," keyval)*;
 keyval          → assignment ":" expression;
 assignment      → (call ".")? IDENTIFIER "=" assignment | logic_or;
 logic_or        → logic_and ("or" logic_and)*;
@@ -139,8 +140,10 @@ addition        → multiplication (("-" | "+") multiplication)*;
 multiplication  → power (("/" | "*") power)*;
 power           → unary ("^" unary)*;
 unary           → ("not" | "-") unary | call;
-call            → primary ("(" arguments? ")" | "." IDENTIFIER)*;
+call            → access ("(" arguments? ")" | "." IDENTIFIER)*;
 arguments       → expression ("," expression)*;
+access          → primary "[" (slice | expression) "]";
+slice           → NUMBER (":" NUMBER? (":" NUMBER)?)?;
 primary         → NUMBER
                 | STRING
                 | "false"
