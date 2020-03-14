@@ -126,12 +126,13 @@ Let's build a syntax definition in backus naur format that will be easy to parse
 #### Expresions
 
 ```
-expression      → list | dictionary | assignment;
+expression      → assignment;
 list            → "[" arguments? "]";
 dictionary      → "{" dict_elements? "}";
 dict_elements   → keyval ("," keyval)*;
-keyval          → assignment ":" expression;
-assignment      → (call ".")? IDENTIFIER "=" assignment | logic_or;
+keyval          → expression ":" expression;
+assignment      → (call ".")? IDENTIFIER "=" assignment | access;
+access          → logic_or ("[" slice "]")*;
 logic_or        → logic_and ("or" logic_and)*;
 logic_and       → equality ("and" equality)*;
 equality        → comparison (("!=" | "==") comparison)*;
@@ -140,10 +141,16 @@ addition        → multiplication (("-" | "+") multiplication)*;
 multiplication  → power (("/" | "*") power)*;
 power           → unary ("^" unary)*;
 unary           → ("not" | "-") unary | call;
-call            → access ("(" arguments? ")" | "." IDENTIFIER)*;
+call            → primary ("(" arguments? ")" | "." IDENTIFIER)*;
 arguments       → expression ("," expression)*;
-access          → primary "[" (slice | expression) "]";
-slice           → NUMBER (":" NUMBER? (":" NUMBER)?)?;
+slice           → (":" expression)
+                | (":" expression ":" expression)
+                | (":" ":" expression)
+                | expression
+                | (expression ":")
+                | (expression ":" expression)
+                | (expression ":" ":" expression)
+                | (expression ":" expression ":" expression);
 primary         → NUMBER
                 | STRING
                 | "false"
@@ -151,7 +158,9 @@ primary         → NUMBER
                 | "nil"
                 | IDENTIFIER
                 | "(" expression ")"
-                | fnAnon;
+                | fnAnon
+                | list
+                | dictionary;
 fnAnon          → "fn" "(" parameters? ")" block;
 ```
 
