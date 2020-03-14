@@ -20,7 +20,7 @@
 {"@type":"BlogPosting","author":{"@type":"Person","name":"Miguel Liezun"},"headline":"Grotsky Part 1: Syntax","dateModified":"2020-02-21T00:00:00-03:00","datePublished":"2020-02-21T00:00:00-03:00","description":"Part 1 of building my own laguage series. Defining the syntax of grotsky toy language.","url":"/2020/02/21/grotsky-part1.html","mainEntityOfPage":{"@type":"WebPage","@id":"/2020/02/21/grotsky-part1.html"},"@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=31c5c30a8bb59f9323218502c0dc381e93fa17c9">
+    <link rel="stylesheet" href="/assets/css/style.css?v=a9abb0763ec13161b6d39932d6e5a17ffdc3b55b">
     <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
     <![endif]-->
@@ -204,26 +204,25 @@ fnAnon          → "fn" "(" parameters? ")" block;
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>program        → declaration* EOF;
 declaration    → classDecl | funDecl | varDecl | statement;
-classDecl      → "class" IDENTIFIER ( "&lt;" IDENTIFIER )? "{" methodDecl* "}" ;
+classDecl      → "class" IDENTIFIER ( "&lt;" IDENTIFIER )? "begin" methodDecl* "end" NEWLINE;
 methodDecl     → "class"? function;
 funDecl        → "fn" function ;
 function       → IDENTIFIER "(" parameters? ")" block ;
 parameters     → IDENTIFIER ( "," IDENTIFIER )* ;
-varDecl        → "let" IDENTIFIER ("=" expression)?;
-statement      → exprStmt
-                | forStmt
+varDecl        → "let" IDENTIFIER ("=" expression)? NEWLINE;
+statement      → forStmt
                 | ifStmt
                 | returnStmt
                 | whileStmt
                 | exprStmt;
-exprStmt       → expression;
+exprStmt       → expression NEWLINE;
 forStmt        → "for"  (classicFor | newFor) statement;
 classicFor     → (varDecl | exprStmt | ",") expression? "," expression?;
 newFor         → IDENTIFIER ("," IDENTIFIER)? "in" expression;
 ifStmt         → "if" expression statement ("elif" expression statement)* ("else" statement)?;
-returnStmt     → "return" expression? ;
+returnStmt     → "return" expression? NEWLINE;
 whileStmt      → "while" expression statement;
-block          → "begin" declaration* "end";
+block          → "begin" NEWLINE declaration* "end" NEWLINE;
 </code></pre></div></div>
 
 <p>That’s it! The next step is to build a lexer and a parser.</p>

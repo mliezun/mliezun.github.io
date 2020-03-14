@@ -160,26 +160,25 @@ fnAnon          → "fn" "(" parameters? ")" block;
 ```
 program        → declaration* EOF;
 declaration    → classDecl | funDecl | varDecl | statement;
-classDecl      → "class" IDENTIFIER ( "<" IDENTIFIER )? "{" methodDecl* "}" ;
+classDecl      → "class" IDENTIFIER ( "<" IDENTIFIER )? "begin" methodDecl* "end" NEWLINE;
 methodDecl     → "class"? function;
 funDecl        → "fn" function ;
 function       → IDENTIFIER "(" parameters? ")" block ;
 parameters     → IDENTIFIER ( "," IDENTIFIER )* ;
-varDecl        → "let" IDENTIFIER ("=" expression)?;
-statement      → exprStmt
-                | forStmt
+varDecl        → "let" IDENTIFIER ("=" expression)? NEWLINE;
+statement      → forStmt
                 | ifStmt
                 | returnStmt
                 | whileStmt
                 | exprStmt;
-exprStmt       → expression;
+exprStmt       → expression NEWLINE;
 forStmt        → "for"  (classicFor | newFor) statement;
 classicFor     → (varDecl | exprStmt | ",") expression? "," expression?;
 newFor         → IDENTIFIER ("," IDENTIFIER)? "in" expression;
 ifStmt         → "if" expression statement ("elif" expression statement)* ("else" statement)?;
-returnStmt     → "return" expression? ;
+returnStmt     → "return" expression? NEWLINE;
 whileStmt      → "while" expression statement;
-block          → "begin" declaration* "end";
+block          → "begin" NEWLINE declaration* "end" NEWLINE;
 ```
 
 That's it! The next step is to build a lexer and a parser.
