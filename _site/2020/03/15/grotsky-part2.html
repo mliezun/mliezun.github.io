@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Grotsky Part 2: Parsing expressions | mliezun.github.io</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="Grotsky Part 2: Parsing expressions" />
+<meta name="author" content="Miguel Liezun" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Part 2 of building my own laguage series. Parsing expressions, traversing and printing the Abstract Syntax Tree." />
+<meta property="og:description" content="Part 2 of building my own laguage series. Parsing expressions, traversing and printing the Abstract Syntax Tree." />
+<meta property="og:site_name" content="mliezun.github.io" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-03-15T00:00:00-03:00" />
+<script type="application/ld+json">
+{"@type":"BlogPosting","author":{"@type":"Person","name":"Miguel Liezun"},"headline":"Grotsky Part 2: Parsing expressions","dateModified":"2020-03-15T00:00:00-03:00","datePublished":"2020-03-15T00:00:00-03:00","description":"Part 2 of building my own laguage series. Parsing expressions, traversing and printing the Abstract Syntax Tree.","url":"/2020/03/15/grotsky-part2.html","mainEntityOfPage":{"@type":"WebPage","@id":"/2020/03/15/grotsky-part2.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=5a17c5708be84ce150c97498a17b198758835056">
+    <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1><a href="/">mliezun.github.io</a></h1>
+        
+        
+
+        <p></p>
+
+        
+        <p class="view"><a href="https://github.com/mliezun/mliezun.github.io">View the Project on GitHub <small>mliezun/mliezun.github.io</small></a></p>
+        
+
+        
+
+        
+      </header>
+      <section>
+
+      <small>15 March 2020</small>
+<h1>Grotsky Part 2: Parsing expressions</h1>
+
+<p class="view">by Miguel Liezun</p>
+
+<h2 id="expressions">Expressions</h2>
+
+<p>Parsing an expression like <code class="language-plaintext highlighter-rouge">1+2*3</code> requires a complex representation on memory. Just looking at it we think that it’s pretty simple, but there is some hidden <code class="language-plaintext highlighter-rouge">hierarchy</code> that we have to pay attention to, like the fact that first we have to compute <code class="language-plaintext highlighter-rouge">2*3</code> and then add <code class="language-plaintext highlighter-rouge">1</code> to it.</p>
+
+<p>To represent that in a data structure the best thing we can come up to is a tree, as seen in the next figure:</p>
+
+<p><img src="/assets/images/grotsky-part2/AST.png" alt="image" /></p>
+
+<p>As you can see the leaves of the tree are literals and the root and intermediate nodes are operations that have to be applied from the bottom up. That means that we traverse the tree until we reach the bottom and start computing the results by going up.</p>
+
+<h2 id="defining-node-types">Defining node types</h2>
+
+<blockquote>
+  <p>Not all operations are created equal.</p>
+</blockquote>
+
+<p>We have to define how each node fits into the tree.</p>
+
+<p>I’ll use the following syntax: <code class="language-plaintext highlighter-rouge">Binary -&gt; left expr, operator token, right expr</code>. Which means that a binary operation (as we have seen in the image before) links to 2 expressions (left and right) and stores 1 value (operator).</p>
+
+<h4 id="lets-define-all-posible-operations-on-literals">Let’s define all posible operations on literals</h4>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Literal -&gt; value object
+# 1, "asd", 5.2, true, false
+
+Binary -&gt; left expr, operator token, right expr
+# 1+2, 3*3, 4^2+1
+
+Grouping -&gt; expression expr
+# (1+2)
+
+Logical -&gt; left expr, operator token, right expr
+# true or false, false and true
+
+Unary: operator token, right expr
+# not true, -5
+
+List -&gt; elements []expr
+# [1, 2, 3, [4], "asd"]
+
+Dictionary -&gt; elements []expr
+# {"a": 1, "b": 2, 3: 4}
+
+Access -&gt; object expr, slice expr
+# [1, 2, 3][0], {"a":1}["a"]
+
+Slice -&gt; first expr, second expr, third expr
+# [1, 2, 3, 4, 5, 6][1:4:2]
+</code></pre></div></div>
+
+<h2 id="traversing-the-abstract-syntax-tree">Traversing the abstract syntax tree</h2>
+
+<p>To traverse the syntax tree we need a pattern that’s uniform and easily scalable when we have to add other types of expressions and statements.</p>
+
+<p>For that we’ll use the <a href="https://en.wikipedia.org/wiki/Visitor_pattern">Visitor Pattern</a>.</p>
+
+<h3 id="visitor-pattern">Visitor Pattern</h3>
+
+<p>First we need an interface for the expression that allows a visitor to visit it.</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">expr</span> <span class="k">interface</span> <span class="p">{</span>
+    <span class="n">accept</span><span class="p">(</span><span class="n">exprVisitor</span><span class="p">)</span> <span class="k">interface</span><span class="p">{}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>An expression visitor should have a method for each kind of expression it has to visit.</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">exprVisitor</span> <span class="k">interface</span> <span class="p">{</span>
+    <span class="n">visitLiteralExpr</span><span class="p">(</span><span class="n">expr</span> <span class="n">expr</span><span class="p">)</span> <span class="k">interface</span><span class="p">{}</span>
+    <span class="n">visitBinaryExpr</span><span class="p">(</span><span class="n">expr</span> <span class="n">expr</span><span class="p">)</span> <span class="k">interface</span><span class="p">{}</span>
+    <span class="n">visitGroupingExpr</span><span class="p">(</span><span class="n">expr</span> <span class="n">expr</span><span class="p">)</span> <span class="k">interface</span><span class="p">{}</span>
+    <span class="n">visitLogicalExpr</span><span class="p">(</span><span class="n">expr</span> <span class="n">expr</span><span class="p">)</span> <span class="k">interface</span><span class="p">{}</span>
+    <span class="n">visitUnaryExpr</span><span class="p">(</span><span class="n">expr</span> <span class="n">expr</span><span class="p">)</span> <span class="k">interface</span><span class="p">{}</span>
+    <span class="n">visitListExpr</span><span class="p">(</span><span class="n">expr</span> <span class="n">expr</span><span class="p">)</span> <span class="k">interface</span><span class="p">{}</span>
+    <span class="n">visitDictionaryExpr</span><span class="p">(</span><span class="n">expr</span> <span class="n">expr</span><span class="p">)</span> <span class="k">interface</span><span class="p">{}</span>
+    <span class="n">visitAccessExpr</span><span class="p">(</span><span class="n">expr</span> <span class="n">expr</span><span class="p">)</span> <span class="k">interface</span><span class="p">{}</span>
+    <span class="n">visitSliceExpr</span><span class="p">(</span><span class="n">expr</span> <span class="n">expr</span><span class="p">)</span> <span class="k">interface</span><span class="p">{}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Then we have to define a type for each kind of expression that implements <code class="language-plaintext highlighter-rouge">expr</code> interface. For example, this is the implementation for a binary expression:</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">binaryExpr</span> <span class="k">struct</span> <span class="p">{</span>
+    <span class="n">left</span> <span class="n">expr</span>
+    <span class="n">operator</span> <span class="o">*</span><span class="n">token</span>
+    <span class="n">right</span> <span class="n">expr</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">s</span> <span class="o">*</span><span class="n">binaryExpr</span><span class="p">)</span> <span class="n">accept</span><span class="p">(</span><span class="n">visitor</span> <span class="n">exprVisitor</span><span class="p">)</span> <span class="n">R</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">visitor</span><span class="o">.</span><span class="n">visitBinaryExpr</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>For all other expressions the definition is practically the same.</p>
+
+<h3 id="string-visitor">String Visitor</h3>
+
+<p>To finish this chapter, let’s define a visitor that allows you to print the syntax tree in a lisp-like syntax, ex: (+ 1 2).</p>
+
+<p>Here is the implementation of the string visitor for a binary expression:</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">stringVisitor</span> <span class="k">struct</span><span class="p">{}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">v</span> <span class="n">stringVisitor</span><span class="p">)</span> <span class="n">visitBinaryExpr</span><span class="p">(</span><span class="n">expr</span> <span class="n">expr</span><span class="p">)</span> <span class="n">R</span> <span class="p">{</span>
+    <span class="n">binary</span> <span class="o">:=</span> <span class="n">expr</span><span class="o">.</span><span class="p">(</span><span class="o">*</span><span class="n">binaryExpr</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fmt</span><span class="o">.</span><span class="n">Sprintf</span><span class="p">(</span><span class="s">"(%s %v %v)"</span><span class="p">,</span> <span class="n">binary</span><span class="o">.</span><span class="n">operator</span><span class="o">.</span><span class="n">lexeme</span><span class="p">,</span> <span class="n">binary</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">accept</span><span class="p">(</span><span class="n">v</span><span class="p">),</span> <span class="n">binary</span><span class="o">.</span><span class="n">right</span><span class="o">.</span><span class="n">accept</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="grotsky-expression">Grotsky expression</h2>
+
+<p>You can check out the state of the Grotsky project right here: <a href="https://github.com/mliezun/grotsky">https://github.com/mliezun/grotsky</a>.</p>
+
+<p>Grotsky it’s able to parse and print all types of expressions defined in this article right now.</p>
+
+<h3 id="expressions-1">Expressions</h3>
+
+<p>Examples of operations supported:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># Math operations
+1+2*3^2-(4+123)/2.6
+=&gt; (- (+ 1 (* 2 (^ 3 2))) (/ (+ 4 123) 2.6))
+
+# Logical operations
+true or false
+=&gt; (or true false)
+
+# Comparisons
+1 == 1 and (1 &gt; 3 or 11/5.5 &lt;= 3+2^2 and 1 != 2)
+=&gt; (and (== 1 1) (or (&gt; 1 3) (and (&lt;= (/ 11 5.5) (+ 3 (^ 2 2))) (!= 1 2))))
+
+# Lists
+[1, 2, [3], "asd"]
+=&gt; (list 1 2 (list 3) "asd")
+
+# List slicing
+[1,2,3,4][1:3][::2][0]
+=&gt; (#0 (#::2 (#1:3 (list 1 2 3 4))))
+
+# Dictionary
+{
+    1: 2,
+    3: 4,
+    "asd": 3.14
+}
+=&gt; (dict 1=&gt;2 3=&gt;4 "asd"=&gt;3.14)
+
+# Dictionary key lookup
+{"key":0.6}["key"]
+=&gt; (#"key" (dict "key"=&gt;0.6))
+</code></pre></div></div>
+
+<p>That’s it for now. In the next chapter we’ll traverse the tree but instead of printing we’ll execute the operations listed before.</p>
+
+<p>If you have questions or suggestions please get in touch.</p>
+
+
+
+  <small>tags: <em>parser,expression,ast</em></small>
+
+
+
+      </section>
+      <footer>
+        
+        <p>This project is maintained by <a href="https://github.com/mliezun">mliezun</a></p>
+        
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="/assets/js/scale.fix.js"></script>
+    
+  </body>
+</html>
