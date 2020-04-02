@@ -179,7 +179,8 @@ statement      → forStmt
                 | ifStmt
                 | returnStmt
                 | whileStmt
-                | exprStmt;
+                | exprStmt
+                | block;
 exprStmt       → expression NEWLINE;
 forStmt        → "for"  (classicFor | newFor) statement;
 classicFor     → (varDecl | exprStmt | ",") expression? "," expression?;

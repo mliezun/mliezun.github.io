@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Grotsky Part 3: Interpreting | mliezun.github.io</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="Grotsky Part 3: Interpreting" />
+<meta name="author" content="Miguel Liezun" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Part 3 of building my own laguage series. Interpreting expressions and statement, traversing the Abstract Syntax Tree." />
+<meta property="og:description" content="Part 3 of building my own laguage series. Interpreting expressions and statement, traversing the Abstract Syntax Tree." />
+<meta property="og:site_name" content="mliezun.github.io" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-04-01T00:00:00-03:00" />
+<script type="application/ld+json">
+{"@type":"BlogPosting","author":{"@type":"Person","name":"Miguel Liezun"},"headline":"Grotsky Part 3: Interpreting","dateModified":"2020-04-01T00:00:00-03:00","datePublished":"2020-04-01T00:00:00-03:00","description":"Part 3 of building my own laguage series. Interpreting expressions and statement, traversing the Abstract Syntax Tree.","url":"/2020/04/01/grotsky-part3.html","mainEntityOfPage":{"@type":"WebPage","@id":"/2020/04/01/grotsky-part3.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=3aa0b220c45f70a1ac3a44a6ddd5e32c1e77145f">
+    <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1><a href="/">mliezun.github.io</a></h1>
+        
+        
+
+        <p></p>
+
+        
+        <p class="view"><a href="https://github.com/mliezun/mliezun.github.io">View the Project on GitHub <small>mliezun/mliezun.github.io</small></a></p>
+        
+
+        
+
+        
+      </header>
+      <section>
+
+      <small>1 April 2020</small>
+<h1>Grotsky Part 3: Interpreting</h1>
+
+<p class="view">by Miguel Liezun</p>
+
+<h2 id="its-slow-">It’s slow! 🤢</h2>
+
+<p>My interpreter it’s really, really, wait for it… <em>Really slow</em>.</p>
+
+<p>An example of a bad performing grotsky code:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># fib: calculates the n-th fibonacci number recursively
+fn fib(n) begin
+    if n &lt; 2 return n
+    return fib(n-2) + fib(n-1)
+end
+println(fib(30))
+</code></pre></div></div>
+
+<h4 id="running-the-code">Running the code</h4>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ time ./grotsky examples/fib.g
+</code></pre></div></div>
+
+<p>Gives a wooping result of:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>832040
+
+real    0m11,154s
+user    0m11,806s
+sys     0m0,272s
+</code></pre></div></div>
+
+<p>Almost twelve seconds!!! 🤣🤣🤣</p>
+
+<p>Comparing with a similar python code</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>def fib(n):
+    if n &lt; 2: return n
+    return fib(n-2) + fib(n-1)
+print(fib(30))
+</code></pre></div></div>
+
+<p>Gives a result of:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>832040
+
+real    0m0,423s
+user    0m0,387s
+sys     0m0,021s
+</code></pre></div></div>
+
+<p>That means, my interpreter is at least 20 times slower than Cpython.</p>
+
+<h4 id="why-is-it-so-slow">Why is it so slow?</h4>
+
+<p><a href="https://www.reddit.com/r/golang/comments/5kv2xx/why_is_golangs_performance_worse_than_javas_in/">Here is an explanation</a>.</p>
+
+<p>As the person from the first comment states, go garbage collector is not well suited for this kind of scenario with heavy allocation of objects.</p>
+
+<blockquote>
+  <p>Go’s GC is not generational, so allocation requires (comparatively speaking) much more work. It’s also tuned for low latency (smallest pause when GC has to stop the program) at the expense of throughput (i.e. total speed). This is the right trade-off for most programs but doesn’t perform optimally on micro-benchmarks that measure throughtput.</p>
+</blockquote>
+
+<p>Setting the gc percent at 800 (100 by default) more than halves the time that the function takes to compute:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ time GOGC=800 ./grotsky examples/fib.g 
+832040
+
+real    0m5,110s
+user    0m5,182s
+sys     0m0,061s
+</code></pre></div></div>
+
+<h2 id="interpreting-functions">Interpreting functions</h2>
+
+<p>Callable interface</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">callable</span> <span class="k">interface</span> <span class="p">{</span>
+	<span class="n">arity</span><span class="p">()</span> <span class="kt">int</span>
+	<span class="n">call</span><span class="p">(</span><span class="n">exec</span> <span class="o">*</span><span class="n">exec</span><span class="p">,</span> <span class="n">arguments</span> <span class="p">[]</span><span class="k">interface</span><span class="p">{})</span> <span class="k">interface</span><span class="p">{}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><em>All grotsky functions must be an object that implements the callable interface.</em></p>
+
+<p>For that I defined two kind of structs:</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">function</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="n">declaration</span>   <span class="o">*</span><span class="n">fnStmt</span>
+	<span class="n">closure</span>       <span class="o">*</span><span class="n">env</span>
+	<span class="n">isInitializer</span> <span class="kt">bool</span>
+<span class="p">}</span>
+
+<span class="k">type</span> <span class="n">nativeFn</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="n">arityValue</span> <span class="kt">int</span>
+	<span class="n">callFn</span>  <span class="k">func</span><span class="p">(</span><span class="n">exec</span> <span class="o">*</span><span class="n">exec</span><span class="p">,</span> <span class="n">arguments</span> <span class="p">[]</span><span class="k">interface</span><span class="p">{})</span> <span class="k">interface</span><span class="p">{}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h4 id="nativefn">nativeFn</h4>
+
+<p>Let’s you define standard functions available on all grotsky interpreters. Line <code class="language-plaintext highlighter-rouge">println</code>.</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="p">(</span><span class="n">n</span> <span class="o">*</span><span class="n">nativeFn</span><span class="p">)</span> <span class="n">arity</span><span class="p">()</span> <span class="kt">int</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="n">n</span><span class="o">.</span><span class="n">arityValue</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">n</span> <span class="o">*</span><span class="n">nativeFn</span><span class="p">)</span> <span class="n">call</span><span class="p">(</span><span class="n">exec</span> <span class="o">*</span><span class="n">exec</span><span class="p">,</span> <span class="n">arguments</span> <span class="p">[]</span><span class="k">interface</span><span class="p">{})</span> <span class="k">interface</span><span class="p">{}</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="n">n</span><span class="o">.</span><span class="n">callFn</span><span class="p">(</span><span class="n">exec</span><span class="p">,</span> <span class="n">arguments</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>From that, println would be pretty straight forward:</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">...</span>
+
+<span class="k">var</span> <span class="nb">println</span> <span class="n">nativeFn</span>
+<span class="nb">println</span><span class="o">.</span><span class="n">arityValue</span> <span class="o">=</span> <span class="m">1</span>
+<span class="nb">println</span><span class="o">.</span><span class="n">callFn</span> <span class="o">=</span> <span class="k">func</span><span class="p">(</span><span class="n">exec</span> <span class="o">*</span><span class="n">exec</span><span class="p">,</span> <span class="n">arguments</span> <span class="p">[]</span><span class="k">interface</span><span class="p">{})</span> <span class="k">interface</span><span class="p">{}</span> <span class="p">{</span>
+    <span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">arguments</span><span class="p">[</span><span class="m">0</span><span class="p">])</span>
+    <span class="k">return</span> <span class="no">nil</span>
+<span class="p">}</span>
+<span class="o">...</span>
+</code></pre></div></div>
+
+<h4 id="ordinary-grotsky-functions">Ordinary grotsky functions</h4>
+
+<p>For ordinary grotsky functions the things are a little bit messier.</p>
+
+<p>First I got to introduce the <code class="language-plaintext highlighter-rouge">environment</code> that is an object that holds <code class="language-plaintext highlighter-rouge">map[string]interface{}</code> as a dictionary for variables in the local scope and a pointer to another environment that contains variables for the outer scope.</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">env</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="n">state</span> <span class="o">*</span><span class="n">state</span>
+
+	<span class="n">enclosing</span> <span class="o">*</span><span class="n">env</span>
+	<span class="n">values</span>    <span class="k">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="k">interface</span><span class="p">{}</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">newEnv</span><span class="p">(</span><span class="n">state</span> <span class="o">*</span><span class="n">state</span><span class="p">,</span> <span class="n">enclosing</span> <span class="o">*</span><span class="n">env</span><span class="p">)</span> <span class="o">*</span><span class="n">env</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="o">&amp;</span><span class="n">env</span><span class="p">{</span>
+		<span class="n">state</span><span class="o">:</span>     <span class="n">state</span><span class="p">,</span>
+		<span class="n">enclosing</span><span class="o">:</span> <span class="n">enclosing</span><span class="p">,</span>
+		<span class="n">values</span><span class="o">:</span>    <span class="nb">make</span><span class="p">(</span><span class="k">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="k">interface</span><span class="p">{}),</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">e</span> <span class="o">*</span><span class="n">env</span><span class="p">)</span> <span class="n">get</span><span class="p">(</span><span class="n">name</span> <span class="o">*</span><span class="n">token</span><span class="p">)</span> <span class="k">interface</span><span class="p">{}</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="n">value</span><span class="p">,</span> <span class="n">ok</span> <span class="o">:=</span> <span class="n">e</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">name</span><span class="o">.</span><span class="n">lexeme</span><span class="p">];</span> <span class="n">ok</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="n">value</span>
+	<span class="p">}</span>
+	<span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">enclosing</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="n">e</span><span class="o">.</span><span class="n">enclosing</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="n">e</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">runtimeErr</span><span class="p">(</span><span class="n">errUndefinedVar</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+	<span class="k">return</span> <span class="no">nil</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">e</span> <span class="o">*</span><span class="n">env</span><span class="p">)</span> <span class="n">define</span><span class="p">(</span><span class="n">name</span> <span class="kt">string</span><span class="p">,</span> <span class="n">value</span> <span class="k">interface</span><span class="p">{})</span> <span class="p">{</span>
+	<span class="n">e</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>As you can see, the define method creates a variable on the local scope, and the get methods tries to retrieve a variable first from the local scope and then from the outer scope.</p>
+
+<p>Let’s see how functions are implemented.</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="p">(</span><span class="n">f</span> <span class="o">*</span><span class="n">function</span><span class="p">)</span> <span class="n">arity</span><span class="p">()</span> <span class="kt">int</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">declaration</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">f</span> <span class="o">*</span><span class="n">function</span><span class="p">)</span> <span class="n">call</span><span class="p">(</span><span class="n">exec</span> <span class="o">*</span><span class="n">exec</span><span class="p">,</span> <span class="n">arguments</span> <span class="p">[]</span><span class="k">interface</span><span class="p">{})</span> <span class="p">(</span><span class="n">result</span> <span class="k">interface</span><span class="p">{})</span> <span class="p">{</span>
+	<span class="n">env</span> <span class="o">:=</span> <span class="n">newEnv</span><span class="p">(</span><span class="n">exec</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">closure</span><span class="p">)</span>
+	<span class="k">for</span> <span class="n">i</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">f</span><span class="o">.</span><span class="n">declaration</span><span class="o">.</span><span class="n">params</span> <span class="p">{</span>
+		<span class="n">env</span><span class="o">.</span><span class="n">define</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">declaration</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">lexeme</span><span class="p">,</span> <span class="n">arguments</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+	<span class="p">}</span>
+
+	<span class="k">defer</span> <span class="k">func</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="n">r</span> <span class="o">:=</span> <span class="nb">recover</span><span class="p">();</span> <span class="n">r</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+			<span class="k">if</span> <span class="n">returnVal</span><span class="p">,</span> <span class="n">isReturn</span> <span class="o">:=</span> <span class="n">r</span><span class="o">.</span><span class="p">(</span><span class="n">returnValue</span><span class="p">);</span> <span class="n">isReturn</span> <span class="p">{</span>
+				<span class="n">result</span> <span class="o">=</span> <span class="n">returnVal</span>
+			<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+				<span class="nb">panic</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+	<span class="p">}()</span>
+
+	<span class="n">exec</span><span class="o">.</span><span class="n">executeBlock</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">declaration</span><span class="o">.</span><span class="n">body</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
+
+	<span class="k">return</span> <span class="no">nil</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Function <code class="language-plaintext highlighter-rouge">arity</code> is pretty simple.</p>
+
+<p>The function <code class="language-plaintext highlighter-rouge">call</code> takes an <code class="language-plaintext highlighter-rouge">exec</code> object, that is no more than an instance of the interpreter, and the arguments to the function as an array of objects. Then creates a new environment the is surrounded by the environment local to the function definition and defines all the function parameters. Then comes the tricky part, first there is a deferred call to an anonymous function, let’s ignore that for a moment, in the end, the function <code class="language-plaintext highlighter-rouge">executeBlock</code> gets called. Let’s see what that function does:</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="p">(</span><span class="n">e</span> <span class="o">*</span><span class="n">exec</span><span class="p">)</span> <span class="n">executeBlock</span><span class="p">(</span><span class="n">stmts</span> <span class="p">[]</span><span class="n">stmt</span><span class="p">,</span> <span class="n">env</span> <span class="o">*</span><span class="n">env</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">previous</span> <span class="o">:=</span> <span class="n">e</span><span class="o">.</span><span class="n">env</span>
+	<span class="k">defer</span> <span class="k">func</span><span class="p">()</span> <span class="p">{</span>
+		<span class="n">e</span><span class="o">.</span><span class="n">env</span> <span class="o">=</span> <span class="n">previous</span>
+	<span class="p">}()</span>
+	<span class="n">e</span><span class="o">.</span><span class="n">env</span> <span class="o">=</span> <span class="n">env</span>
+	<span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">s</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">stmts</span> <span class="p">{</span>
+		<span class="n">e</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>What’s happening here is that the interpreter steps into the new environment, saving the previous environment in a variable, and execute all given statements, after that it restores the environment to the previous one. Exactly as a function does.</p>
+
+<h4 id="what-happens-when-you-hit-a-return">What happens when you hit a <code class="language-plaintext highlighter-rouge">return</code></h4>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">returnValue</span> <span class="k">interface</span><span class="p">{}</span>
+
+<span class="o">...</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">e</span> <span class="o">*</span><span class="n">exec</span><span class="p">)</span> <span class="n">visitReturnStmt</span><span class="p">(</span><span class="n">stmt</span> <span class="o">*</span><span class="n">returnStmt</span><span class="p">)</span> <span class="n">R</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="n">stmt</span><span class="o">.</span><span class="n">value</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="n">returnValue</span><span class="p">(</span><span class="n">stmt</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">accept</span><span class="p">(</span><span class="n">e</span><span class="p">)))</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="no">nil</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>When you get to a return node in the ast, the nodes panics with a return value. This has to do with the fact that you need to go up the call stack and finish the execution of the function, otherwise the function will keep it’s execution.</p>
+
+<p>That’s the reason of the deferred function we forgot a couple seconds ago:</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="p">(</span><span class="n">f</span> <span class="o">*</span><span class="n">function</span><span class="p">)</span> <span class="n">call</span><span class="p">(</span><span class="n">exec</span> <span class="o">*</span><span class="n">exec</span><span class="p">,</span> <span class="n">arguments</span> <span class="p">[]</span><span class="k">interface</span><span class="p">{})</span> <span class="p">(</span><span class="n">result</span> <span class="k">interface</span><span class="p">{})</span> <span class="p">{</span>
+    <span class="o">...</span>
+
+    <span class="k">defer</span> <span class="k">func</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="n">r</span> <span class="o">:=</span> <span class="nb">recover</span><span class="p">();</span> <span class="n">r</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+			<span class="k">if</span> <span class="n">returnVal</span><span class="p">,</span> <span class="n">isReturn</span> <span class="o">:=</span> <span class="n">r</span><span class="o">.</span><span class="p">(</span><span class="n">returnValue</span><span class="p">);</span> <span class="n">isReturn</span> <span class="p">{</span>
+				<span class="n">result</span> <span class="o">=</span> <span class="n">returnVal</span>
+			<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+				<span class="nb">panic</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+    <span class="p">}()</span>
+
+    <span class="o">...</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>This function recovers from a panic. If the value recovered is of type <code class="language-plaintext highlighter-rouge">returnValue</code> it recovers successfully and sets the result value of the function call to the return value, else it panics again.</p>
+
+<h2 id="hasta-la-vista-baby">Hasta la vista, baby</h2>
+
+<p>That’s it for now. There are a lot of nifty stuff to keep talking about. But I think it’s enough for now.</p>
+
+<p>Remember to check out the <a href="https://github.com/mliezun/grotsky">source code</a>. And stay tuned for more.</p>
+
+
+
+  <small>tags: <em>interpreter,expression,ast</em></small>
+
+
+
+      </section>
+      <footer>
+        
+        <p>This project is maintained by <a href="https://github.com/mliezun">mliezun</a></p>
+        
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="/assets/js/scale.fix.js"></script>
+    
+  </body>
+</html>
