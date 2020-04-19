@@ -6,6 +6,8 @@ author: "Miguel Liezun"
 tags: parser,lexer,interpreter
 ---
 
+# Grotsky Part 1: Syntax
+
 ### Syntax Restrictions
 
 - No use of semicolon `;`

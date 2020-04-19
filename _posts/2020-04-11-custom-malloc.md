@@ -6,6 +6,8 @@ author: "Miguel Liezun"
 tags: malloc,free,tutorial
 ---
 
+# Writing your own C malloc and free
+
 ## Challenge
 
 This challenge comes from the book Crafting Interpreters by Bob Nystrom. And can be found in [Chapter 14 - Challenge 3](http://www.craftinginterpreters.com/chunks-of-bytecode.html#challenges).
@@ -26,7 +28,7 @@ As stated in the challenge I'll be using a big chunk of _contiguous_ memory. The
 
 The structure of the header is pretty similar to that of a linked list.
 
-```C
+```c
 struct block_meta
 {
     size_t size;
@@ -41,7 +43,7 @@ It stores the size of the block, a pointer to the next block and a flag to mark 
 
 Then, a function to traverse the list of blocks and find if there is any freed block is needed:
 
-```C
+```c
 void *first_block = NULL;
 
 struct block_meta *find_free_block(struct block_meta **last, size_t size)
@@ -62,14 +64,14 @@ This function receives a double pointer to a block_meta struct called `last` tha
 
 Two functions are needed to handle the big chunk of memory, one to initialize and the other to free it.
 
-```C
+```c
 void initMemory();
 void freeMemory();
 ```
 
 To implement `initMemory` I've decided that I would ask for the maximum amount of memory that I could get from the OS.
 
-```C
+```c
 #define MINREQ 0x20000
 
 // Big block of memory
@@ -106,7 +108,7 @@ As you can see, `initMemory` starts trying to allocate the maximum amount a memo
 
 Now that we have our chunk of memory ready to go, we can start to start giving blocks away.
 
-```C
+```c
 struct block_meta *request_block(size_t size)
 {
     struct block_meta *last = NULL;
@@ -143,7 +145,7 @@ How `request_block` works:
 
 With this function, implementing `malloc` and `free` is pretty easy:
 
-```C
+```c
 void *my_malloc(size_t size)
 {
     struct block_meta *block = request_block(size);
@@ -159,7 +161,7 @@ void my_free(void *ptr)
 
 To finish the challenge, I have to implement realloc, that is a little bit more tricky.
 
-```C
+```c
 void *my_realloc(void *ptr, size_t size)
 {
     if (!ptr)

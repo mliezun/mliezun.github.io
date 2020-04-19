@@ -6,9 +6,11 @@ author: "Miguel Liezun"
 tags: interpreter,expression,ast
 ---
 
+# Grotsky Part 3: Interpreting
+
 ## It's slow! 🤢
 
-My interpreter it's really, really, wait for it... *Really slow*.
+My interpreter it's really, really, wait for it... _Really slow_.
 
 An example of a bad performing grotsky code:
 
@@ -68,11 +70,10 @@ As the person from the first comment states, go garbage collector is not well su
 
 > Go's GC is not generational, so allocation requires (comparatively speaking) much more work. It's also tuned for low latency (smallest pause when GC has to stop the program) at the expense of throughput (i.e. total speed). This is the right trade-off for most programs but doesn't perform optimally on micro-benchmarks that measure throughtput.
 
-
 Setting the gc percent at 800 (100 by default) more than halves the time that the function takes to compute:
 
 ```
-$ time GOGC=800 ./grotsky examples/fib.g 
+$ time GOGC=800 ./grotsky examples/fib.g
 832040
 
 real    0m5,110s
@@ -91,7 +92,7 @@ type callable interface {
 }
 ```
 
-*All grotsky functions must be an object that implements the callable interface.*
+_All grotsky functions must be an object that implements the callable interface._
 
 For that I defined two kind of structs:
 
@@ -135,7 +136,6 @@ println.callFn = func(exec *exec, arguments []interface{}) interface{} {
 }
 ...
 ```
-
 
 #### Ordinary grotsky functions
 

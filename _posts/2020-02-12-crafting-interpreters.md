@@ -6,6 +6,8 @@ author: "Miguel Liezun"
 tags: interpreter,parser,lexer
 ---
 
+# Crafting interpreters
+
 I've just finished the section 2 of the book _Crafting Interpreters_, and I wanted to upload it to github right away.
 
 Take a look at the [source code](https://github.com/mliezun/jlox).

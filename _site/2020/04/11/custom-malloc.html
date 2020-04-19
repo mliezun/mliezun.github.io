@@ -17,37 +17,18 @@
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2020-04-11T00:00:00-03:00" />
 <script type="application/ld+json">
-{"mainEntityOfPage":{"@type":"WebPage","@id":"/2020/04/11/custom-malloc.html"},"@type":"BlogPosting","url":"/2020/04/11/custom-malloc.html","author":{"@type":"Person","name":"Miguel Liezun"},"headline":"Writing your own C malloc and free","dateModified":"2020-04-11T00:00:00-03:00","datePublished":"2020-04-11T00:00:00-03:00","description":"Challenge for writing your own implementation of malloc and free.","@context":"https://schema.org"}</script>
+{"@type":"BlogPosting","headline":"Writing your own C malloc and free","dateModified":"2020-04-11T00:00:00-03:00","datePublished":"2020-04-11T00:00:00-03:00","mainEntityOfPage":{"@type":"WebPage","@id":"/2020/04/11/custom-malloc.html"},"url":"/2020/04/11/custom-malloc.html","author":{"@type":"Person","name":"Miguel Liezun"},"description":"Challenge for writing your own implementation of malloc and free.","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=32c6a8b5f96210964487d4f4b623d522b23be3e5">
-    <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <![endif]-->
+    <link rel="stylesheet" href="/assets/css/style.css?v=e2a9a41ddd4b4b27c205b9b85fb0ea292ac32c36">
   </head>
   <body>
-    <div class="wrapper">
-      <header>
-        <h1><a href="/">mliezun.github.io</a></h1>
-        
-        
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="/">mliezun.github.io</a></h1>
+      
 
-        <p>Personal blog by Miguel Liezun.</p>
-
-        
-        <p class="view"><a href="https://github.com/mliezun/mliezun.github.io">View the Project on GitHub <small>mliezun/mliezun.github.io</small></a></p>
-        
-
-        
-
-        
-      </header>
-      <section>
-
-      <small>11 April 2020</small>
-<h1>Writing your own C malloc and free</h1>
-
-<p class="view">by Miguel Liezun</p>
+      <h1 id="writing-your-own-c-malloc-and-free">Writing your own C malloc and free</h1>
 
 <h2 id="challenge">Challenge</h2>
 
@@ -70,33 +51,33 @@
 
 <p>The structure of the header is pretty similar to that of a linked list.</p>
 
-<pre><code class="language-C">struct block_meta
-{
-    size_t size;
-    struct block_meta *next;
-    int free;
-};
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">struct</span> <span class="n">block_meta</span>
+<span class="p">{</span>
+    <span class="kt">size_t</span> <span class="n">size</span><span class="p">;</span>
+    <span class="k">struct</span> <span class="n">block_meta</span> <span class="o">*</span><span class="n">next</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">free</span><span class="p">;</span>
+<span class="p">};</span>
 
-#define META_SIZE sizeof(struct block_meta)
-</code></pre>
+<span class="cp">#define META_SIZE sizeof(struct block_meta)
+</span></code></pre></div></div>
 
 <p>It stores the size of the block, a pointer to the next block and a flag to mark wether it’s free or not.</p>
 
 <p>Then, a function to traverse the list of blocks and find if there is any freed block is needed:</p>
 
-<pre><code class="language-C">void *first_block = NULL;
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="o">*</span><span class="n">first_block</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
 
-struct block_meta *find_free_block(struct block_meta **last, size_t size)
-{
-    struct block_meta *current = first_block;
-    while (current &amp;&amp; !(current-&gt;free &amp;&amp; current-&gt;size &gt;= size))
-    {
-        *last = current;
-        current = current-&gt;next;
-    }
-    return current;
-}
-</code></pre>
+<span class="k">struct</span> <span class="n">block_meta</span> <span class="o">*</span><span class="nf">find_free_block</span><span class="p">(</span><span class="k">struct</span> <span class="n">block_meta</span> <span class="o">**</span><span class="n">last</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">size</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">struct</span> <span class="n">block_meta</span> <span class="o">*</span><span class="n">current</span> <span class="o">=</span> <span class="n">first_block</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">current</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="p">(</span><span class="n">current</span><span class="o">-&gt;</span><span class="n">free</span> <span class="o">&amp;&amp;</span> <span class="n">current</span><span class="o">-&gt;</span><span class="n">size</span> <span class="o">&gt;=</span> <span class="n">size</span><span class="p">))</span>
+    <span class="p">{</span>
+        <span class="o">*</span><span class="n">last</span> <span class="o">=</span> <span class="n">current</span><span class="p">;</span>
+        <span class="n">current</span> <span class="o">=</span> <span class="n">current</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">current</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
 
 <p>This function receives a double pointer to a block_meta struct called <code class="language-plaintext highlighter-rouge">last</code> that at the end of the execution should be pointing to the last node of the list and a size_t variable that indicates the minimum size that the block needs to be.</p>
 
@@ -104,74 +85,74 @@ struct block_meta *find_free_block(struct block_meta **last, size_t size)
 
 <p>Two functions are needed to handle the big chunk of memory, one to initialize and the other to free it.</p>
 
-<pre><code class="language-C">void initMemory();
-void freeMemory();
-</code></pre>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">initMemory</span><span class="p">();</span>
+<span class="kt">void</span> <span class="nf">freeMemory</span><span class="p">();</span>
+</code></pre></div></div>
 
 <p>To implement <code class="language-plaintext highlighter-rouge">initMemory</code> I’ve decided that I would ask for the maximum amount of memory that I could get from the OS.</p>
 
-<pre><code class="language-C">#define MINREQ 0x20000
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#define MINREQ 0x20000
+</span>
+<span class="c1">// Big block of memory</span>
+<span class="kt">void</span> <span class="o">*</span><span class="n">memory</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+<span class="c1">// Position where the last block ends</span>
+<span class="kt">size_t</span> <span class="n">endpos</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
-// Big block of memory
-void *memory = NULL;
-// Position where the last block ends
-size_t endpos = 0;
+<span class="kt">void</span> <span class="nf">initMemory</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">size_t</span> <span class="n">required</span> <span class="o">=</span> <span class="n">PTRDIFF_MAX</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">memory</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">memory</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="n">required</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">required</span> <span class="o">&lt;</span> <span class="n">MINREQ</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">memory</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="n">free</span><span class="p">(</span><span class="n">memory</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="n">printf</span><span class="p">(</span><span class="s">"Cannot allocate enough memory</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+            <span class="n">exit</span><span class="p">(</span><span class="n">ENOMEM</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="n">required</span> <span class="o">&gt;&gt;=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
 
-void initMemory()
-{
-    size_t required = PTRDIFF_MAX;
-    while (memory == NULL)
-    {
-        memory = malloc(required);
-        if (required &lt; MINREQ)
-        {
-            if (memory)
-            {
-                free(memory);
-            }
-            printf("Cannot allocate enough memory\n");
-            exit(ENOMEM);
-        }
-        required &gt;&gt;= 1;
-    }
-}
-
-void freeMemory()
-{
-    free(memory);
-}
-</code></pre>
+<span class="kt">void</span> <span class="nf">freeMemory</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">free</span><span class="p">(</span><span class="n">memory</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
 
 <p>As you can see, <code class="language-plaintext highlighter-rouge">initMemory</code> starts trying to allocate the maximum amount a memory allowed, and starts to divide that amount by 2 every time the allocation fails. If there isn’t at least 128KB of memory available the program crashes with ENOMEM.</p>
 
 <p>Now that we have our chunk of memory ready to go, we can start to start giving blocks away.</p>
 
-<pre><code class="language-C">struct block_meta *request_block(size_t size)
-{
-    struct block_meta *last = NULL;
-    struct block_meta *block = find_free_block(&amp;last, size);
-    if (block)
-    {
-        block-&gt;free = 0;
-        return block;
-    }
-    // Append new block to list
-    block = memory + endpos;
-    endpos += META_SIZE + size;
-    if (last)
-    {
-        last-&gt;next = block;
-    }
-    else
-    {
-        first_block = block;
-    }
-    block-&gt;free = 0;
-    block-&gt;next = NULL;
-    block-&gt;size = size;
-    return block;
-}
-</code></pre>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">struct</span> <span class="n">block_meta</span> <span class="o">*</span><span class="nf">request_block</span><span class="p">(</span><span class="kt">size_t</span> <span class="n">size</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">struct</span> <span class="n">block_meta</span> <span class="o">*</span><span class="n">last</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+    <span class="k">struct</span> <span class="n">block_meta</span> <span class="o">*</span><span class="n">block</span> <span class="o">=</span> <span class="n">find_free_block</span><span class="p">(</span><span class="o">&amp;</span><span class="n">last</span><span class="p">,</span> <span class="n">size</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">block</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">block</span><span class="o">-&gt;</span><span class="n">free</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">block</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="c1">// Append new block to list</span>
+    <span class="n">block</span> <span class="o">=</span> <span class="n">memory</span> <span class="o">+</span> <span class="n">endpos</span><span class="p">;</span>
+    <span class="n">endpos</span> <span class="o">+=</span> <span class="n">META_SIZE</span> <span class="o">+</span> <span class="n">size</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">last</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">last</span><span class="o">-&gt;</span><span class="n">next</span> <span class="o">=</span> <span class="n">block</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">else</span>
+    <span class="p">{</span>
+        <span class="n">first_block</span> <span class="o">=</span> <span class="n">block</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">block</span><span class="o">-&gt;</span><span class="n">free</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">block</span><span class="o">-&gt;</span><span class="n">next</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+    <span class="n">block</span><span class="o">-&gt;</span><span class="n">size</span> <span class="o">=</span> <span class="n">size</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">block</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
 
 <p>How <code class="language-plaintext highlighter-rouge">request_block</code> works:</p>
 
@@ -184,42 +165,42 @@ void freeMemory()
 
 <p>With this function, implementing <code class="language-plaintext highlighter-rouge">malloc</code> and <code class="language-plaintext highlighter-rouge">free</code> is pretty easy:</p>
 
-<pre><code class="language-C">void *my_malloc(size_t size)
-{
-    struct block_meta *block = request_block(size);
-    return block + 1;
-}
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="o">*</span><span class="nf">my_malloc</span><span class="p">(</span><span class="kt">size_t</span> <span class="n">size</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">struct</span> <span class="n">block_meta</span> <span class="o">*</span><span class="n">block</span> <span class="o">=</span> <span class="n">request_block</span><span class="p">(</span><span class="n">size</span><span class="p">);</span>
+    <span class="k">return</span> <span class="n">block</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
 
-void my_free(void *ptr)
-{
-    struct block_meta *block = ptr - META_SIZE;
-    block-&gt;free = 1;
-}
-</code></pre>
+<span class="kt">void</span> <span class="nf">my_free</span><span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="n">ptr</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">struct</span> <span class="n">block_meta</span> <span class="o">*</span><span class="n">block</span> <span class="o">=</span> <span class="n">ptr</span> <span class="o">-</span> <span class="n">META_SIZE</span><span class="p">;</span>
+    <span class="n">block</span><span class="o">-&gt;</span><span class="n">free</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
 
 <p>To finish the challenge, I have to implement realloc, that is a little bit more tricky.</p>
 
-<pre><code class="language-C">void *my_realloc(void *ptr, size_t size)
-{
-    if (!ptr)
-    {
-        return my_malloc(size);
-    }
-    struct block_meta *block = ptr - META_SIZE;
-    if (block-&gt;size &gt;= size)
-    {
-        return block + 1;
-    }
-    uint8_t *newptr = my_malloc(size);
-    size_t i;
-    for (i = 0; i &lt; (block-&gt;size &lt; size ? block-&gt;size : size); i++)
-    {
-        newptr[i] = ((uint8_t *)ptr)[i];
-    }
-    block-&gt;free = 1;
-    return newptr;
-}
-</code></pre>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="o">*</span><span class="nf">my_realloc</span><span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="n">ptr</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">size</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">ptr</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="n">my_malloc</span><span class="p">(</span><span class="n">size</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">struct</span> <span class="n">block_meta</span> <span class="o">*</span><span class="n">block</span> <span class="o">=</span> <span class="n">ptr</span> <span class="o">-</span> <span class="n">META_SIZE</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">block</span><span class="o">-&gt;</span><span class="n">size</span> <span class="o">&gt;=</span> <span class="n">size</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="n">block</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="kt">uint8_t</span> <span class="o">*</span><span class="n">newptr</span> <span class="o">=</span> <span class="n">my_malloc</span><span class="p">(</span><span class="n">size</span><span class="p">);</span>
+    <span class="kt">size_t</span> <span class="n">i</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">block</span><span class="o">-&gt;</span><span class="n">size</span> <span class="o">&lt;</span> <span class="n">size</span> <span class="o">?</span> <span class="n">block</span><span class="o">-&gt;</span><span class="n">size</span> <span class="o">:</span> <span class="n">size</span><span class="p">);</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">newptr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">((</span><span class="kt">uint8_t</span> <span class="o">*</span><span class="p">)</span><span class="n">ptr</span><span class="p">)[</span><span class="n">i</span><span class="p">];</span>
+    <span class="p">}</span>
+    <span class="n">block</span><span class="o">-&gt;</span><span class="n">free</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">newptr</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
 
 <p>How realloc works:</p>
 
@@ -243,20 +224,10 @@ void my_free(void *ptr)
 </ul>
 
 
-
-  <small>tags: <em>malloc,free,tutorial</em></small>
-
-
-
-      </section>
-      <footer>
-        
-        <p>This project is maintained by <a href="https://github.com/mliezun">mliezun</a></p>
-        
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
-      </footer>
+      
     </div>
-    <script src="/assets/js/scale.fix.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
     
   </body>
 </html>

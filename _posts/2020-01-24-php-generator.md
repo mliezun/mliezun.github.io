@@ -6,6 +6,8 @@ author: "Miguel Liezun"
 tags: php, generators
 ---
 
+# Reinventing the Wheel: PHP Generators
+
 ## First thing first. How a generator works?
 
 ### Starting back at C

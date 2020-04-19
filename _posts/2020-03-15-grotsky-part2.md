@@ -6,6 +6,8 @@ author: "Miguel Liezun"
 tags: parser,expression,ast
 ---
 
+# Grotsky Part 2: Parsing expressions
+
 ## Expressions
 
 Parsing an expression like `1+2*3` requires a complex representation on memory. Just looking at it we think that it's pretty simple, but there is some hidden `hierarchy` that we have to pay attention to, like the fact that first we have to compute `2*3` and then add `1` to it.

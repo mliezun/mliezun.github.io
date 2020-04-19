@@ -6,6 +6,8 @@ author: "Miguel Liezun"
 tags: sudoku,python,solver
 ---
 
+# Sudoku Solver
+
 I wanted to make my own sudoku solver to challenge myself.
 
 Im not a sudoku player so my approach is a brute force scan of possible combinations sort-of.
