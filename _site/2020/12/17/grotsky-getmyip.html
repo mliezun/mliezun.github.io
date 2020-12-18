@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Grotsky Part 4: Writing a service to get your public IP | mliezun.github.io</title>
+<meta name="generator" content="Jekyll v3.9.0" />
+<meta property="og:title" content="Grotsky Part 4: Writing a service to get your public IP" />
+<meta name="author" content="Miguel Liezun" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Part 4 of building my own laguage series. This time I write and deploy a service to Heroku that let’s your retrieve your pulbic IP." />
+<meta property="og:description" content="Part 4 of building my own laguage series. This time I write and deploy a service to Heroku that let’s your retrieve your pulbic IP." />
+<link rel="canonical" href="http://localhost:4000/2020/12/17/grotsky-getmyip.html" />
+<meta property="og:url" content="http://localhost:4000/2020/12/17/grotsky-getmyip.html" />
+<meta property="og:site_name" content="mliezun.github.io" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-12-17T00:00:00-03:00" />
+<script type="application/ld+json">
+{"description":"Part 4 of building my own laguage series. This time I write and deploy a service to Heroku that let’s your retrieve your pulbic IP.","url":"http://localhost:4000/2020/12/17/grotsky-getmyip.html","@type":"BlogPosting","headline":"Grotsky Part 4: Writing a service to get your public IP","dateModified":"2020-12-17T00:00:00-03:00","datePublished":"2020-12-17T00:00:00-03:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2020/12/17/grotsky-getmyip.html"},"author":{"@type":"Person","name":"Miguel Liezun"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=1c4526f63a7342cf2ef28604af6e327a8ad8c66c">
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="http://localhost:4000/">mliezun.github.io</a></h1>
+      
+
+      <h1 id="writing-a-service-to-get-your-public-ip">Writing a service to get your public IP</h1>
+
+<p><a href="https://github.com/mliezun/grotsky">Grotsky</a> (my toy programming language) finally can be used to make something useful.</p>
+
+<p>In this post I want to show you how I made a service that let’s your retrieve your public IP as a response to a HTTP Request.</p>
+
+<h2 id="show-me-the-code">Show me the code</h2>
+
+<p>Let’s start by building the http request handler.</p>
+
+<p>The service will be deployed to heroku. Heroku passes the port that the http server has to listen as an environment variable named <code class="language-plaintext highlighter-rouge">PORT</code>.</p>
+
+<h4 id="lets-get-the-server-up-and-running">Let’s get the server up and running</h4>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>let listen = ":8092"
+let port = env.get("PORT")
+if port != "" {
+    listen = ":" + port
+}
+
+io.println("Listen " + listen)
+http.listen(listen)
+</code></pre></div></div>
+
+<p>We listen by default at the port 8092 and if the environment variable is given we change it.</p>
+
+<p>Then we print what is the port and start the server with <code class="language-plaintext highlighter-rouge">http.listen</code>. That blocks the execution and starts the server.</p>
+
+<p>Grotsky interpreter is written in Go, and uses Go’s standard http server. Each requests is handled by a goroutine, but because Grotsky is single threaded only one goroutine executes at any given point in time.</p>
+
+<p>When a request is received the goroutine has to hold the GIL (Global Interrupt Lock) to be able to give control to the interpreter.</p>
+
+<h4 id="now-lets-add-some-code-to-handle-requests">Now lets add some code to handle requests</h4>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>fn getIP(rq, rs) {
+    io.println("Request from --&gt; " + rq.address)
+    rs.write(200, rq.address)
+}
+
+http.handler("/", getIP)
+
+let listen = ":8092"
+let port = env.get("PORT")
+if port != "" {
+    listen = ":" + port
+}
+
+io.println("Listen " + listen)
+http.listen(listen)
+</code></pre></div></div>
+
+<p>Now we have something interesting to try out!</p>
+
+<p>What we’ve done is to log and write back as response the address of the device that is doing the request.</p>
+
+<p>To try it out you need to download grotsky.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>go get github.com/mliezun/grotsky/cmd/grotsky
+</code></pre></div></div>
+
+<p>Save the Grotsky code under a filed called <code class="language-plaintext highlighter-rouge">getip.g</code> and the execute it using the grotsky interpreter:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>go run <span class="si">$(</span>go <span class="nb">env </span>GOPATH<span class="si">)</span>/src/github.com/mliezun/grotsky/cmd/grotsky getip.g
+</code></pre></div></div>
+
+<p>Output:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Listen :8092
+</code></pre></div></div>
+
+<p>Now you can make a request to see if it is working</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>curl localhost:8092
+</code></pre></div></div>
+
+<p>Output:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[::1]:43464
+</code></pre></div></div>
+
+<p>We see that the address contains the port we want to split it and show just the IP.</p>
+
+<h4 id="lets-write-a-couple-functions-to-do-that">Let’s write a couple functions to do that</h4>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>fn findReversed(string, char) {
+    for let i = string.length-1; i &gt; -1; i = i - 1 {
+        if string[i] == char {
+            return i
+        }
+    }
+    return -1
+}
+
+fn parseIP(address) {
+    let ix = findReversed(address, ":")
+    return address[:ix]
+}
+</code></pre></div></div>
+
+<p>The function <code class="language-plaintext highlighter-rouge">findReversed</code> finds the first index where <code class="language-plaintext highlighter-rouge">char</code> appears in <code class="language-plaintext highlighter-rouge">string</code> starting from the end.</p>
+
+<p>The function <code class="language-plaintext highlighter-rouge">parseIP</code> uses <code class="language-plaintext highlighter-rouge">findReversed</code> to obtain the index where “:” splits the IP and the PORT and uses that index to return just the IP address.</p>
+
+<h4 id="now-we-can-send-just-the-ip-address">Now we can send just the IP address</h4>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>fn getIP(rq, rs) {
+    let address = parseIP(rq.address)
+    io.println("Request from --&gt; " + address)
+    rs.write(200, address)
+}
+</code></pre></div></div>
+
+<p>Add the two functions at the beginning of the file and modify the getIP function.</p>
+
+<p>Restart the server and now if you make a request you should get just the IP.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ curl localhost:8092
+[::1]
+</code></pre></div></div>
+
+<p>Voila!</p>
+
+<h4 id="we-have-just-one-last-issue-proxies">We have just one last issue: Proxies!</h4>
+
+<p>Our service will probably sit behind a proxy, so we need to read the address from a special header <code class="language-plaintext highlighter-rouge">X-Forwarded-For</code>.</p>
+
+<p>Let’s implement that!</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>fn getIP(rq, rs) {
+    let address = parseIP(rq.address)
+    let forwarded = rq.headers["X-Forwarded-For"]
+    if forwarded != nil {
+        address = forwarded[0]
+    }
+    io.println("Request from --&gt; " + address)
+    rs.write(200, address)
+}
+</code></pre></div></div>
+
+<p>We read the header from the request and if <code class="language-plaintext highlighter-rouge">X-Forwarded-For</code> is present we sent that as a response to the user.</p>
+
+<h4 id="our-work-is-complete-lets-try-it">Our work is complete. Let’s try it!</h4>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ curl localhost:8092 -H 'X-Forwarded-For: 8.8.8.8'
+8.8.8.8
+
+$ curl localhost:8092
+[::1]
+</code></pre></div></div>
+
+<p>Well done. Now you can deploy it to Heroku (that’s up to you) or any other cloud platform.</p>
+
+<p>I have my own version running under: https://peaceful-lowlands-45821.herokuapp.com/</p>
+
+<h4 id="try-it-from-your-command-line">Try it from your command line</h4>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>curl https://peaceful-lowlands-45821.herokuapp.com/
+</code></pre></div></div>
+
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+    
+  </body>
+</html>
