@@ -95,8 +95,6 @@ I made a github workflow for this project to automatically build and release so 
 var A = {
     mlisp: null,
     init () {
-        this.mlisp = window.Mlisp;
-        this.mlisp.init();
         const node = document.getElementById('input-command');
         node.addEventListener("keyup", (event) => {
             if (event.key === "Enter") {
@@ -105,6 +103,15 @@ var A = {
         });
     },
     handleInput(ev) {
+        if (!this.mlisp) {
+            window.Mlisp = {
+                init: Module.cwrap('mlisp_init', 'number', []),
+                interpret: Module.cwrap('mlisp_interpret', 'string', ['string']),
+                cleanup: Module.cwrap('mlisp_cleanup', 'void', []),
+            };
+            this.mlisp = window.Mlisp;
+            this.mlisp.init();
+        }
         const node = ev.target;
         const cmd = node.value;
         if (!cmd) {
@@ -117,15 +124,7 @@ var A = {
     }
 };
 
-
-document.onreadystatechange = () => {
-    window.Mlisp = {
-        init: Module.cwrap('mlisp_init', 'number', []),
-        interpret: Module.cwrap('mlisp_interpret', 'string', ['string']),
-        cleanup: Module.cwrap('mlisp_cleanup', 'void', []),
-    };
-    A.init();
-}
+A.init();
 </script>
 
 
