@@ -1,0 +1,102 @@
+
+let base = import("../base.gr")
+
+# Create new Post Object
+let post = base.Post(
+    "Reinventing the Wheel: PHP Generators",
+    "Attempt of a lunatic to recreate functionalities that a language already has using the same language, and failing.",
+    "Miguel Liezun",
+    ["php", "generators"],
+    [
+    [
+        "h2",
+        [],
+        "Reinventing the Wheel: PHP Generators"
+    ],
+    [
+        "div",
+        [],
+        "\n"
+    ],
+    [
+        "h3",
+        [],
+        "First thing first. How a generator works?"
+    ],
+    [
+        "div",
+        [],
+        "\n"
+    ],
+    [
+        "h4",
+        [],
+        "Starting back at C"
+    ],
+    [
+        "div",
+        [],
+        "\n"
+    ],
+    [
+        "h4",
+        [],
+        "First generator for PHP"
+    ],
+    [
+        "div",
+        [],
+        "\nLet's create a function that each time we call it we get the next number of the fibonacci sequence.\n\n```c\nint fibonacci()\n{\n    static int a = 0;\n    static int b = 1;\n    int aux = b;\n    b = a + b;\n    a = aux;\n    return a;\n}\n```\n\nIf we call fibonacci(), the first time we'll get 1, the second time 1, the third 2, the fourth 3, and so on...\n\nThis happens because we declared variables `a, b` to be static. This means that they mantain the value after the function returns. Normally, what happens (if we don't declare a variable as static) is that the variables inside the function don't mantain the values of the last execution.\n\n"
+    ],
+    [
+        "h4",
+        [],
+        "Creating a custom version of PHP `yield`"
+    ],
+    [
+        "div",
+        [],
+        "\nThe equivalent function in PHP is pretty similar to C's approach.\n\n```php\n<?php\n\nfunction fibonacci()\n{\n    static $a = 0;\n    static $b = 1;\n    $aux = $b;\n    $b = $a + $b;\n    $a = $aux;\n    return $a;\n}\n\n$out = [];\n\nfor ($i = 1; $i <= 10; $i++) {\n    $out[] = fibonacci();\n}\n\necho implode(', ', $out) . \"\\n\";\n\n/*\nOutput: 1, 1, 2, 3, 5, 8, 13, 21, 34, 55\n*/\n```\n\nLet's compare this to the `real` PHP version using `yield`.\n\n```php\n<?php\n\nfunction fibonacci($N)\n{\n    $a = 0;\n    $b = 1;\n    for ($i = 0; $i < $N; $i++) {\n        $aux = $b;\n        $b = $a + $b;\n        $a = $aux;\n        yield $a;\n    }\n}\n\n$out = [];\n\nforeach (fibonacci(10) as $fib) {\n    $out[] = $fib;\n}\n\necho implode(', ', $out) . \"\\n\";\n\n/*\nOutput: 1, 1, 2, 3, 5, 8, 13, 21, 34, 55\n*/\n```\n\n"
+    ],
+    [
+        "h4",
+        [],
+        "Performance comparison: PHP vs Custom"
+    ],
+    [
+        "div",
+        [],
+        "\nThis is my own version using the library parallel and channels (probably uses yield internally).\n\n```php\n<?php\n\nclass MyGenerator implements Iterator\n{\n    private $chan;\n    private $current;\n    private $iteratorFn;\n    private $runtime;\n    private $key = -1;\n    private $valid = true;\n\n    public function __construct($iteratorFn)\n    {\n        $this->iteratorFn = $iteratorFn;\n        $this->runtime = new \\parallel\\Runtime();\n        $channel = new \\parallel\\Channel();\n\n        $this->runtime->run(function() use ($iteratorFn, $channel) {\n            $iteratorFn(function ($val) use ($channel) {\n                $channel->send($val);\n            });\n            $channel->close();\n        });\n\n        $this->chan = $channel;\n        $this->next();\n    }\n\n    public function current()\n    {\n        return $this->current;\n    }\n\n    public function next()\n    {\n        try {\n            ++$this->key;\n            $val = $this->chan->recv();\n            $this->current = $val;\n        } catch (\\parallel\\Channel\\Error\\Closed $e) {\n            $this->valid = false;\n        }\n        return $this->current;\n    }\n\n    public function key() {return $this->key;}\n    public function valid() {return $this->valid;}\n    public function rewind() {}\n}\n\n\nfunction fibonacci($N)\n{\n    return new MyGenerator(function ($yield) use ($N) {\n        $a = 0;\n        $b = 1;\n        for ($i = 0; $i < $N; $i++) {\n            $aux = $b;\n            $b = $a + $b;\n            $a = $aux;\n            $yield($a);\n        }\n    });\n}\n\n$out = [];\n\nforeach (fibonacci(10) as $fib) {\n    $out[] = $fib;\n}\n\necho implode(', ', $out) . \"\\n\";\n```\n\n"
+    ],
+    [
+        "h5",
+        [],
+        "Tested code"
+    ],
+    [
+        "div",
+        [],
+        "\n"
+    ],
+    [
+        "h5",
+        [],
+        "`yield` version"
+    ],
+    [
+        "div",
+        [],
+        "\n```php\nfor ($i = 0; $i < 1000; ++$i) {\n    foreach (fibonacci(100) as $fib) {\n        $out[] = $fib;\n    }\n}\n```\n\n"
+    ],
+    [
+        "h5",
+        [],
+        "`MyGenerator` version"
+    ],
+    [
+        "div",
+        [],
+        "\n```\nreal    0m0,083s\nuser    0m0,059s\nsys     0m0,023s\n```\n\n"
+    ]
+]
+)

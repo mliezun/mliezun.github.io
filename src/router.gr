@@ -1,0 +1,30 @@
+let u = import("./utils.gr")
+
+fn get_routes() {
+    # Store routes here
+    let routes = {}
+
+    # Store post dicts here, in the form {"post_ojb":..., "url": ...}
+    let posts = []
+
+    # List of directories for posts
+    let postList = io.listDir("src/pages/posts")
+
+    # Compute urls and get objects for posts
+    u.each(u.map(postList, fn (p) {
+        let name = p["name"]
+        return {
+            "url": "/" + name[0:4] + "/" + name[5:7] + "/" + name[8:10] + "/" + name[11:name.length-3] + ".html",
+            "date": p["name"][:10],
+            "post_obj": import("pages/posts/" + name).post,
+        }
+    }), fn (r) {
+        routes[r["url"]] = r["post_obj"].content
+        posts = posts + [r]
+    })
+
+    # Build index using posts dicts
+    routes["/"] = import("pages/index.gr").build_index(posts)
+    
+    return routes
+}

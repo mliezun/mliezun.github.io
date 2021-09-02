@@ -1,0 +1,281 @@
+# Request object, handles parsing of the request headers and body.
+class Request {
+    init(conn) {
+        this.conn = conn
+        this.method = ""
+        this.target = ""
+        this.protocol = ""
+        this.headers = {}
+        this.text = ""
+        this.current = 0
+        this.body = ""
+        this.maxBodySize = 1024 * 1024 * 20
+        this.entityTooLarge = false
+        this.badRequest = false
+        this.readError = false
+    }
+    
+    atEnd() {
+        return this.current >= this.text.length
+    }
+
+    advance() {
+        let c = this.char()
+        this.current = this.current + 1
+        return c
+    }
+
+    char() {
+        if not this.atEnd() {
+            return this.text[this.current]
+        }
+        return ""
+    }
+
+    consumeStr(stopChar) {
+        let out = ""
+        while not this.atEnd() {
+            let c = this.advance()
+            if c == stopChar {
+                break
+            }
+            out = out + c
+        }
+        return out
+    }
+
+    consume(c) {
+        if this.advance() != c {
+            this.badRequest = true
+        }
+    }
+
+    consumeOptional(c) {
+        if this.char() == c {
+            this.advance()
+        }
+    }
+
+    parseMethod() {
+        this.method = this.consumeStr(" ")
+        this.target = this.consumeStr(" ")
+        this.protocol = this.consumeStr("\r")
+        this.consume("\n")
+    }
+
+    parseSingleHeader() {
+        let headerName = strings.toLower(this.consumeStr(":"))
+        this.consumeOptional(" ")
+        let headerValue = this.consumeStr("\r")
+        this.consumeOptional(" ")
+        this.consume("\n")
+        this.headers[headerName] = headerValue
+    }
+
+    parseHeaders() {
+        while not this.atEnd() and this.char() != "\r" {
+            this.parseSingleHeader()
+        }
+        this.consume("\r")
+        this.consume("\n")
+    }
+
+    ensureHeaders() {
+        this.text = this.text + this.conn.read() + this.conn.read()
+    }
+
+    readBody(size) {
+        if size > this.maxBodySize {
+            this.entityTooLarge = true
+        } else {
+            this.body = this.text[this.current:]
+            while this.body.length != size and this.body.length < this.maxBodySize {
+                this.text = this.text + this.conn.read()
+                this.body = this.text[this.current:]
+            }
+            if this.body.length != size {
+                this.badRequest = true
+            }
+        }
+    }
+
+    parse() {
+        this.text = this.conn.read()
+        if this.text == "" {
+            this.readError = true
+            return
+        }
+
+        this.parseMethod()
+        this.parseHeaders()
+
+        if this.headers["content-length"] {
+            let size = strings.asNumber(this.headers["content-length"])
+            this.readBody(size)
+        }
+    }
+}
+
+# Dictionary that maps status codes to messages
+let StatusMessage = {
+    "100": "Continue",
+    "101": "Switching Protocol",
+    "102": "Processing",
+    "103": "Early Hints",
+
+    "200": "OK",
+    "201": "Created",
+    "202": "Accepted",
+    "203": "Non-Authoritative Information",
+    "204": "No Content",
+    "205": "Reset Content",
+    "206": "Partial Content",
+    "207": "Multi-Status",
+    "208": "Already Reported",
+    "226": "IM Used",
+
+    "300": "Multiple Choices",
+    "301": "Moved Permanently",
+    "302": "Found",
+    "303": "See Other",
+    "304": "Not Modified",
+    "305": "Use Proxy",
+    "306": "Switch Proxy",
+    "307": "Temporary Redirect",
+    "308": "Permanent Redirect",
+
+    "400": "Bad Request",
+    "401": "Unauthorized",
+    "402": "Payment Required",
+    "403": "Forbidden",
+    "404": "Not Found",
+    "405": "Method Not Allowed",
+    "406": "Not Acceptable",
+    "407": "Proxy Authentication Required",
+    "408": "Request Timeout",
+    "409": "Conflict",
+    "410": "Gone",
+    "411": "Length Required",
+    "412": "Precondition Failed",
+    "413": "Payload Too Large",
+    "414": "URI Too Long",
+    "415": "Unsupported Media Type",
+    "416": "Range Not Satisfiable",
+    "417": "Expectation Failed",
+    "418": "I'm a teapot",
+    "421": "Misdirected Request",
+    "422": "Unprocessable Entity",
+    "423": "Locked",
+    "424": "Failed Dependency",
+    "425": "Too Early",
+    "426": "Upgrade Required",
+    "428": "Precondition Required",
+    "429": "Too Many Requests",
+    "431": "Request Header Fields Too Large",
+    "451": "Unavailable For Legal Reasons",
+
+    "500": "Internal Server Error",
+    "501": "Not Implemented",
+    "502": "Bad Gateway",
+    "503": "Service Unavailable",
+    "504": "Gateway Timeout",
+    "505": "HTTP Version Not Supported",
+    "506": "Variant Also Negotiates",
+    "507": "Insufficient Storage",
+    "508": "Loop Detected",
+    "510": "Not Extended",
+    "511": "Network Authentication Required"
+}
+
+# ResponseWriter object, provides an interface to writing the response back to the client.
+class ResponseWriter {
+    init(rq) {
+        this.rq = rq
+        this.headers = {}
+        this.body = ""
+        this.status = "500"
+    }
+
+    setHeader(header, value) {
+        this.headers[header] = value
+        return this
+    }
+
+    setBody(body) {
+        this.body = body
+        return this
+    }
+
+    setStatus(status) { 
+        this.status = status
+        return this
+    }
+}
+
+# Server object, handles connections, parses requests and writes responses
+class Server {
+    init(host, port, handler) {
+        this.host = host
+        this.port = port
+        this.handler = handler
+        this.socket = net.listenTcp(host + ":" + port)
+    }
+
+    handleErrors(rq) {
+        let rw = ResponseWriter(rq)
+        if rq.readError or rq.badRequest {
+            rw.setStatus("400")
+            conn.write(this.buildResponse(rq, rw))
+            return true
+        }
+        if rq.entityTooLarge {
+            rw.setStatus("413")
+            conn.write(this.buildResponse(rq, rw))
+            return true
+        }
+        return false
+    }
+
+    buildHeaders(headers) {
+        let out = ""
+        for h, v in headers {
+            out = out + h + ": " + v + "\r\n"
+        }
+        return out
+    }
+
+    buildResponse(rq, rw) {
+        let firstLine = rq.protocol + " " + rw.status + " " + StatusMessage[rw.status] + "\r\n"
+        return firstLine + this.buildHeaders(rw.headers) + "\r\n" + rw.body
+    }
+
+    handleConn(conn) {
+        let rq = Request(conn)
+        rq.parse()
+        if not this.handleErrors(rq) {
+            let rw = ResponseWriter(rq)
+            this.handler(rq, rw)
+            conn.write(this.buildResponse(rq, rw))
+        }
+    }
+
+    serve() {
+        let conn
+        while true {
+            try {
+                conn = this.socket.accept()
+            } catch err {
+                io.println("Error accepting new connection", err)
+                continue
+            }
+            try {
+                this.handleConn(conn)
+            } catch err {
+                io.println("Error handling connection", err)
+            }
+            try {
+                conn.close()
+            } catch err {}
+        }
+    }
+}

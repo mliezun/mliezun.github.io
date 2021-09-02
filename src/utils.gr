@@ -1,0 +1,52 @@
+fn find(list, obj) {
+    for let i = 0; i < list.length; i = i + 1 {
+        if type(list[i]) == type(obj) and list[i] == obj {
+            return i
+        }
+    }
+    return -1
+}
+
+fn filter(list, predicate) {
+    let out = []
+    for el in list {
+        if predicate(e) {
+            out = out + [e]
+        }
+    }
+    return out
+}
+
+fn map(list, mapFn) {
+    let out = []
+    for el in list {
+        out = out + [mapFn(el)]
+    }
+    return out
+}
+
+fn each(list, eachFn) {
+    for el in list {
+        eachFn(el)
+    }
+}
+
+fn foldl(list, initial, foldFn) {
+    let out = initial
+    for el in list {
+        out = foldFn(out, el)
+    }
+    return out
+}
+
+fn foldr(list, initial, foldFn) {
+    let out = initial
+    for let i = list.length; i > 0; i = i - 1 {
+        out = foldFn(out, list[i-1])
+    }
+    return out
+}
+
+fn sum(a, b) {
+    return a + b
+}

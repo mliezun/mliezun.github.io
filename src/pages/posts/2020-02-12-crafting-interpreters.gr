@@ -1,0 +1,22 @@
+
+let base = import("../base.gr")
+
+# Create new Post Object
+let post = base.Post(
+    "Crafting interpreters",
+    "Lox language interpreter based on the book craftinginterpreters.com by Bob Nystrom.",
+    "Miguel Liezun",
+    ["interpreter", "parser", "lexer"],
+    [
+    [
+        "h2",
+        [],
+        "Crafting interpreters"
+    ],
+    [
+        "div",
+        [],
+        "\n"
+    ]
+]
+)

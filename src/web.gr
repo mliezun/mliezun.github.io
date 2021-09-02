@@ -1,0 +1,50 @@
+let http = import("http.gr")
+let html = import("html.gr")
+let router = import("router.gr")
+
+class Web {
+    init() {
+        this.server = http.Server("", "8802", this.handleRq)
+        this.renderer = html.Renderer()
+        this.routes = router.get_routes()
+        this.renderPages()
+    }
+
+    wrapBody(body) {
+        return [
+            ["!DOCTYPE HTML"],
+            ["html", [], [
+                ["head"],
+                ["body", [], body]
+            ]]
+        ]
+    }
+
+    renderPages() {
+        this.renderedPages = {}
+        for url, body in this.routes {
+            let payload = this.wrapBody(body)
+            let page = this.renderer.render(payload)
+            this.renderedPages[url] = page
+            io.println(url, page)
+        }
+    }
+
+    handleRq(rq, rw) {
+        let page = this.renderedPages[rq.target]
+        rw.setHeader("content-type", "text/html")
+        if page != nil {
+            rw.setStatus("200").setBody(page)
+        } else {
+            this.handleNotFound(rq, rw)
+        }
+    }
+
+    handleNotFound(rq, rw) {
+        rw.setStatus("404").setBody("404 Not Found")
+    }
+
+    start() {
+        this.server.serve()
+    }
+}

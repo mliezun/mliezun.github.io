@@ -1,0 +1,262 @@
+
+let base = import("../base.gr")
+
+# Create new Post Object
+let post = base.Post(
+    "Grotsky Part 2: Parsing expressions",
+    "Part 2 of building my own laguage series. Parsing expressions, traversing and printing the Abstract Syntax Tree.",
+    "Miguel Liezun",
+    ["parser", "expression", "ast"],
+    [
+    [
+        "h2",
+        [],
+        "Grotsky Part 2: Parsing expressions"
+    ],
+    [
+        "div",
+        [],
+        "\n"
+    ],
+    [
+        "h3",
+        [],
+        "Expressions"
+    ],
+    [
+        "div",
+        [],
+        "\n"
+    ],
+    [
+        "h3",
+        [],
+        "Defining node types"
+    ],
+    [
+        "div",
+        [],
+        "\nParsing an expression like `1+2*3` requires a complex representation on memory. Just looking at it we think that it's pretty simple, but there is some hidden `hierarchy` that we have to pay attention to, like the fact that first we have to compute `2*3` and then add `1` to it.\n\nTo represent that in a data structure the best thing we can come up to is a tree, as seen in the next figure:\n\n![image](/assets/images/grotsky-part2/AST.png)\n\nAs you can see the leaves of the tree are literals and the root and intermediate nodes are operations that have to be applied from the bottom up. That means that we traverse the tree until we reach the bottom and start computing the results by going up.\n\n"
+    ],
+    [
+        "h5",
+        [],
+        "Let's define all posible operations on literals"
+    ],
+    [
+        "div",
+        [],
+        "\n> Not all operations are created equal.\n\nWe have to define how each node fits into the tree.\n\nI'll use the following syntax: `Binary -> left expr, operator token, right expr`. Which means that a binary operation (as we have seen in the image before) links to 2 expressions (left and right) and stores 1 value (operator).\n\n"
+    ],
+    [
+        "h2",
+        [],
+        "1, \"asd\", 5.2, true, false"
+    ],
+    [
+        "div",
+        [],
+        "\n```\nLiteral -> value object\n"
+    ],
+    [
+        "h2",
+        [],
+        "1+2, 3*3, 4^2+1"
+    ],
+    [
+        "div",
+        [],
+        "\nBinary -> left expr, operator token, right expr\n"
+    ],
+    [
+        "h2",
+        [],
+        "(1+2)"
+    ],
+    [
+        "div",
+        [],
+        "\nGrouping -> expression expr\n"
+    ],
+    [
+        "h2",
+        [],
+        "true or false, false and true"
+    ],
+    [
+        "div",
+        [],
+        "\nLogical -> left expr, operator token, right expr\n"
+    ],
+    [
+        "h2",
+        [],
+        "not true, -5"
+    ],
+    [
+        "div",
+        [],
+        "\nUnary: operator token, right expr\n"
+    ],
+    [
+        "h2",
+        [],
+        "[1, 2, 3, [4], \"asd\"]"
+    ],
+    [
+        "div",
+        [],
+        "\nList -> elements []expr\n"
+    ],
+    [
+        "h2",
+        [],
+        "{\"a\": 1, \"b\": 2, 3: 4}"
+    ],
+    [
+        "div",
+        [],
+        "\nDictionary -> elements []expr\n"
+    ],
+    [
+        "h2",
+        [],
+        "[1, 2, 3][0], {\"a\":1}[\"a\"]"
+    ],
+    [
+        "div",
+        [],
+        "\nAccess -> object expr, slice expr\n"
+    ],
+    [
+        "h2",
+        [],
+        "[1, 2, 3, 4, 5, 6][1:4:2]"
+    ],
+    [
+        "div",
+        [],
+        "\nSlice -> first expr, second expr, third expr\n"
+    ],
+    [
+        "h3",
+        [],
+        "Traversing the abstract syntax tree"
+    ],
+    [
+        "div",
+        [],
+        "```\n\n"
+    ],
+    [
+        "h4",
+        [],
+        "Visitor Pattern"
+    ],
+    [
+        "div",
+        [],
+        "\nTo traverse the syntax tree we need a pattern that's uniform and easily scalable when we have to add other types of expressions and statements.\n\nFor that we'll use the [Visitor Pattern](https://en.wikipedia.org/wiki/Visitor_pattern).\n\n"
+    ],
+    [
+        "h4",
+        [],
+        "String Visitor"
+    ],
+    [
+        "div",
+        [],
+        "\nFirst we need an interface for the expression that allows a visitor to visit it.\n\n```go\ntype expr interface {\n    accept(exprVisitor) interface{}\n}\n```\n\nAn expression visitor should have a method for each kind of expression it has to visit.\n\n```go\ntype exprVisitor interface {\n    visitLiteralExpr(expr expr) interface{}\n    visitBinaryExpr(expr expr) interface{}\n    visitGroupingExpr(expr expr) interface{}\n    visitLogicalExpr(expr expr) interface{}\n    visitUnaryExpr(expr expr) interface{}\n    visitListExpr(expr expr) interface{}\n    visitDictionaryExpr(expr expr) interface{}\n    visitAccessExpr(expr expr) interface{}\n    visitSliceExpr(expr expr) interface{}\n}\n```\n\nThen we have to define a type for each kind of expression that implements `expr` interface. For example, this is the implementation for a binary expression:\n\n```go\ntype binaryExpr struct {\n    left expr\n    operator *token\n    right expr\n}\n\nfunc (s *binaryExpr) accept(visitor exprVisitor) R {\n    return visitor.visitBinaryExpr(s)\n}\n```\n\nFor all other expressions the definition is practically the same.\n\n"
+    ],
+    [
+        "h3",
+        [],
+        "Grotsky expression"
+    ],
+    [
+        "div",
+        [],
+        "\nTo finish this chapter, let's define a visitor that allows you to print the syntax tree in a lisp-like syntax, ex: (+ 1 2).\n\nHere is the implementation of the string visitor for a binary expression:\n\n```go\ntype stringVisitor struct{}\n\nfunc (v stringVisitor) visitBinaryExpr(expr expr) R {\n    binary := expr.(*binaryExpr)\n    return fmt.Sprintf(\"(%s %v %v)\", binary.operator.lexeme, binary.left.accept(v), binary.right.accept(v))\n}\n```\n\n"
+    ],
+    [
+        "h4",
+        [],
+        "Expressions"
+    ],
+    [
+        "div",
+        [],
+        "\nYou can check out the state of the Grotsky project right here: [https://github.com/mliezun/grotsky](https://github.com/mliezun/grotsky).\n\nGrotsky it's able to parse and print all types of expressions defined in this article right now.\n\n"
+    ],
+    [
+        "h2",
+        [],
+        "Math operations"
+    ],
+    [
+        "div",
+        [],
+        "\nExamples of operations supported:\n\n```\n"
+    ],
+    [
+        "h2",
+        [],
+        "Logical operations"
+    ],
+    [
+        "div",
+        [],
+        "1+2*3^2-(4+123)/2.6\n=> (- (+ 1 (* 2 (^ 3 2))) (/ (+ 4 123) 2.6))\n\n"
+    ],
+    [
+        "h2",
+        [],
+        "Comparisons"
+    ],
+    [
+        "div",
+        [],
+        "true or false\n=> (or true false)\n\n"
+    ],
+    [
+        "h2",
+        [],
+        "Lists"
+    ],
+    [
+        "div",
+        [],
+        "1 == 1 and (1 > 3 or 11/5.5 <= 3+2^2 and 1 != 2)\n=> (and (== 1 1) (or (> 1 3) (and (<= (/ 11 5.5) (+ 3 (^ 2 2))) (!= 1 2))))\n\n"
+    ],
+    [
+        "h2",
+        [],
+        "List slicing"
+    ],
+    [
+        "div",
+        [],
+        "[1, 2, [3], \"asd\"]\n=> (list 1 2 (list 3) \"asd\")\n\n"
+    ],
+    [
+        "h2",
+        [],
+        "Dictionary"
+    ],
+    [
+        "div",
+        [],
+        "[1,2,3,4][1:3][::2][0]\n=> (#0 (#::2 (#1:3 (list 1 2 3 4))))\n\n"
+    ],
+    [
+        "h2",
+        [],
+        "Dictionary key lookup"
+    ],
+    [
+        "div",
+        [],
+        "{\n    1: 2,\n    3: 4,\n    \"asd\": 3.14\n}\n=> (dict 1=>2 3=>4 \"asd\"=>3.14)\n\n"
+    ]
+]
+)

@@ -1,0 +1,93 @@
+let u = import("utils.gr")
+
+# document: [tag, props, content]
+# tag: string
+# props: list(string)
+# content: list(document) | string
+
+class Renderer {
+    init() {
+        this.tags = ["!DOCTYPE HTML", "LITERAL", "a", "abbr", "address", "area", "article", "aside", "audio", "b", "base", "bdi", "bdo", "blockquote", "body", "br", "button", "canvas", "caption", "cite", "code", "col", "colgroup", "command", "datalist", "dd", "del", "details", "dfn", "div", "dl", "dt", "em", "embed", "fieldset", "figcaption", "figure", "footer", "form", "h1", "h2", "h3", "h4", "h5", "h6", "head", "header", "hgroup", "hr", "html", "i", "iframe", "img", "input", "ins", "kbd", "keygen", "label", "legend", "li", "link", "map", "mark", "menu", "meta", "meter", "nav", "noscript", "object", "ol", "optgroup", "option", "output", "p", "param", "pre", "progress", "q", "rp", "rt", "ruby", "s", "samp", "script", "section", "select", "small", "source", "span", "strong", "style", "sub", "summary", "sup", "table", "tbody", "td", "textarea", "tfoot", "th", "thead", "time", "title", "tr", "track", "u", "ul", "var", "video", "wbr"]
+        this.voidTags = ["!DOCTYPE HTML", "area", "base", "br", "col", "command", "embed", "hr", "img", "input", "keygen", "link", "meta", "param", "source", "track", "wbr"]
+    }
+
+    # Renders [tag, props, content]
+    # Admits this inputs:
+    #   - [tag]
+    #   - [tag, props]
+    #   - [tag, props, content]
+    # Validates that tag exists
+    renderTag(list) {
+        if list.length == 0 or list.length > 3 {
+            return ""
+        }
+        if list.length == 1 {
+            return this.renderContent(list[0], [], "")
+        }
+        if list.length == 2 {
+            return this.renderContent(list[0], list[1], "")
+        }
+        return this.renderContent(list[0], list[1], list[2])
+    }
+
+    # Renders 'props'
+    # Admits this inputs:
+    #   - [prop, value]
+    #   - [prop]
+    renderProps(props) {
+        if props.length % 2 != 0 {
+            props = props + [""]
+        }
+        let out = ""
+        for let i = 0; i < props.length/2; i = i + 1 {
+            out = out + " " + props[i*2] + "=\"" + props[i*2+1] + "\""
+        }
+        return out
+    }
+
+    renderContent(tag, props, content) {
+        # Find if tag is valid
+        let ix = u.find(this.tags, tag)
+        if ix == -1 {
+            return ""
+        }
+
+        # Start writing out tag and properties
+        let out = "<" + tag + this.renderProps(props) + ">"
+
+        # Render contents of tag
+        out = out + this.render(content)
+        
+        # Find if tag needs to be closed
+        ix = u.find(this.voidTags, tag)
+        if ix == -1 {
+            out = out + "</" + tag + ">"
+        }
+
+        return out
+    }
+
+    renderDocument(document) {
+        if type(document) == "string" {
+            return document
+        }
+        if type(document) == "list" {
+            return this.renderTag(document)
+        }
+        return ""
+    }
+
+    render(payload) {
+        if type(payload) == "string" {
+            return payload
+        }
+        if type(payload) != "list" {
+            return ""
+        }
+        let out = ""
+        for document in payload {
+            out = out + this.renderDocument(document)
+        }
+        return out
+    }
+}

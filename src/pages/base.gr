@@ -1,0 +1,9 @@
+class Post {
+    init(title, excerpt, author, tags, content) {
+        this.title = title
+        this.excerpt = excerpt
+        this.author = author
+        this.tags = tags
+        this.content = content
+    }
+}

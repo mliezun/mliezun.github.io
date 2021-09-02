@@ -1,0 +1,102 @@
+
+let base = import("../base.gr")
+
+# Create new Post Object
+let post = base.Post(
+    "Grotsky Part 4: Writing a service to get your public IP",
+    "Part 4 of building my own laguage series. This time I write and deploy a service to Heroku that let's your retrieve your pulbic IP.",
+    "Miguel Liezun",
+    ["grotsky", "service", "http", "heroku", "ip"],
+    [
+    [
+        "h2",
+        [],
+        "Writing a service to get your public IP"
+    ],
+    [
+        "div",
+        [],
+        "\n"
+    ],
+    [
+        "h3",
+        [],
+        "Show me the code"
+    ],
+    [
+        "div",
+        [],
+        "\n[Grotsky](https://github.com/mliezun/grotsky) (my toy programming language) finally can be used to make something useful.\n\nIn this post I want to show you how I made a service that let's your retrieve your public IP as a response to a HTTP Request.\n\n"
+    ],
+    [
+        "h5",
+        [],
+        "Let's get the server up and running"
+    ],
+    [
+        "div",
+        [],
+        "\nLet's start by building the http request handler.\n\nThe service will be deployed to heroku. Heroku passes the port that the http server has to listen as an environment variable named `PORT`.\n\n"
+    ],
+    [
+        "h5",
+        [],
+        "Now lets add some code to handle requests"
+    ],
+    [
+        "div",
+        [],
+        "\n```\nlet listen = \":8092\"\nlet port = env.get(\"PORT\")\nif port != \"\" {\n    listen = \":\" + port\n}\n\nio.println(\"Listen \" + listen)\nhttp.listen(listen)\n```\n\nWe listen by default at the port 8092 and if the environment variable is given we change it.\n\nThen we print what is the port and start the server with `http.listen`. That blocks the execution and starts the server.\n\nGrotsky interpreter is written in Go, and uses Go's standard http server. Each requests is handled by a goroutine, but because Grotsky is single threaded only one goroutine executes at any given point in time. \n\nWhen a request is received the goroutine has to hold the GIL (Global Interrupt Lock) to be able to give control to the interpreter.\n\n"
+    ],
+    [
+        "h5",
+        [],
+        "Let's write a couple functions to do that"
+    ],
+    [
+        "div",
+        [],
+        "\n```\nfn getIP(rq, rs) {\n    io.println(\"Request from --> \" + rq.address)\n    rs.write(200, rq.address)\n}\n\nhttp.handler(\"/\", getIP)\n\nlet listen = \":8092\"\nlet port = env.get(\"PORT\")\nif port != \"\" {\n    listen = \":\" + port\n}\n\nio.println(\"Listen \" + listen)\nhttp.listen(listen)\n```\n\nNow we have something interesting to try out!\n\nWhat we've done is to log and write back as response the address of the device that is doing the request.\n\nTo try it out you need to download grotsky.\n\n```bash\n$ go get github.com/mliezun/grotsky/cmd/grotsky\n```\n\nSave the Grotsky code under a filed called `getip.g` and the execute it using the grotsky interpreter:\n\n```bash\n$ go run $(go env GOPATH)/src/github.com/mliezun/grotsky/cmd/grotsky getip.g\n```\n\nOutput:\n```\nListen :8092\n```\n\nNow you can make a request to see if it is working\n\n```bash\n$ curl localhost:8092\n```\n\nOutput:\n```\n[::1]:43464\n```\n\nWe see that the address contains the port we want to split it and show just the IP.\n\n\n"
+    ],
+    [
+        "h5",
+        [],
+        "Now we can send just the IP address"
+    ],
+    [
+        "div",
+        [],
+        "\n```\nfn findReversed(string, char) {\n    for let i = string.length-1; i > -1; i = i - 1 {\n        if string[i] == char {\n            return i\n        }\n    }\n    return -1\n}\n\nfn parseIP(address) {\n    let ix = findReversed(address, \":\")\n    return address[:ix]\n}\n```\n\nThe function `findReversed` finds the first index where `char` appears in `string` starting from the end.\n\nThe function `parseIP` uses `findReversed` to obtain the index where \":\" splits the IP and the PORT and uses that index to return just the IP address.\n\n"
+    ],
+    [
+        "h5",
+        [],
+        "We have just one last issue: Proxies!"
+    ],
+    [
+        "div",
+        [],
+        "\n```\nfn getIP(rq, rs) {\n    let address = parseIP(rq.address)\n    io.println(\"Request from --> \" + address)\n    rs.write(200, address)\n}\n```\n\nAdd the two functions at the beginning of the file and modify the getIP function.\n\nRestart the server and now if you make a request you should get just the IP.\n\n```\n$ curl localhost:8092\n[::1]\n```\n\nVoila!\n\n\n"
+    ],
+    [
+        "h5",
+        [],
+        "Our work is complete. Let's try it!"
+    ],
+    [
+        "div",
+        [],
+        "\nOur service will probably sit behind a proxy, so we need to read the address from a special header `X-Forwarded-For`.\n\nLet's implement that!\n\n```\nfn getIP(rq, rs) {\n    let address = parseIP(rq.address)\n    let forwarded = rq.headers[\"X-Forwarded-For\"]\n    if forwarded != nil {\n        address = forwarded[0]\n    }\n    io.println(\"Request from --> \" + address)\n    rs.write(200, address)\n}\n```\n\nWe read the header from the request and if `X-Forwarded-For` is present we sent that as a response to the user.\n\n"
+    ],
+    [
+        "h5",
+        [],
+        "Try it from your command line"
+    ],
+    [
+        "div",
+        [],
+        "\n```\n$ curl localhost:8092 -H 'X-Forwarded-For: 8.8.8.8'\n8.8.8.8\n\n$ curl localhost:8092\n[::1]\n```\n\nWell done. Now you can deploy it to Heroku (that's up to you) or any other cloud platform.\n\nI have my own version running under: https://peaceful-lowlands-45821.herokuapp.com/\n\n\n"
+    ]
+]
+)

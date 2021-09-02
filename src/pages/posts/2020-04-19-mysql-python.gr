@@ -1,0 +1,177 @@
+
+let base = import("../base.gr")
+
+# Create new Post Object
+let post = base.Post(
+    "Executing python code from MySQL Server",
+    "Evaluate python expressions inside MySQL using a UDF that binds to python interpreter.",
+    "Miguel Liezun",
+    ["python", "c++", "mysql", "udf"],
+    [
+    [
+        "h2",
+        [],
+        "Executing python code from MySQL Server"
+    ],
+    [
+        "div",
+        [],
+        "\n"
+    ],
+    [
+        "h3",
+        [],
+        "Trying `py_eval`"
+    ],
+    [
+        "div",
+        [],
+        "\n"
+    ],
+    [
+        "h5",
+        [],
+        "Generate a list of integers from 0 to 10"
+    ],
+    [
+        "div",
+        [],
+        "\n"
+    ],
+    [
+        "h5",
+        [],
+        "Generate a dictionary (json object) from a list of dicts"
+    ],
+    [
+        "div",
+        [],
+        "\n```sql\n> select py_eval('[i for i in range(10)]') list;\n+--------------------------------+\n| list                           |\n+--------------------------------+\n| [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] |\n+--------------------------------+\n```\n\n"
+    ],
+    [
+        "h5",
+        [],
+        "Make a function that receives a json array and a key and sorts the array by key"
+    ],
+    [
+        "div",
+        [],
+        "\n```sql\n> select replace(py_eval('{ str(user[\"id\"]) : user for user in [{\"id\": 33, \"name\": \"John\"}, {\"id\": 44, \"name\": \"George\"}] }'), \"'\", '\"') dict;\n+------------------------------------------------------------------------+\n| dict                                                                   |\n+------------------------------------------------------------------------+\n| {\"33\": {\"id\": 33, \"name\": \"John\"}, \"44\": {\"id\": 44, \"name\": \"George\"}} |\n+------------------------------------------------------------------------+\n```\n\nReplace is needed here, because python uses single quotes for dictionaries.\n\n"
+    ],
+    [
+        "h3",
+        [],
+        "How to write a MySQL UDF"
+    ],
+    [
+        "div",
+        [],
+        "\n```sql\nDROP function IF EXISTS `sort_by_key`;\nDELIMITER $$\nCREATE FUNCTION `sort_by_key` (arr json, k text)\nRETURNS json\nBEGIN\n    RETURN replace(py_eval(CONCAT(\"sorted(\", arr, \", key=lambda e: e['\", k, \"'])\")), \"'\", '\"');\nEND$$\nDELIMITER ;\n```\n\nTest\n\n```sql\n> select sort_by_key('[{\"a\":2}, {\"a\":1}, {\"a\": 722}, {\"a\": 0}]', 'a') sorted;\n+--------------------------------------------+\n| sorted                                     |\n+--------------------------------------------+\n| [{\"a\": 0}, {\"a\": 1}, {\"a\": 2}, {\"a\": 722}] |\n+--------------------------------------------+\n```\n\n"
+    ],
+    [
+        "h4",
+        [],
+        "Functions signatures"
+    ],
+    [
+        "div",
+        [],
+        "\nThere is a pretty good guide at the [MySQL 8.0 Reference Manual](https://dev.mysql.com/doc/refman/8.0/en/adding-udf.html). I'll give you a brief explanation so you can start quickly, but reading the full guide is highly recomended.\n\nMySQL's UDFs are written in C++ and need to follow certain conventions so they can be recognized as such.\n\nIn our case, we want our MySQL function to be called `py_eval`, so we have to define the following C++ functions:\n\n- py_eval_init or py_eval_deinit\n- py_eval\n\n**py_eval_init**: (Optional) Initializes memory and data structures for the function execution.\n\n**py_eval**: Executes the actual function, in our case evaluates a python expression.\n\n**py_eval_deinit**: (Optional) If any memory was allocated in the init function, this is the place where we free it.\n\nFor `py_eval` we only need **py_eval_init** and **py_eval**.\n\n"
+    ],
+    [
+        "h3",
+        [],
+        "Evaluating python expression"
+    ],
+    [
+        "div",
+        [],
+        "\n```c\nbool py_eval_init(UDF_INIT *initid, UDF_ARGS *args,\n                             char *message);\n\nchar *py_eval(UDF_INIT *, UDF_ARGS *args, char *result,\n                         unsigned long *res_length, unsigned char *null_value,\n                         unsigned char *);\n```\n\nThese are the standard definitions for MySQL functions that return string, as is the case of `py_eval`. To be able to declare this functions, you need to have the definition of `UDF_INIT` and `UDF_ARGS`, you can find that at the source code of mysql server -> [right here](https://github.com/mysql/mysql-server/blob/8.0/include/mysql/udf_registration_types.h).\n\n"
+    ],
+    [
+        "h5",
+        [],
+        "Example"
+    ],
+    [
+        "div",
+        [],
+        "\nFor evaluating python expression, we'll be using [pybind11](https://github.com/pybind/pybind11). That gives us the ability to directly access the python interpreter and execute code.\n\n"
+    ],
+    [
+        "h2",
+        [],
+        "include \"pybind11/include/pybind11/embed.h\""
+    ],
+    [
+        "div",
+        [],
+        "\nMake sure you have `g++` installed. Try executing: `g++ --help`. And some version of python running of your system, for this tutorial I'll be using version _3.8_.\n\n```bash\n$ mkdir py_eval && cd py_eval\n$ git clone https://github.com/pybind/pybind11\n```\n\nCreate a new file called `main.cpp` with the following content:\n\n```c\n"
+    ],
+    [
+        "h2",
+        [],
+        "include \"pybind11/include/pybind11/eval.h\""
+    ],
+    [
+        "h2",
+        [],
+        "include <iostream>"
+    ],
+    [
+        "div",
+        [],
+        "\n"
+    ],
+    [
+        "h3",
+        [],
+        "Putting all together"
+    ],
+    [
+        "div",
+        [],
+        "namespace py = pybind11;\n\npy::scoped_interpreter guard{}; // We need this to keep the interpreter alive\n\nint main(void) {\n    auto obj = py::eval(\"[i for i in range(10)]\");\n    std::cout << std::string(py::str(obj)) << std::endl;\n}\n```\n\nTo run the example we have to compile the file.\n\nFirst, we need the compilation flags.\n\n```bash\n$ pkg-config python-3.8 --libs --cflags\n-I/usr/include/python3.8\n```\n\nThen, we can compile and run our code with the following.\n\n```bash\n$ g++ main.cpp -I/usr/include/python3.8 -lpython3.8\n$ ./a.out\n[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]\n```\n\n"
+    ],
+    [
+        "h2",
+        [],
+        "include \"pybind11/include/pybind11/embed.h\""
+    ],
+    [
+        "div",
+        [],
+        "\nDownload udf types to the project folder.\n\n```bash\n$ wget https://raw.githubusercontent.com/mysql/mysql-server/8.0/include/mysql/udf_registration_types.h\n```\n\nCreate a new file called `py_eval.cpp`, with the following content:\n\n```c++\n"
+    ],
+    [
+        "h2",
+        [],
+        "include \"pybind11/include/pybind11/eval.h\""
+    ],
+    [
+        "h2",
+        [],
+        "include \"udf_registration_types.h\""
+    ],
+    [
+        "h2",
+        [],
+        "include <string.h>"
+    ],
+    [
+        "div",
+        [],
+        "\n"
+    ],
+    [
+        "h3",
+        [],
+        "Future"
+    ],
+    [
+        "div",
+        [],
+        "namespace py = pybind11;\n\npy::scoped_interpreter guard{}; // We need this to keep the interpreter alive\n\nextern \"C\" bool py_eval_init(UDF_INIT *initid, UDF_ARGS *args,\n                             char *message)\n{\n    // Here we can check if we received one argument\n    if (args->arg_count != 1)\n    {\n        // The function returns true if there is an error,\n        // the error message is copied to the message arg.\n        strcpy(message, \"py_eval must have one argument\");\n        return true;\n    }\n    // Cast the passed argument to string\n    args->arg_type[0] = STRING_RESULT;\n    initid->maybe_null = true; /* The result may be null */\n    return false;\n}\n\nextern \"C\" char *py_eval(UDF_INIT *, UDF_ARGS *args, char *result,\n                         unsigned long *res_length, unsigned char *null_value,\n                         unsigned char *)\n{\n    // Evaluate the argument as a python expression\n    auto obj = py::eval(args->args[0]);\n    // Cast the result to std::string\n    std::string res_str = std::string(py::str(obj));\n\n    // Copy the output string from py::eval to the result argument\n    strcpy(result, res_str.c_str());\n\n    // Set the length of the result string\n    *res_length = res_str.length();\n\n    return result;\n}\n```\n\nThen, we have to compile the project as a shared library, and move it to the plugin folder of mysql (in your case, it could be located in some other directory).\n\n```bash\n$ g++ -I/usr/include/python3.8 -lpython3.8 -shared -fPIC -o py_eval.so py_eval.cpp\n$ sudo cp py_eval.so /usr/lib/mysql/plugin/\n```\n\nNow, it's time to try it from mysql.\n\nFirst, connect to your server as root.\n\n```bash\n$ sudo mysql -uroot\n```\n\nCreate and test the function.\n\n```sql\n> create function py_eval returns string soname 'py_eval.so';\nQuery OK, 0 rows affected (0.029 sec)\n\n> select py_eval('[i for i in range(10)]') list;\n+--------------------------------+\n| list                           |\n+--------------------------------+\n| [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] |\n+--------------------------------+\n1 row in set (0.001 sec)\n```\n\n"
+    ]
+]
+)

@@ -1,0 +1,3 @@
+let web = import("web.gr")
+
+web.Web().start()
