@@ -31,8 +31,18 @@ def replaceQuotes(in_text: str):
             offset = in_text[ix+len(quotes):].find(quotes)
             in_text = in_text[:ix] + in_text[ix:ix+len(quotes)+offset].replace('#', '\\#') + in_text[ix+len(quotes)+offset:]
 
+            # Patch for javascript wasm post
+            old_replaced_by = replaced_by
+            if "output.value +=" in in_text[ix-len("output.value += "):ix]:
+                replaced_by = (lambda _: "\\quote", "\\quote")
+
             in_text = in_text.replace(quotes, replaced_by[0](lang), 1).replace(quotes, replaced_by[1], 1)
             lang_ix += 2
+
+            # Needed for patch for javascript wasm post
+            if old_replaced_by != replaced_by:
+                replaced_by = old_replaced_by
+
     return in_text
 
 def generateMultilineString(in_text: str):
@@ -55,6 +65,11 @@ def unescapeMd(in_text: str) -> str:
         start, end = matches.span(0)
         _, _, content, _, link = matches.groups()
         in_text = instertReplacement(in_text, (start, end), f'<a href="{link}">{content}</a>')
+
+    # Patch for javascript wasm post
+    in_text = in_text.replace("\\quote", "`")
+
+    # Unescape escaped hashes
     return in_text.replace("\\#", "#")
 
 def escapePhp(in_text: str) -> str:
@@ -108,8 +123,6 @@ def convert(md_lines):
             tmp_str = ""
         else:
             tmp_str += l
-            if 'yield $a;' in l:
-                print(l)
 
     if tmp_str:
         body += [["div", [], transform(tmp_str)]]

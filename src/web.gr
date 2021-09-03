@@ -22,11 +22,16 @@ class Web {
 
     renderPages() {
         this.renderedPages = {}
-        for url, body in this.routes {
-            let payload = this.wrapBody(body)
-            let page = this.renderer.render(payload)
+        for url, route in this.routes {
+            let page = ""
+            if route["class"] == "html" {
+                let payload = this.wrapBody(route["content"])
+                page = this.renderer.render(payload)
+            } elif route["class"] == "static" {
+                page = route["content"]
+            }
             this.renderedPages[url] = page
-            io.println(url, page)
+            # io.println(url, page)
         }
     }
 

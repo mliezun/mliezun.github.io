@@ -1,8 +1,19 @@
 let u = import("./utils.gr")
+let static = import("./static.gr")
 
 fn get_routes() {
     # Store routes here
     let routes = {}
+
+    # Add static folders
+    let statics = static.build("/assets", "./assets")
+    for url, content in statics {
+        routes[url] = {
+            "class": "static",
+            "content": content,
+        }
+    }
+
 
     # Store post dicts here, in the form {"post_ojb":..., "url": ...}
     let posts = []
@@ -19,12 +30,18 @@ fn get_routes() {
             "post_obj": import("pages/posts/" + name).post,
         }
     }), fn (r) {
-        routes[r["url"]] = r["post_obj"].content
+        routes[r["url"]] = {
+            "class": "html",
+            "content": r["post_obj"].content,
+        }
         posts = posts + [r]
     })
 
     # Build index using posts dicts
-    routes["/"] = import("pages/index.gr").build_index(posts)
+    routes["/"] = {
+        "class": "html",
+        "content": import("pages/index.gr").build_index(posts),
+    }
     
     return routes
 }

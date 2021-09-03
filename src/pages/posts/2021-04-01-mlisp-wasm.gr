@@ -192,7 +192,7 @@ let post = base.Post(
             "        const output = document.getElementById('show-repl');",
             "        const result = this.mlisp.interpret(cmd);",
             "        node.value = null;",
-            "        output.value += <span class=\"single-quote\">> ${cmd}\\n\\t${result}\\n</span>;",
+            "        output.value += `> ${cmd}\\n\\t${result}\\n`;",
             "    }",
             "};",
             "",
