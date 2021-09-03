@@ -69,7 +69,7 @@ class Renderer {
 
     renderDocument(document) {
         if type(document) == "string" {
-            return document
+            return document + "\n"
         }
         if type(document) == "list" {
             return this.renderTag(document)

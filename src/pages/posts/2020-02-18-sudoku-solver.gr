@@ -9,64 +9,242 @@ let post = base.Post(
     ["sudoku", "python", "solver"],
     [
     [
+        "div",
+        [],
+        [
+            "",
+            ""
+        ]
+    ],
+    [
         "h2",
         [],
-        "Sudoku Solver"
+        [
+            "Sudoku Solver"
+        ]
     ],
     [
         "div",
         [],
-        "\n"
+        [
+            "",
+            "I wanted to make my own sudoku solver to challenge myself.",
+            "",
+            "Im not a sudoku player so my approach is a brute force scan of possible combinations sort-of.",
+            "",
+            "I just know the basic rules:",
+            "",
+            "- Numbers 1-9 are allowed.",
+            "- Numbers in the same row cannot be repeated.",
+            "- Numbers in the same column cannot be repeated.",
+            "- Numbers in the 3x3 square cannot be repeated.",
+            "",
+            "The first thing i did was to build a some classes that calculates the possible values a cell can have if it's empty, based on the constraints.",
+            "",
+            "I came up with 3 classes:",
+            "",
+            "- <span class=\"single-quote\">Board</span> that stores the entire board.",
+            "- <span class=\"single-quote\">BoardSlice</span> that stores a slice of a board. An object of this type is returned when a <span class=\"single-quote\">Board</span> is sliced (method <span class=\"single-quote\">__getitem__</span>).",
+            "- <span class=\"single-quote\">Cell</span> that stores the value of a single cell and calculates all possible values a cell can take.",
+            "",
+            "The class <span class=\"single-quote\">Cell</span> receives a board, the coordinates on the board, and the value that holds. Also has the method options that uses python <span class=\"single-quote\">set</span> data structure to calculate the posibilites.",
+            "",
+            "If you look at the following snippet you can see that the method <span class=\"single-quote\">options</span>",
+            "generates the sets: <span class=\"single-quote\">options</span> that contains all possible options (1-9), <span class=\"single-quote\">row</span> that contains all the numbers that are in the same row, <span class=\"single-quote\">column</span> that contains all the numbers that are in the same column and <span class=\"single-quote\">square</span> that contains all the numbers that are in the same 3x3 square. The return value is <span class=\"single-quote\">options</span> without all the used values.",
+            "",
+            "<pre class=\"triple-quote python\">",
+            "class Cell:",
+            "    def __init__(self, b, i, j, value):",
+            "        self.b = b",
+            "        self.value = value",
+            "        self.i = i",
+            "        self.j = j",
+            "",
+            "    def options(self):",
+            "        if self.value != 0:",
+            "            return {self.value}",
+            "        options = set(range(1, 10))",
+            "        row = set(map(lambda x: x.value, self.b[self.i]))",
+            "        column = set(map(lambda x: x.value, self.b[:][self.j]))",
+            "        def to_square(k): return slice((k // 3) * 3, (k // 3) * 3 + 3)",
+            "        square = set(",
+            "            map(lambda x: x.value,",
+            "                self.b[to_square(self.i)][to_square(self.j)]))",
+            "        return options - row - column - square - {0}",
+            "</pre>",
+            "",
+            "To make easier the implementation of the square I used the class <span class=\"single-quote\">BoardSlice</span> that contains a slice of a board and implements the magic method <span class=\"single-quote\">__getitem__</span>.",
+            "",
+            "<pre class=\"triple-quote python\">",
+            "class BoardSlice:",
+            "    def __init__(self, board_slice):",
+            "        self.board_slice = board_slice",
+            "",
+            "    def __getitem__(self, items):",
+            "        if type(items) == slice:",
+            "            return (el for row in self.board_slice for el in row[items])",
+            "        if type(items) == int:",
+            "            return (row[items] for row in self.board_slice)",
+            "        raise KeyError",
+            "</pre>",
+            "",
+            "The base class: <span class=\"single-quote\">Board</span> contains the board and a copy method that copies all the values and creates a new <span class=\"single-quote\">Board</span> object. This is necessary to avoid messing with object references and have a clean object when needed.",
+            "",
+            "<pre class=\"triple-quote python\">",
+            "class Board:",
+            "    def __init__(self, board):",
+            "        self.board = [[Cell(self, i, j, value)",
+            "                       for (j, value) in enumerate(row)] for (i, row) in enumerate(board)]",
+            "",
+            "    def copy(self):",
+            "        return Board(((cell.value for cell in row) for row in self.board))",
+            "",
+            "    def __getitem__(self, items):",
+            "        if type(items) == int:",
+            "            return self.board[items]",
+            "        if type(items) == slice:",
+            "            return BoardSlice(self.board[items])",
+            "        raise KeyError",
+            "",
+            "    def __repr__(self):",
+            "        return repr(self.board)",
+            "</pre>",
+            "",
+            "With these tools the next step is to solve the problem!",
+            "",
+            "My idea was to generate a mixed iterative-recursive algorithm.",
+            "",
+            "The first pass will be iterative, and if needed, the second pass will be recursive.",
+            "",
+            ""
+        ]
     ],
     [
         "h5",
         [],
-        "Iterative pass"
+        [
+            "Iterative pass"
+        ]
     ],
     [
         "div",
         [],
-        "\nI wanted to make my own sudoku solver to challenge myself.\n\nIm not a sudoku player so my approach is a brute force scan of possible combinations sort-of.\n\nI just know the basic rules:\n\n- Numbers 1-9 are allowed.\n- Numbers in the same row cannot be repeated.\n- Numbers in the same column cannot be repeated.\n- Numbers in the 3x3 square cannot be repeated.\n\nThe first thing i did was to build a some classes that calculates the possible values a cell can have if it's empty, based on the constraints.\n\nI came up with 3 classes:\n\n- `Board` that stores the entire board.\n- `BoardSlice` that stores a slice of a board. An object of this type is returned when a `Board` is sliced (method `__getitem__`).\n- `Cell` that stores the value of a single cell and calculates all possible values a cell can take.\n\nThe class `Cell` receives a board, the coordinates on the board, and the value that holds. Also has the method options that uses python `set` data structure to calculate the posibilites.\n\nIf you look at the following snippet you can see that the method `options`\ngenerates the sets: `options` that contains all possible options (1-9), `row` that contains all the numbers that are in the same row, `column` that contains all the numbers that are in the same column and `square` that contains all the numbers that are in the same 3x3 square. The return value is `options` without all the used values.\n\n```python\nclass Cell:\n    def __init__(self, b, i, j, value):\n        self.b = b\n        self.value = value\n        self.i = i\n        self.j = j\n\n    def options(self):\n        if self.value != 0:\n            return {self.value}\n        options = set(range(1, 10))\n        row = set(map(lambda x: x.value, self.b[self.i]))\n        column = set(map(lambda x: x.value, self.b[:][self.j]))\n        def to_square(k): return slice((k // 3) * 3, (k // 3) * 3 + 3)\n        square = set(\n            map(lambda x: x.value,\n                self.b[to_square(self.i)][to_square(self.j)]))\n        return options - row - column - square - {0}\n```\n\nTo make easier the implementation of the square I used the class `BoardSlice` that contains a slice of a board and implements the magic method `__getitem__`.\n\n```python\nclass BoardSlice:\n    def __init__(self, board_slice):\n        self.board_slice = board_slice\n\n    def __getitem__(self, items):\n        if type(items) == slice:\n            return (el for row in self.board_slice for el in row[items])\n        if type(items) == int:\n            return (row[items] for row in self.board_slice)\n        raise KeyError\n```\n\nThe base class: `Board` contains the board and a copy method that copies all the values and creates a new `Board` object. This is necessary to avoid messing with object references and have a clean object when needed.\n\n```python\nclass Board:\n    def __init__(self, board):\n        self.board = [[Cell(self, i, j, value)\n                       for (j, value) in enumerate(row)] for (i, row) in enumerate(board)]\n\n    def copy(self):\n        return Board(((cell.value for cell in row) for row in self.board))\n\n    def __getitem__(self, items):\n        if type(items) == int:\n            return self.board[items]\n        if type(items) == slice:\n            return BoardSlice(self.board[items])\n        raise KeyError\n\n    def __repr__(self):\n        return repr(self.board)\n```\n\nWith these tools the next step is to solve the problem!\n\nMy idea was to generate a mixed iterative-recursive algorithm.\n\nThe first pass will be iterative, and if needed, the second pass will be recursive.\n\n"
+        [
+            "",
+            "Iterates over the whole board and calculates the options that each cell can have. If a cell has only one option set that option on the cell and set a flag to repeat the iterative pass, if has 0 options return <span class=\"single-quote\">None</span> meaning that the board has no solutions, and if has more than one option store the options for the recursive pass.",
+            "",
+            "If the loop ends and we found that no cell has more than one option then we solved the board!",
+            "",
+            "The idea of this first step is to solve an _easy_ board quickly.",
+            "",
+            ""
+        ]
     ],
     [
         "h5",
         [],
-        "Recursive pass"
+        [
+            "Recursive pass"
+        ]
     ],
     [
         "div",
         [],
-        "\nIterates over the whole board and calculates the options that each cell can have. If a cell has only one option set that option on the cell and set a flag to repeat the iterative pass, if has 0 options return `None` meaning that the board has no solutions, and if has more than one option store the options for the recursive pass.\n\nIf the loop ends and we found that no cell has more than one option then we solved the board!\n\nThe idea of this first step is to solve an _easy_ board quickly.\n\n"
+        [
+            "",
+            "If the iterative pass ends and we found that a cell has more than one option then we try all that options and call solve again!",
+            "",
+            "If solve returns a board that means we've found the solution!",
+            "",
+            "If solve returns None (back at the iterative passs) we have to try with another options.",
+            "",
+            ""
+        ]
     ],
     [
         "h5",
         [],
-        "BoardSolver"
+        [
+            "BoardSolver"
+        ]
     ],
     [
         "div",
         [],
-        "\nIf the iterative pass ends and we found that a cell has more than one option then we try all that options and call solve again!\n\nIf solve returns a board that means we've found the solution!\n\nIf solve returns None (back at the iterative passs) we have to try with another options.\n\n"
+        [
+            "",
+            "The class is pretty straightforward.",
+            "",
+            "<pre class=\"triple-quote python\">",
+            "class SudokuSolver:",
+            "    @staticmethod",
+            "    def solve(board):",
+            "        b = board.copy()",
+            "        # First pass: Iterative",
+            "        board_map = {}",
+            "        exhaust = False",
+            "        while not exhaust:",
+            "            exhaust = True",
+            "            for i in range(9):",
+            "                for j in range(9):",
+            "                    cell = b[i][j]",
+            "                    if cell.value == 0:",
+            "                        options = cell.options()",
+            "                        if len(options) == 1:",
+            "                            cell.value = options.pop()",
+            "                            exhaust = False",
+            "                        elif len(options) == 0:",
+            "                            return None",
+            "                        elif len(board_map) == 0:",
+            "                            board_map[(i, j)] = options",
+            "",
+            "        # Second pass: Recursive",
+            "        for ((i, j), options) in board_map.items():",
+            "            for op in options:",
+            "                b[i][j].value = op",
+            "                solved = SudokuSolver.solve(b)",
+            "                if solved:",
+            "                    return solved",
+            "            return None",
+            "",
+            "        return b",
+            "</pre>",
+            "",
+            ""
+        ]
     ],
     [
         "h5",
         [],
-        "Conclusions"
+        [
+            "Conclusions"
+        ]
     ],
     [
         "div",
         [],
-        "\nThe class is pretty straightforward.\n\n```python\nclass SudokuSolver:\n    @staticmethod\n    def solve(board):\n        b = board.copy()\n        # First pass: Iterative\n        board_map = {}\n        exhaust = False\n        while not exhaust:\n            exhaust = True\n            for i in range(9):\n                for j in range(9):\n                    cell = b[i][j]\n                    if cell.value == 0:\n                        options = cell.options()\n                        if len(options) == 1:\n                            cell.value = options.pop()\n                            exhaust = False\n                        elif len(options) == 0:\n                            return None\n                        elif len(board_map) == 0:\n                            board_map[(i, j)] = options\n\n        # Second pass: Recursive\n        for ((i, j), options) in board_map.items():\n            for op in options:\n                b[i][j].value = op\n                solved = SudokuSolver.solve(b)\n                if solved:\n                    return solved\n            return None\n\n        return b\n```\n\n"
+        [
+            "",
+            "Actually my implementation is not a brute force algorithm, is a search algorithm, that searches the path to solving a board. Because it doesn't try all values on all cells nonsensically, it rather tries _some_ options for a given cell and advances to the next option as _soon_ as it detects that it's not the correct path.",
+            "",
+            ""
+        ]
     ],
     [
         "h4",
         [],
-        "Source"
+        [
+            "Source"
+        ]
     ],
     [
         "div",
         [],
-        "\nActually my implementation is not a brute force algorithm, is a search algorithm, that searches the path to solving a board. Because it doesn't try all values on all cells nonsensically, it rather tries _some_ options for a given cell and advances to the next option as _soon_ as it detects that it's not the correct path.\n\n"
+        [
+            "",
+            "Take a look at the <a href=\"https://github.com/mliezun/sudoku-solver\">source code</a>.",
+            ""
+        ]
     ]
 ]
 )

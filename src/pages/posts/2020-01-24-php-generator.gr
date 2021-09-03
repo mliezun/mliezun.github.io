@@ -9,94 +9,321 @@ let post = base.Post(
     ["php", "generators"],
     [
     [
+        "div",
+        [],
+        [
+            "",
+            ""
+        ]
+    ],
+    [
         "h2",
         [],
-        "Reinventing the Wheel: PHP Generators"
+        [
+            "Reinventing the Wheel: PHP Generators"
+        ]
     ],
     [
         "div",
         [],
-        "\n"
+        [
+            "",
+            ""
+        ]
     ],
     [
         "h3",
         [],
-        "First thing first. How a generator works?"
+        [
+            "First thing first. How a generator works?"
+        ]
     ],
     [
         "div",
         [],
-        "\n"
+        [
+            "",
+            ""
+        ]
     ],
     [
         "h4",
         [],
-        "Starting back at C"
+        [
+            "Starting back at C"
+        ]
     ],
     [
         "div",
         [],
-        "\n"
+        [
+            "",
+            "Let's create a function that each time we call it we get the next number of the fibonacci sequence.",
+            "",
+            "<pre class=\"triple-quote c\">",
+            "int fibonacci()",
+            "{",
+            "    static int a = 0;",
+            "    static int b = 1;",
+            "    int aux = b;",
+            "    b = a + b;",
+            "    a = aux;",
+            "    return a;",
+            "}",
+            "</pre>",
+            "",
+            "If we call fibonacci(), the first time we'll get 1, the second time 1, the third 2, the fourth 3, and so on...",
+            "",
+            "This happens because we declared variables <span class=\"single-quote\">a, b</span> to be static. This means that they mantain the value after the function returns. Normally, what happens (if we don't declare a variable as static) is that the variables inside the function don't mantain the values of the last execution.",
+            "",
+            ""
+        ]
     ],
     [
         "h4",
         [],
-        "First generator for PHP"
+        [
+            "First generator for PHP"
+        ]
     ],
     [
         "div",
         [],
-        "\nLet's create a function that each time we call it we get the next number of the fibonacci sequence.\n\n```c\nint fibonacci()\n{\n    static int a = 0;\n    static int b = 1;\n    int aux = b;\n    b = a + b;\n    a = aux;\n    return a;\n}\n```\n\nIf we call fibonacci(), the first time we'll get 1, the second time 1, the third 2, the fourth 3, and so on...\n\nThis happens because we declared variables `a, b` to be static. This means that they mantain the value after the function returns. Normally, what happens (if we don't declare a variable as static) is that the variables inside the function don't mantain the values of the last execution.\n\n"
+        [
+            "",
+            "The equivalent function in PHP is pretty similar to C's approach.",
+            "",
+            "<pre class=\"triple-quote php\">",
+            "",
+            "",
+            "function fibonacci()",
+            "{",
+            "    static $a = 0;",
+            "    static $b = 1;",
+            "    $aux = $b;",
+            "    $b = $a + $b;",
+            "    $a = $aux;",
+            "    return $a;",
+            "}",
+            "",
+            "$out = [];",
+            "",
+            "for ($i = 1; $i <= 10; $i++) {",
+            "    $out[] = fibonacci();",
+            "}",
+            "",
+            "echo implode(', ', $out) . \"\\n\";",
+            "",
+            "/*",
+            "Output: 1, 1, 2, 3, 5, 8, 13, 21, 34, 55",
+            "*/",
+            "</pre>",
+            "",
+            "Let's compare this to the <span class=\"single-quote\">real</span> PHP version using <span class=\"single-quote\">yield</span>.",
+            "",
+            "<pre class=\"triple-quote php\">",
+            "",
+            "",
+            "function fibonacci($N)",
+            "{",
+            "    $a = 0;",
+            "    $b = 1;",
+            "    for ($i = 0; $i < $N; $i++) {",
+            "        $aux = $b;",
+            "        $b = $a + $b;",
+            "        $a = $aux;",
+            "        yield $a;",
+            "    }",
+            "}",
+            "",
+            "$out = [];",
+            "",
+            "foreach (fibonacci(10) as $fib) {",
+            "    $out[] = $fib;",
+            "}",
+            "",
+            "echo implode(', ', $out) . \"\\n\";",
+            "",
+            "/*",
+            "Output: 1, 1, 2, 3, 5, 8, 13, 21, 34, 55",
+            "*/",
+            "</pre>",
+            "",
+            ""
+        ]
     ],
     [
         "h4",
         [],
-        "Creating a custom version of PHP `yield`"
+        [
+            "Creating a custom version of PHP <span class=\"single-quote\">yield</span>"
+        ]
     ],
     [
         "div",
         [],
-        "\nThe equivalent function in PHP is pretty similar to C's approach.\n\n```php\n<?php\n\nfunction fibonacci()\n{\n    static $a = 0;\n    static $b = 1;\n    $aux = $b;\n    $b = $a + $b;\n    $a = $aux;\n    return $a;\n}\n\n$out = [];\n\nfor ($i = 1; $i <= 10; $i++) {\n    $out[] = fibonacci();\n}\n\necho implode(', ', $out) . \"\\n\";\n\n/*\nOutput: 1, 1, 2, 3, 5, 8, 13, 21, 34, 55\n*/\n```\n\nLet's compare this to the `real` PHP version using `yield`.\n\n```php\n<?php\n\nfunction fibonacci($N)\n{\n    $a = 0;\n    $b = 1;\n    for ($i = 0; $i < $N; $i++) {\n        $aux = $b;\n        $b = $a + $b;\n        $a = $aux;\n        yield $a;\n    }\n}\n\n$out = [];\n\nforeach (fibonacci(10) as $fib) {\n    $out[] = $fib;\n}\n\necho implode(', ', $out) . \"\\n\";\n\n/*\nOutput: 1, 1, 2, 3, 5, 8, 13, 21, 34, 55\n*/\n```\n\n"
+        [
+            "",
+            "This is my own version using the library parallel and channels (probably uses yield internally).",
+            "",
+            "<pre class=\"triple-quote php\">",
+            "",
+            "",
+            "class MyGenerator implements Iterator",
+            "{",
+            "    private $chan;",
+            "    private $current;",
+            "    private $iteratorFn;",
+            "    private $runtime;",
+            "    private $key = -1;",
+            "    private $valid = true;",
+            "",
+            "    public function __construct($iteratorFn)",
+            "    {",
+            "        $this->iteratorFn = $iteratorFn;",
+            "        $this->runtime = new \\parallel\\Runtime();",
+            "        $channel = new \\parallel\\Channel();",
+            "",
+            "        $this->runtime->run(function() use ($iteratorFn, $channel) {",
+            "            $iteratorFn(function ($val) use ($channel) {",
+            "                $channel->send($val);",
+            "            });",
+            "            $channel->close();",
+            "        });",
+            "",
+            "        $this->chan = $channel;",
+            "        $this->next();",
+            "    }",
+            "",
+            "    public function current()",
+            "    {",
+            "        return $this->current;",
+            "    }",
+            "",
+            "    public function next()",
+            "    {",
+            "        try {",
+            "            ++$this->key;",
+            "            $val = $this->chan->recv();",
+            "            $this->current = $val;",
+            "        } catch (\\parallel\\Channel\\Error\\Closed $e) {",
+            "            $this->valid = false;",
+            "        }",
+            "        return $this->current;",
+            "    }",
+            "",
+            "    public function key() {return $this->key;}",
+            "    public function valid() {return $this->valid;}",
+            "    public function rewind() {}",
+            "}",
+            "",
+            "",
+            "function fibonacci($N)",
+            "{",
+            "    return new MyGenerator(function ($yield) use ($N) {",
+            "        $a = 0;",
+            "        $b = 1;",
+            "        for ($i = 0; $i < $N; $i++) {",
+            "            $aux = $b;",
+            "            $b = $a + $b;",
+            "            $a = $aux;",
+            "            $yield($a);",
+            "        }",
+            "    });",
+            "}",
+            "",
+            "$out = [];",
+            "",
+            "foreach (fibonacci(10) as $fib) {",
+            "    $out[] = $fib;",
+            "}",
+            "",
+            "echo implode(', ', $out) . \"\\n\";",
+            "</pre>",
+            "",
+            ""
+        ]
     ],
     [
         "h4",
         [],
-        "Performance comparison: PHP vs Custom"
+        [
+            "Performance comparison: PHP vs Custom"
+        ]
     ],
     [
         "div",
         [],
-        "\nThis is my own version using the library parallel and channels (probably uses yield internally).\n\n```php\n<?php\n\nclass MyGenerator implements Iterator\n{\n    private $chan;\n    private $current;\n    private $iteratorFn;\n    private $runtime;\n    private $key = -1;\n    private $valid = true;\n\n    public function __construct($iteratorFn)\n    {\n        $this->iteratorFn = $iteratorFn;\n        $this->runtime = new \\parallel\\Runtime();\n        $channel = new \\parallel\\Channel();\n\n        $this->runtime->run(function() use ($iteratorFn, $channel) {\n            $iteratorFn(function ($val) use ($channel) {\n                $channel->send($val);\n            });\n            $channel->close();\n        });\n\n        $this->chan = $channel;\n        $this->next();\n    }\n\n    public function current()\n    {\n        return $this->current;\n    }\n\n    public function next()\n    {\n        try {\n            ++$this->key;\n            $val = $this->chan->recv();\n            $this->current = $val;\n        } catch (\\parallel\\Channel\\Error\\Closed $e) {\n            $this->valid = false;\n        }\n        return $this->current;\n    }\n\n    public function key() {return $this->key;}\n    public function valid() {return $this->valid;}\n    public function rewind() {}\n}\n\n\nfunction fibonacci($N)\n{\n    return new MyGenerator(function ($yield) use ($N) {\n        $a = 0;\n        $b = 1;\n        for ($i = 0; $i < $N; $i++) {\n            $aux = $b;\n            $b = $a + $b;\n            $a = $aux;\n            $yield($a);\n        }\n    });\n}\n\n$out = [];\n\nforeach (fibonacci(10) as $fib) {\n    $out[] = $fib;\n}\n\necho implode(', ', $out) . \"\\n\";\n```\n\n"
+        [
+            "",
+            ""
+        ]
     ],
     [
         "h5",
         [],
-        "Tested code"
+        [
+            "Tested code"
+        ]
     ],
     [
         "div",
         [],
-        "\n"
+        [
+            "",
+            "<pre class=\"triple-quote php\">",
+            "for ($i = 0; $i < 1000; ++$i) {",
+            "    foreach (fibonacci(100) as $fib) {",
+            "        $out[] = $fib;",
+            "    }",
+            "}",
+            "</pre>",
+            "",
+            ""
+        ]
     ],
     [
         "h5",
         [],
-        "`yield` version"
+        [
+            "<span class=\"single-quote\">yield</span> version"
+        ]
     ],
     [
         "div",
         [],
-        "\n```php\nfor ($i = 0; $i < 1000; ++$i) {\n    foreach (fibonacci(100) as $fib) {\n        $out[] = $fib;\n    }\n}\n```\n\n"
+        [
+            "",
+            "<pre class=\"triple-quote \">",
+            "real    0m0,083s",
+            "user    0m0,059s",
+            "sys     0m0,023s",
+            "</pre>",
+            "",
+            ""
+        ]
     ],
     [
         "h5",
         [],
-        "`MyGenerator` version"
+        [
+            "<span class=\"single-quote\">MyGenerator</span> version"
+        ]
     ],
     [
         "div",
         [],
-        "\n```\nreal    0m0,083s\nuser    0m0,059s\nsys     0m0,023s\n```\n\n"
+        [
+            "",
+            "<pre class=\"triple-quote \">",
+            "real    0m2,138s",
+            "user    0m1,426s",
+            "sys     0m1,363s",
+            "</pre>",
+            "",
+            "So, it's aproximately 26 times slower :-)",
+            ""
+        ]
     ]
 ]
 )

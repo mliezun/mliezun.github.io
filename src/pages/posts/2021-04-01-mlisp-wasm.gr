@@ -9,84 +9,222 @@ let post = base.Post(
     ["lisp", "wasm", "emcc", "C/C++", "emscripten"],
     [
     [
+        "div",
+        [],
+        [
+            "",
+            ""
+        ]
+    ],
+    [
         "h2",
         [],
-        "Mlisp, My own lisp implementation"
+        [
+            "Mlisp, My own lisp implementation"
+        ]
     ],
     [
         "div",
         [],
-        "\n"
+        [
+            "",
+            "<a href=\"https://github.com/mliezun/mlisp\">Mlisp</a> a tiny lispy language based on the book <a href=\"http://www.buildyourownlisp.com/\">Build Your Own Lisp</a>.",
+            "",
+            "The interpreter is written in C and compiled directly to WASM. You can try it in this page by openning the developer console of your browser and typing <span class=\"single-quote\">Mlisp.interpret(\"+ 2 2\")</span> or using the repl shown below.",
+            "",
+            ""
+        ]
     ],
     [
         "h3",
         [],
-        "Interface"
+        [
+            "Interface"
+        ]
     ],
     [
         "div",
         [],
-        "\n[Mlisp](https://github.com/mliezun/mlisp) a tiny lispy language based on the book [Build Your Own Lisp](http://www.buildyourownlisp.com/).\n\nThe interpreter is written in C and compiled directly to WASM. You can try it in this page by openning the developer console of your browser and typing `Mlisp.interpret(\"+ 2 2\")` or using the repl shown below.\n\n"
-    ],
-    [
-        "h2",
-        [],
-        "if __EMSCRIPTEN__"
-    ],
-    [
-        "div",
-        [],
-        "\nTo be able to access C functions from your browser you have to export them. Let's see how we can define a function that is exported.\n\n```C\n"
-    ],
-    [
-        "h2",
-        [],
-        "endif"
-    ],
-    [
-        "div",
-        [],
-        "EMSCRIPTEN_KEEPALIVE\n"
+        [
+            "",
+            "To be able to access C functions from your browser you have to export them. Let's see how we can define a function that is exported.",
+            "",
+            "<pre class=\"triple-quote c\">",
+            "#if __EMSCRIPTEN__",
+            "EMSCRIPTEN_KEEPALIVE",
+            "#endif",
+            "int mlisp_init();",
+            "</pre>",
+            "",
+            "When compilen with <span class=\"single-quote\">emcc</span> the emscripten compiler to wasm, you have to add <span class=\"single-quote\">EMSCRIPTEN_KEEPALIVE</span> macro before your function so it doesn't get optimized away.",
+            "",
+            "The exported functions in this project are:",
+            "",
+            "<pre class=\"triple-quote c\">",
+            "int mlisp_init();",
+            "char *mlisp_interpret(char *input);",
+            "void mlisp_cleanup();",
+            "</pre>",
+            "",
+            "The project is then compiled with: ",
+            "",
+            "<pre class=\"triple-quote \">",
+            "emcc -std=c99  -Wall -O3 -s WASM=1 -s EXTRA_EXPORTED_RUNTIME_METHODS='[\"cwrap\"]'",
+            "</pre>",
+            "",
+            "That means that you would be able to access the exported functions using a <span class=\"single-quote\">cwrap</span> that let's you wrap a C function call from a Javascript function call.",
+            "",
+            "This compilation generates two files <span class=\"single-quote\">mlisp.js</span> and <span class=\"single-quote\">mlisp.wasm</span>.",
+            "",
+            "The javascript file defines a <span class=\"single-quote\">Module</span> that provides useful tool to access exported functions.",
+            "",
+            ""
+        ]
     ],
     [
         "h4",
         [],
-        "Let's start using it"
+        [
+            "Let's start using it"
+        ]
     ],
     [
         "div",
         [],
-        "int mlisp_init();\n```\n\nWhen compilen with `emcc` the emscripten compiler to wasm, you have to add `EMSCRIPTEN_KEEPALIVE` macro before your function so it doesn't get optimized away.\n\nThe exported functions in this project are:\n\n```C\nint mlisp_init();\nchar *mlisp_interpret(char *input);\nvoid mlisp_cleanup();\n```\n\nThe project is then compiled with: \n\n```\nemcc -std=c99  -Wall -O3 -s WASM=1 -s EXTRA_EXPORTED_RUNTIME_METHODS='[\"cwrap\"]'\n```\n\nThat means that you would be able to access the exported functions using a `cwrap` that let's you wrap a C function call from a Javascript function call.\n\nThis compilation generates two files `mlisp.js` and `mlisp.wasm`.\n\nThe javascript file defines a `Module` that provides useful tool to access exported functions.\n\n"
+        [
+            "",
+            "<pre class=\"triple-quote js\">",
+            "const Mlisp = {",
+            "    init: Module.cwrap('mlisp_init', 'number', []),",
+            "    interpret: Module.cwrap('mlisp_interpret', 'string', ['string']),",
+            "    cleanup: Module.cwrap('mlisp_cleanup', 'void', []),",
+            "};",
+            "",
+            "// Init interpreter",
+            "Mlisp.init();",
+            "",
+            "// Run some commands",
+            "console.log(Mlisp.interpret(\"+ 2 2\"));",
+            "",
+            "// Cleanup interpreter",
+            "Mlisp.cleanup();",
+            "</pre>",
+            "",
+            ""
+        ]
     ],
     [
         "h3",
         [],
-        "Automated Build & Release from github"
+        [
+            "Automated Build & Release from github"
+        ]
     ],
     [
         "div",
         [],
-        "\n```js\nconst Mlisp = {\n    init: Module.cwrap('mlisp_init', 'number', []),\n    interpret: Module.cwrap('mlisp_interpret', 'string', ['string']),\n    cleanup: Module.cwrap('mlisp_cleanup', 'void', []),\n};\n\n// Init interpreter\nMlisp.init();\n\n// Run some commands\nconsole.log(Mlisp.interpret(\"+ 2 2\"));\n\n// Cleanup interpreter\nMlisp.cleanup();\n```\n\n"
+        [
+            "",
+            "I made a github workflow for this project to automatically build and release so you can retrieve them from <a href=\"https://github.com/mliezun/mlisp/releases/tag/refs%2Fheads%2Fmaster\">Github</a>.",
+            "",
+            "",
+            ""
+        ]
     ],
     [
         "h3",
         [],
-        "REPL"
+        [
+            "REPL"
+        ]
     ],
     [
         "div",
         [],
-        "\nI made a github workflow for this project to automatically build and release so you can retrieve them from [Github](https://github.com/mliezun/mlisp/releases/tag/refs%2Fheads%2Fmaster).\n\n\n"
+        [
+            "",
+            "<script src=\"/assets/mlisp/mlisp.js\"></script>",
+            "",
+            "<style>",
+            ".container-centered {",
+            "  display: flex;",
+            "  justify-content: center;",
+            "}",
+            "",
+            ".vertical-centered {",
+            "  display: block;",
+            "}",
+            "</style>",
+            "",
+            "<div class=\"container-centered\">",
+            "    <div class=\"vertical-centered\" style=\"width: 50vw\">",
+            "        <textarea id=\"show-repl\" disabled style=\"min-width: 50vw; max-width: 50vw; min-height: 20vh\"></textarea>",
+            "        <input id=\"input-command\" type=\"text\" style=\"min-width: 50vw; max-width: 50vw\" placeholder=\"> Input some commands\">",
+            "    </div>",
+            "</div>",
+            "",
+            "<script type=\"application/javascript\">",
+            "var A = {",
+            "    mlisp: null,",
+            "    init () {",
+            "        const node = document.getElementById('input-command');",
+            "        node.addEventListener(\"keyup\", (event) => {",
+            "            if (event.key === \"Enter\") {",
+            "                this.handleInput(event);",
+            "            }",
+            "        });",
+            "    },",
+            "    handleInput(ev) {",
+            "        if (!this.mlisp) {",
+            "            window.Mlisp = {",
+            "                init: Module.cwrap('mlisp_init', 'number', []),",
+            "                interpret: Module.cwrap('mlisp_interpret', 'string', ['string']),",
+            "                cleanup: Module.cwrap('mlisp_cleanup', 'void', []),",
+            "            };",
+            "            this.mlisp = window.Mlisp;",
+            "            this.mlisp.init();",
+            "        }",
+            "        const node = ev.target;",
+            "        const cmd = node.value;",
+            "        if (!cmd) {",
+            "            return;",
+            "        }",
+            "        const output = document.getElementById('show-repl');",
+            "        const result = this.mlisp.interpret(cmd);",
+            "        node.value = null;",
+            "        output.value += <span class=\"single-quote\">> ${cmd}\\n\\t${result}\\n</span>;",
+            "    }",
+            "};",
+            "",
+            "A.init();",
+            "</script>",
+            "",
+            "",
+            "",
+            ""
+        ]
     ],
     [
         "h3",
         [],
-        "Interesting commands to try out"
+        [
+            "Interesting commands to try out"
+        ]
     ],
     [
         "div",
         [],
-        "\n<script src=\"/assets/mlisp/mlisp.js\"></script>\n\n<style>\n.container-centered {\n  display: flex;\n  justify-content: center;\n}\n\n.vertical-centered {\n  display: block;\n}\n</style>\n\n<div class=\"container-centered\">\n    <div class=\"vertical-centered\" style=\"width: 50vw\">\n        <textarea id=\"show-repl\" disabled style=\"min-width: 50vw; max-width: 50vw; min-height: 20vh\"></textarea>\n        <input id=\"input-command\" type=\"text\" style=\"min-width: 50vw; max-width: 50vw\" placeholder=\"> Input some commands\">\n    </div>\n</div>\n\n<script type=\"application/javascript\">\nvar A = {\n    mlisp: null,\n    init () {\n        const node = document.getElementById('input-command');\n        node.addEventListener(\"keyup\", (event) => {\n            if (event.key === \"Enter\") {\n                this.handleInput(event);\n            }\n        });\n    },\n    handleInput(ev) {\n        if (!this.mlisp) {\n            window.Mlisp = {\n                init: Module.cwrap('mlisp_init', 'number', []),\n                interpret: Module.cwrap('mlisp_interpret', 'string', ['string']),\n                cleanup: Module.cwrap('mlisp_cleanup', 'void', []),\n            };\n            this.mlisp = window.Mlisp;\n            this.mlisp.init();\n        }\n        const node = ev.target;\n        const cmd = node.value;\n        if (!cmd) {\n            return;\n        }\n        const output = document.getElementById('show-repl');\n        const result = this.mlisp.interpret(cmd);\n        node.value = null;\n        output.value += `> ${cmd}\\n\\t${result}\\n`;\n    }\n};\n\nA.init();\n</script>\n\n\n\n"
+        [
+            "",
+            "- <span class=\"single-quote\">foldl</span>: Fold left (same as reduce left)",
+            "    - <span class=\"single-quote\">(foldl + 0 {1 2 3 4 5})</span>: Sum of elements",
+            "- <span class=\"single-quote\">filter</span>",
+            "    - <span class=\"single-quote\">(filter (\\ {e} {> e 3}) {1 2 3 4 5 6})</span>: Elements bigger than 3",
+            "- <span class=\"single-quote\">map</span>",
+            "    - <span class=\"single-quote\">(foldl * 1 (map (\\ {e} {* e 2}) {1 1 1 1 1}))</span>: Multiply elements by 2 and then multiply all elements",
+            "",
+            ""
+        ]
     ]
 ]
 )

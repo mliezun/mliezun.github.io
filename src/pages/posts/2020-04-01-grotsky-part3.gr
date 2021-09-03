@@ -9,104 +9,392 @@ let post = base.Post(
     ["interpreter", "expression", "ast"],
     [
     [
-        "h2",
-        [],
-        "Grotsky Part 3: Interpreting"
-    ],
-    [
         "div",
         [],
-        "\n"
-    ],
-    [
-        "h3",
-        [],
-        "It's slow! "
-    ],
-    [
-        "div",
-        [],
-        "\n"
+        [
+            "",
+            ""
+        ]
     ],
     [
         "h2",
         [],
-        "fib: calculates the n-th fibonacci number recursively"
+        [
+            "Grotsky Part 3: Interpreting"
+        ]
     ],
     [
         "div",
         [],
-        "\nMy interpreter it's really, really, wait for it... _Really slow_.\n\nAn example of a bad performing grotsky code:\n\n```\n"
-    ],
-    [
-        "h5",
-        [],
-        "Running the code"
-    ],
-    [
-        "div",
-        [],
-        "fn fib(n) begin\n    if n < 2 return n\n    return fib(n-2) + fib(n-1)\nend\nprintln(fib(30))\n```\n\n"
-    ],
-    [
-        "h5",
-        [],
-        "Why is it so slow?"
-    ],
-    [
-        "div",
-        [],
-        "\n```\n$ time ./grotsky examples/fib.g\n```\n\nGives a wooping result of:\n\n```\n832040\n\nreal    0m11,154s\nuser    0m11,806s\nsys     0m0,272s\n```\n\nAlmost twelve seconds!!! \n\nComparing with a similar python code\n\n```\ndef fib(n):\n    if n < 2: return n\n    return fib(n-2) + fib(n-1)\nprint(fib(30))\n```\n\nGives a result of:\n\n```\n832040\n\nreal    0m0,423s\nuser    0m0,387s\nsys     0m0,021s\n```\n\nThat means, my interpreter is at least 20 times slower than Cpython.\n\n"
+        [
+            "",
+            ""
+        ]
     ],
     [
         "h3",
         [],
-        "Interpreting functions"
+        [
+            "It's slow! "
+        ]
     ],
     [
         "div",
         [],
-        "\n[Here is an explanation](https://www.reddit.com/r/golang/comments/5kv2xx/why_is_golangs_performance_worse_than_javas_in/).\n\nAs the person from the first comment states, go garbage collector is not well suited for this kind of scenario with heavy allocation of objects.\n\n> Go's GC is not generational, so allocation requires (comparatively speaking) much more work. It's also tuned for low latency (smallest pause when GC has to stop the program) at the expense of throughput (i.e. total speed). This is the right trade-off for most programs but doesn't perform optimally on micro-benchmarks that measure throughtput.\n\nSetting the gc percent at 800 (100 by default) more than halves the time that the function takes to compute:\n\n```\n$ time GOGC=800 ./grotsky examples/fib.g\n832040\n\nreal    0m5,110s\nuser    0m5,182s\nsys     0m0,061s\n```\n\n"
+        [
+            "",
+            "My interpreter it's really, really, wait for it... _Really slow_.",
+            "",
+            "An example of a bad performing grotsky code:",
+            "",
+            "<pre class=\"triple-quote \">",
+            "# fib: calculates the n-th fibonacci number recursively",
+            "fn fib(n) begin",
+            "    if n < 2 return n",
+            "    return fib(n-2) + fib(n-1)",
+            "end",
+            "println(fib(30))",
+            "</pre>",
+            "",
+            ""
+        ]
     ],
     [
         "h5",
         [],
-        "nativeFn"
+        [
+            "Running the code"
+        ]
     ],
     [
         "div",
         [],
-        "\nCallable interface\n\n```go\ntype callable interface {\n\tarity() int\n\tcall(exec *exec, arguments []interface{}) interface{}\n}\n```\n\n_All grotsky functions must be an object that implements the callable interface._\n\nFor that I defined two kind of structs:\n\n```go\ntype function struct {\n\tdeclaration   *fnStmt\n\tclosure       *env\n\tisInitializer bool\n}\n\ntype nativeFn struct {\n\tarityValue int\n\tcallFn  func(exec *exec, arguments []interface{}) interface{}\n}\n```\n\n"
+        [
+            "",
+            "<pre class=\"triple-quote \">",
+            "$ time ./grotsky examples/fib.g",
+            "</pre>",
+            "",
+            "Gives a wooping result of:",
+            "",
+            "<pre class=\"triple-quote \">",
+            "832040",
+            "",
+            "real    0m11,154s",
+            "user    0m11,806s",
+            "sys     0m0,272s",
+            "</pre>",
+            "",
+            "Almost twelve seconds!!! ",
+            "",
+            "Comparing with a similar python code",
+            "",
+            "<pre class=\"triple-quote \">",
+            "def fib(n):",
+            "    if n < 2: return n",
+            "    return fib(n-2) + fib(n-1)",
+            "print(fib(30))",
+            "</pre>",
+            "",
+            "Gives a result of:",
+            "",
+            "<pre class=\"triple-quote \">",
+            "832040",
+            "",
+            "real    0m0,423s",
+            "user    0m0,387s",
+            "sys     0m0,021s",
+            "</pre>",
+            "",
+            "That means, my interpreter is at least 20 times slower than Cpython.",
+            "",
+            ""
+        ]
     ],
     [
         "h5",
         [],
-        "Ordinary grotsky functions"
+        [
+            "Why is it so slow?"
+        ]
     ],
     [
         "div",
         [],
-        "\nLet's you define standard functions available on all grotsky interpreters. Line `println`.\n\n```go\nfunc (n *nativeFn) arity() int {\n\treturn n.arityValue\n}\n\nfunc (n *nativeFn) call(exec *exec, arguments []interface{}) interface{} {\n\treturn n.callFn(exec, arguments)\n}\n```\n\nFrom that, println would be pretty straight forward:\n\n```go\n...\n\nvar println nativeFn\nprintln.arityValue = 1\nprintln.callFn = func(exec *exec, arguments []interface{}) interface{} {\n    fmt.Println(arguments[0])\n    return nil\n}\n...\n```\n\n"
-    ],
-    [
-        "h5",
-        [],
-        "What happens when you hit a `return`"
-    ],
-    [
-        "div",
-        [],
-        "\nFor ordinary grotsky functions the things are a little bit messier.\n\nFirst I got to introduce the `environment` that is an object that holds `map[string]interface{}` as a dictionary for variables in the local scope and a pointer to another environment that contains variables for the outer scope.\n\n```go\ntype env struct {\n\tstate *state\n\n\tenclosing *env\n\tvalues    map[string]interface{}\n}\n\nfunc newEnv(state *state, enclosing *env) *env {\n\treturn &env{\n\t\tstate:     state,\n\t\tenclosing: enclosing,\n\t\tvalues:    make(map[string]interface{}),\n\t}\n}\n\nfunc (e *env) get(name *token) interface{} {\n\tif value, ok := e.values[name.lexeme]; ok {\n\t\treturn value\n\t}\n\tif e.enclosing != nil {\n\t\treturn e.enclosing.get(name)\n\t}\n\te.state.runtimeErr(errUndefinedVar, name)\n\treturn nil\n}\n\nfunc (e *env) define(name string, value interface{}) {\n\te.values[name] = value\n}\n```\n\nAs you can see, the define method creates a variable on the local scope, and the get methods tries to retrieve a variable first from the local scope and then from the outer scope.\n\nLet's see how functions are implemented.\n\n```go\nfunc (f *function) arity() int {\n\treturn len(f.declaration.params)\n}\n\nfunc (f *function) call(exec *exec, arguments []interface{}) (result interface{}) {\n\tenv := newEnv(exec.state, f.closure)\n\tfor i := range f.declaration.params {\n\t\tenv.define(f.declaration.params[i].lexeme, arguments[i])\n\t}\n\n\tdefer func() {\n\t\tif r := recover(); r != nil {\n\t\t\tif returnVal, isReturn := r.(returnValue); isReturn {\n\t\t\t\tresult = returnVal\n\t\t\t} else {\n\t\t\t\tpanic(r)\n\t\t\t}\n\t\t}\n\t}()\n\n\texec.executeBlock(f.declaration.body, env)\n\n\treturn nil\n}\n```\n\nFunction `arity` is pretty simple.\n\nThe function `call` takes an `exec` object, that is no more than an instance of the interpreter, and the arguments to the function as an array of objects. Then creates a new environment the is surrounded by the environment local to the function definition and defines all the function parameters. Then comes the tricky part, first there is a deferred call to an anonymous function, let's ignore that for a moment, in the end, the function `executeBlock` gets called. Let's see what that function does:\n\n```go\nfunc (e *exec) executeBlock(stmts []stmt, env *env) {\n\tprevious := e.env\n\tdefer func() {\n\t\te.env = previous\n\t}()\n\te.env = env\n\tfor _, s := range stmts {\n\t\te.execute(s)\n\t}\n}\n```\n\nWhat's happening here is that the interpreter steps into the new environment, saving the previous environment in a variable, and execute all given statements, after that it restores the environment to the previous one. Exactly as a function does.\n\n"
+        [
+            "",
+            "<a href=\"https://www.reddit.com/r/golang/comments/5kv2xx/why_is_golangs_performance_worse_than_javas_in/\">Here is an explanation</a>.",
+            "",
+            "As the person from the first comment states, go garbage collector is not well suited for this kind of scenario with heavy allocation of objects.",
+            "",
+            "> Go's GC is not generational, so allocation requires (comparatively speaking) much more work. It's also tuned for low latency (smallest pause when GC has to stop the program) at the expense of throughput (i.e. total speed). This is the right trade-off for most programs but doesn't perform optimally on micro-benchmarks that measure throughtput.",
+            "",
+            "Setting the gc percent at 800 (100 by default) more than halves the time that the function takes to compute:",
+            "",
+            "<pre class=\"triple-quote \">",
+            "$ time GOGC=800 ./grotsky examples/fib.g",
+            "832040",
+            "",
+            "real    0m5,110s",
+            "user    0m5,182s",
+            "sys     0m0,061s",
+            "</pre>",
+            "",
+            ""
+        ]
     ],
     [
         "h3",
         [],
-        "Hasta la vista, baby"
+        [
+            "Interpreting functions"
+        ]
     ],
     [
         "div",
         [],
-        "\n```go\ntype returnValue interface{}\n\n...\n\nfunc (e *exec) visitReturnStmt(stmt *returnStmt) R {\n\tif stmt.value != nil {\n\t\tpanic(returnValue(stmt.value.accept(e)))\n\t}\n\treturn nil\n}\n```\n\nWhen you get to a return node in the ast, the nodes panics with a return value. This has to do with the fact that you need to go up the call stack and finish the execution of the function, otherwise the function will keep it's execution.\n\nThat's the reason of the deferred function we forgot a couple seconds ago:\n\n```go\nfunc (f *function) call(exec *exec, arguments []interface{}) (result interface{}) {\n    ...\n\n    defer func() {\n\t\tif r := recover(); r != nil {\n\t\t\tif returnVal, isReturn := r.(returnValue); isReturn {\n\t\t\t\tresult = returnVal\n\t\t\t} else {\n\t\t\t\tpanic(r)\n\t\t\t}\n\t\t}\n    }()\n\n    ...\n}\n```\n\nThis function recovers from a panic. If the value recovered is of type `returnValue` it recovers successfully and sets the result value of the function call to the return value, else it panics again.\n\n"
+        [
+            "",
+            "Callable interface",
+            "",
+            "<pre class=\"triple-quote go\">",
+            "type callable interface {",
+            "\tarity() int",
+            "\tcall(exec *exec, arguments []interface{}) interface{}",
+            "}",
+            "</pre>",
+            "",
+            "_All grotsky functions must be an object that implements the callable interface._",
+            "",
+            "For that I defined two kind of structs:",
+            "",
+            "<pre class=\"triple-quote go\">",
+            "type function struct {",
+            "\tdeclaration   *fnStmt",
+            "\tclosure       *env",
+            "\tisInitializer bool",
+            "}",
+            "",
+            "type nativeFn struct {",
+            "\tarityValue int",
+            "\tcallFn  func(exec *exec, arguments []interface{}) interface{}",
+            "}",
+            "</pre>",
+            "",
+            ""
+        ]
+    ],
+    [
+        "h5",
+        [],
+        [
+            "nativeFn"
+        ]
+    ],
+    [
+        "div",
+        [],
+        [
+            "",
+            "Let's you define standard functions available on all grotsky interpreters. Line <span class=\"single-quote\">println</span>.",
+            "",
+            "<pre class=\"triple-quote go\">",
+            "func (n *nativeFn) arity() int {",
+            "\treturn n.arityValue",
+            "}",
+            "",
+            "func (n *nativeFn) call(exec *exec, arguments []interface{}) interface{} {",
+            "\treturn n.callFn(exec, arguments)",
+            "}",
+            "</pre>",
+            "",
+            "From that, println would be pretty straight forward:",
+            "",
+            "<pre class=\"triple-quote go\">",
+            "...",
+            "",
+            "var println nativeFn",
+            "println.arityValue = 1",
+            "println.callFn = func(exec *exec, arguments []interface{}) interface{} {",
+            "    fmt.Println(arguments[0])",
+            "    return nil",
+            "}",
+            "...",
+            "</pre>",
+            "",
+            ""
+        ]
+    ],
+    [
+        "h5",
+        [],
+        [
+            "Ordinary grotsky functions"
+        ]
+    ],
+    [
+        "div",
+        [],
+        [
+            "",
+            "For ordinary grotsky functions the things are a little bit messier.",
+            "",
+            "First I got to introduce the <span class=\"single-quote\">environment</span> that is an object that holds <span class=\"single-quote\">map[string]interface{}</span> as a dictionary for variables in the local scope and a pointer to another environment that contains variables for the outer scope.",
+            "",
+            "<pre class=\"triple-quote go\">",
+            "type env struct {",
+            "\tstate *state",
+            "",
+            "\tenclosing *env",
+            "\tvalues    map[string]interface{}",
+            "}",
+            "",
+            "func newEnv(state *state, enclosing *env) *env {",
+            "\treturn &env{",
+            "\t\tstate:     state,",
+            "\t\tenclosing: enclosing,",
+            "\t\tvalues:    make(map[string]interface{}),",
+            "\t}",
+            "}",
+            "",
+            "func (e *env) get(name *token) interface{} {",
+            "\tif value, ok := e.values[name.lexeme]; ok {",
+            "\t\treturn value",
+            "\t}",
+            "\tif e.enclosing != nil {",
+            "\t\treturn e.enclosing.get(name)",
+            "\t}",
+            "\te.state.runtimeErr(errUndefinedVar, name)",
+            "\treturn nil",
+            "}",
+            "",
+            "func (e *env) define(name string, value interface{}) {",
+            "\te.values[name] = value",
+            "}",
+            "</pre>",
+            "",
+            "As you can see, the define method creates a variable on the local scope, and the get methods tries to retrieve a variable first from the local scope and then from the outer scope.",
+            "",
+            "Let's see how functions are implemented.",
+            "",
+            "<pre class=\"triple-quote go\">",
+            "func (f *function) arity() int {",
+            "\treturn len(f.declaration.params)",
+            "}",
+            "",
+            "func (f *function) call(exec *exec, arguments []interface{}) (result interface{}) {",
+            "\tenv := newEnv(exec.state, f.closure)",
+            "\tfor i := range f.declaration.params {",
+            "\t\tenv.define(f.declaration.params[i].lexeme, arguments[i])",
+            "\t}",
+            "",
+            "\tdefer func() {",
+            "\t\tif r := recover(); r != nil {",
+            "\t\t\tif returnVal, isReturn := r.(returnValue); isReturn {",
+            "\t\t\t\tresult = returnVal",
+            "\t\t\t} else {",
+            "\t\t\t\tpanic(r)",
+            "\t\t\t}",
+            "\t\t}",
+            "\t}()",
+            "",
+            "\texec.executeBlock(f.declaration.body, env)",
+            "",
+            "\treturn nil",
+            "}",
+            "</pre>",
+            "",
+            "Function <span class=\"single-quote\">arity</span> is pretty simple.",
+            "",
+            "The function <span class=\"single-quote\">call</span> takes an <span class=\"single-quote\">exec</span> object, that is no more than an instance of the interpreter, and the arguments to the function as an array of objects. Then creates a new environment the is surrounded by the environment local to the function definition and defines all the function parameters. Then comes the tricky part, first there is a deferred call to an anonymous function, let's ignore that for a moment, in the end, the function <span class=\"single-quote\">executeBlock</span> gets called. Let's see what that function does:",
+            "",
+            "<pre class=\"triple-quote go\">",
+            "func (e *exec) executeBlock(stmts []stmt, env *env) {",
+            "\tprevious := e.env",
+            "\tdefer func() {",
+            "\t\te.env = previous",
+            "\t}()",
+            "\te.env = env",
+            "\tfor _, s := range stmts {",
+            "\t\te.execute(s)",
+            "\t}",
+            "}",
+            "</pre>",
+            "",
+            "What's happening here is that the interpreter steps into the new environment, saving the previous environment in a variable, and execute all given statements, after that it restores the environment to the previous one. Exactly as a function does.",
+            "",
+            ""
+        ]
+    ],
+    [
+        "h5",
+        [],
+        [
+            "What happens when you hit a <span class=\"single-quote\">return</span>"
+        ]
+    ],
+    [
+        "div",
+        [],
+        [
+            "",
+            "<pre class=\"triple-quote go\">",
+            "type returnValue interface{}",
+            "",
+            "...",
+            "",
+            "func (e *exec) visitReturnStmt(stmt *returnStmt) R {",
+            "\tif stmt.value != nil {",
+            "\t\tpanic(returnValue(stmt.value.accept(e)))",
+            "\t}",
+            "\treturn nil",
+            "}",
+            "</pre>",
+            "",
+            "When you get to a return node in the ast, the nodes panics with a return value. This has to do with the fact that you need to go up the call stack and finish the execution of the function, otherwise the function will keep it's execution.",
+            "",
+            "That's the reason of the deferred function we forgot a couple seconds ago:",
+            "",
+            "<pre class=\"triple-quote go\">",
+            "func (f *function) call(exec *exec, arguments []interface{}) (result interface{}) {",
+            "    ...",
+            "",
+            "    defer func() {",
+            "\t\tif r := recover(); r != nil {",
+            "\t\t\tif returnVal, isReturn := r.(returnValue); isReturn {",
+            "\t\t\t\tresult = returnVal",
+            "\t\t\t} else {",
+            "\t\t\t\tpanic(r)",
+            "\t\t\t}",
+            "\t\t}",
+            "    }()",
+            "",
+            "    ...",
+            "}",
+            "</pre>",
+            "",
+            "This function recovers from a panic. If the value recovered is of type <span class=\"single-quote\">returnValue</span> it recovers successfully and sets the result value of the function call to the return value, else it panics again.",
+            "",
+            ""
+        ]
+    ],
+    [
+        "h3",
+        [],
+        [
+            "Hasta la vista, baby"
+        ]
+    ],
+    [
+        "div",
+        [],
+        [
+            "",
+            "That's it for now. There are a lot of nifty stuff to keep talking about. But I think it's enough for now.",
+            "",
+            "Remember to check out the <a href=\"https://github.com/mliezun/grotsky\">source code</a>. And stay tuned for more.",
+            ""
+        ]
     ]
 ]
 )

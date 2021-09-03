@@ -1,4 +1,5 @@
 import json, re
+from typing import List, Callable, Tuple
 
 def deUnicodeize(text):
     p = re.compile(r"\\u[0-9a-fA-F]+")
@@ -8,6 +9,56 @@ def deUnicodeize(text):
         return p.sub(r"", text)
     return text
 
+
+def replaceQuotes(in_text: str):
+    replace_with = {
+        '```': (lambda lang: f'<pre class="triple-quote {lang.lower()}">', "</pre>"),
+        '`': (lambda _: '<span class="single-quote">', "</span>")
+    }
+    p = re.compile(r'```(\w+)?\n')
+    langs = p.findall(in_text)
+    in_text = p.sub('```\n', in_text)
+    for (quotes, replaced_by) in replace_with.items():
+        lang_ix = 0
+        while quotes in in_text:
+            if lang_ix < len(langs):
+                lang = langs[lang_ix]
+            else:
+                lang = ""
+
+            # Escape md
+            ix = in_text.find(quotes)
+            offset = in_text[ix+len(quotes):].find(quotes)
+            in_text = in_text[:ix] + in_text[ix:ix+len(quotes)+offset].replace('#', '\\#') + in_text[ix+len(quotes)+offset:]
+
+            in_text = in_text.replace(quotes, replaced_by[0](lang), 1).replace(quotes, replaced_by[1], 1)
+            lang_ix += 2
+    return in_text
+
+def generateMultilineString(in_text: str):
+    return in_text.split("\n")
+
+def combineTransformations(transformations: List) -> Callable[[str], str]:
+    def foo(text):
+        for t in transformations:
+            text = t(text)
+        return text
+    return foo
+
+def instertReplacement(in_text: str, span: Tuple[int, int], replacement: str) -> str:
+    return in_text[:span[0]] + replacement + in_text[span[1]:]
+
+def unescapeMd(in_text: str) -> str:
+    p = re.compile(r"((\[(.*?)\])(\((http.*?)\)))")
+    while p.search(in_text):
+        matches = p.search(in_text)
+        start, end = matches.span(0)
+        _, _, content, _, link = matches.groups()
+        in_text = instertReplacement(in_text, (start, end), f'<a href="{link}">{content}</a>')
+    return in_text.replace("\\#", "#")
+
+def escapePhp(in_text: str) -> str:
+    return in_text.replace("<?php", "")
 
 def convert(md_lines):
     tmp_dict = {}
@@ -24,29 +75,44 @@ def convert(md_lines):
             if str(h).startswith(ht):
                 tmp_dict[ht] = h[len(ht)+1:-1].strip()
 
+    text_body = replaceQuotes(''.join(md_lines[body_start+1:]))
+
+    transform = combineTransformations([
+        escapePhp,
+        unescapeMd,
+        generateMultilineString,
+    ])
+
     body = []
     tmp_str = ""
-    append = False
-    for l in md_lines[body_start+1:]:
+    for l in text_body.splitlines(True):
         if str(l).startswith("####"):
-            body += [["h5", [], l[4:].strip()]]
-            append = True
+            if tmp_str:
+                body += [["div", [], transform(tmp_str)]]
+            body += [["h5", [], transform(l[4:].strip())]]
+            tmp_str = ""
         elif str(l).startswith("###"):
-            body += [["h4", [], l[3:].strip()]]
-            append = True
+            if tmp_str:
+                body += [["div", [], transform(tmp_str)]]
+            body += [["h4", [], transform(l[3:].strip())]]
+            tmp_str = ""
         elif str(l).startswith("##"):
-            body += [["h3", [], l[2:].strip()]]
-            append = True
+            if tmp_str:
+                body += [["div", [], transform(tmp_str)]]
+            body += [["h3", [], transform(l[2:].strip())]]
+            tmp_str = ""
         elif str(l).startswith("#"):
-            body += [["h2", [], l[1:].strip()]]
-            append = True
+            if tmp_str:
+                body += [["div", [], transform(tmp_str)]]
+            body += [["h2", [], transform(l[1:].strip())]]
+            tmp_str = ""
         else:
             tmp_str += l
+            if 'yield $a;' in l:
+                print(l)
 
-        if append and tmp_str:
-            body += [["div", [], tmp_str]]
-            append = False
-            tmp_str = ""
+    if tmp_str:
+        body += [["div", [], transform(tmp_str)]]
 
     return deUnicodeize(f"""
 let base = import("../base.gr")
