@@ -85,9 +85,9 @@ I made a github workflow for this project to automatically build and release so 
 </style>
 
 <div class="container-centered">
-    <div class="vertical-centered" style="width: 50vw">
-        <textarea id="show-repl" disabled style="min-width: 50vw; max-width: 50vw; min-height: 20vh"></textarea>
-        <input id="input-command" type="text" style="min-width: 50vw; max-width: 50vw" placeholder="> Input some commands">
+    <div class="vertical-centered" style="width: 40vw">
+        <textarea id="show-repl" disabled style="min-width: 40vw; max-width: 40vw; min-height: 20vh"></textarea>
+        <input id="input-command" type="text" style="min-width: 40vw; max-width: 40vw" placeholder="> Input some commands">
     </div>
 </div>
 

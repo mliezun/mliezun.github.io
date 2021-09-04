@@ -2,7 +2,6 @@ let u = import("../utils.gr")
 
 fn build_index(posts) {
     return [
-        ["h2", [], "Posts"],
         [
             "div", [],
             u.foldr(u.map(posts, fn (postDict) {

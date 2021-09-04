@@ -50,3 +50,10 @@ fn foldr(list, initial, foldFn) {
 fn sum(a, b) {
     return a + b
 }
+
+fn endsWith(str, substr) {
+    if str.length < substr.length {
+        return false
+    }
+    return str[str.length-1] == substr[substr.length-1] and endsWith(str[:str.length-1], substr[:substr.length-1])
+}

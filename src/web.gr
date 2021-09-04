@@ -1,6 +1,7 @@
 let http = import("http.gr")
 let html = import("html.gr")
 let router = import("router.gr")
+let u = import("utils.gr")
 
 class Web {
     init() {
@@ -14,8 +15,47 @@ class Web {
         return [
             ["!DOCTYPE HTML"],
             ["html", [], [
-                ["head"],
-                ["body", [], body]
+                ["head", [], [
+                    ["link", ["rel", "stylesheet", "href", "/assets/css/style.css"], []]
+                ]],
+                ["body", [], [
+                    ["div", ["class", "body-wrapper"], [
+                        ["div", ["class", "body-content"], [
+                            ["h1", [], [
+                                ["a", ["href", "/"], "Blog"],
+                            ]],
+                        ] + body + [
+                            ["footer", [], [
+                                ["hr", [], []],
+                                ["div", ["class", "footer-wrapper"], [
+                                    ["div", [], [
+                                        ["div", [], [
+                                            "This blog was made by",
+                                            ["a", ["href", "https://github.com/mliezun"], "Miguel Liezun"],
+                                            " using",
+                                            ["a", ["href", "https://github.com/mliezun/grotsky"], "Grotsky"]
+                                        ]],
+                                        ["div", [], [
+                                            "Blog",
+                                            ["a", ["href", "https://github.com/mliezun/mliezun.github.io"], "source code"]
+                                        ]]
+                                    ]],
+                                    ["div", ["class", "footer-socials"], [
+                                        ["a", ["href", "https://www.linkedin.com/in/miguel-liezun-8697a9168/"], [
+                                            ["img", ["src", "/assets/images/socials/linkedin.png", "width", "20", "height", "20"], []]
+                                        ]],
+                                        ["a", ["href", "https://github.com/mliezun"], [
+                                            ["img", ["src", "/assets/images/socials/github.png", "width", "20", "height", "20"], []]
+                                        ]],
+                                        ["a", ["href", "https://twitter.com/migueliezun"], [
+                                            ["img", ["src", "/assets/images/socials/twitter.png", "width", "20", "height", "20"], []]
+                                        ]]
+                                    ]]
+                                ]]
+                            ]]
+                        ]],
+                    ]]
+                ]]
             ]]
         ]
     }
@@ -35,9 +75,24 @@ class Web {
         }
     }
 
+    setContentType(rw, target) {
+        let matches = {
+            "html": "text/html",
+            "css": "text/css",
+            "wasm": "application/wasm",
+            "js": "application/javascript",
+        }
+        for t, contentType in matches {
+            if u.endsWith(target, t) {
+                rw.setHeader("content-type", contentType)
+                break
+            }
+        }
+    }
+
     handleRq(rq, rw) {
         let page = this.renderedPages[rq.target]
-        rw.setHeader("content-type", "text/html")
+        
         if page != nil {
             rw.setStatus("200").setBody(page)
         } else {
