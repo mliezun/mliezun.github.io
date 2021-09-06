@@ -11,7 +11,7 @@ else
     exit 1
 fi
 
-GROTSKY_VERSION=v0.0.3
+GROTSKY_VERSION=v0.0.6
 
 GROTSKY_FOLDER=.grotsky
 

@@ -1,0 +1,26 @@
+let web = import("web.gr")
+
+let w = web.Web()
+
+for url, route in w.routes {
+	let basePath = "./_site"
+	if route["class"] == "html" {
+		let fullPath = ""
+		if url == "/" {
+			fullPath = basePath + "/index.html"
+		} else {
+			fullPath = basePath + url
+		}
+		if not io.fileExists(fullPath) {
+			let path = strings.split(fullPath, "/")
+			let dir = ""
+			let pathListWithoutFile = path[:path.length-1]
+			for p in pathListWithoutFile {
+				dir = dir + p + "/"
+			}
+			io.mkdirAll(dir, 469) # 755
+		}
+		io.println(fullPath)
+		io.writeFile(fullPath, w.renderedPages[url])
+	}
+}

@@ -4,9 +4,7 @@ let router = import("router.gr")
 let u = import("utils.gr")
 
 class Web {
-    init(port) {
-        this.port = port
-        this.server = http.Server("", port, this.handleRq)
+    init() {
         this.renderer = html.Renderer()
         this.routes = router.get_routes()
         this.renderPages()
@@ -152,8 +150,9 @@ class Web {
         rw.setStatus("404").setBody("404 Not Found")
     }
 
-    start() {
-        io.println("Listening on http://0.0.0.0:" + this.port)
+    start(port) {
+        this.server = http.Server("", port, this.handleRq)
+        io.println("Listening on http://0.0.0.0:" + port)
         this.server.serve()
     }
 }

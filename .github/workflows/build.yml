@@ -1,0 +1,16 @@
+name: Build Site
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build the site in the jekyll/builder container
+      run: |
+        apt update -yyqq && \
+        apt install -yyqq make && \
+        make generate
