@@ -6,7 +6,7 @@ let post = base.Post(
     "Crafting interpreters",
     "Lox language interpreter based on the book craftinginterpreters.com by Bob Nystrom.",
     "Miguel Liezun",
-    ["interpreter", "parser", "lexer"],
+    "interpreter,parser,lexer",
     [
     [
         "div",
@@ -34,10 +34,10 @@ let post = base.Post(
             "",
             "Beside the lox specification I've added:",
             "",
-            "- The keyword <span class=\"single-quote\">until</span> that is a variation of <span class=\"single-quote\">while</span> loops (as in ruby). also",
-            "- <span class=\"single-quote\">print</span> is a function instead of a statement.",
-            "- <span class=\"single-quote\">eval</span> function that let's you eval source code in runtime.",
-            "- Class methods.",
+            "<li>The keyword <span class=\"single-quote\">until</span> that is a variation of <span class=\"single-quote\">while</span> loops (as in ruby). also",
+            "<li><span class=\"single-quote\">print</span> is a function instead of a statement.",
+            "<li><span class=\"single-quote\">eval</span> function that let's you eval source code in runtime.",
+            "<li>Class methods.",
             "",
             "I'll implement another language interpreter, this time using <span class=\"single-quote\">golang</span> and with a syntax similar to ruby.",
             ""

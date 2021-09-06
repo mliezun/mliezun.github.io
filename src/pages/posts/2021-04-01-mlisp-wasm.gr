@@ -6,7 +6,7 @@ let post = base.Post(
     "Mlisp: My own lisp implementation compiled to WASM",
     "Lisp implementation written in C that compiles to WASM with emscripten.",
     "Miguel Liezun",
-    ["lisp", "wasm", "emcc", "C/C++", "emscripten"],
+    "lisp,wasm,emcc,C/C++,emscripten",
     [
     [
         "div",
@@ -216,11 +216,11 @@ let post = base.Post(
         [],
         [
             "",
-            "- <span class=\"single-quote\">foldl</span>: Fold left (same as reduce left)",
+            "<li><span class=\"single-quote\">foldl</span>: Fold left (same as reduce left)",
             "    - <span class=\"single-quote\">(foldl + 0 {1 2 3 4 5})</span>: Sum of elements",
-            "- <span class=\"single-quote\">filter</span>",
+            "<li><span class=\"single-quote\">filter</span>",
             "    - <span class=\"single-quote\">(filter (\\ {e} {> e 3}) {1 2 3 4 5 6})</span>: Elements bigger than 3",
-            "- <span class=\"single-quote\">map</span>",
+            "<li><span class=\"single-quote\">map</span>",
             "    - <span class=\"single-quote\">(foldl * 1 (map (\\ {e} {* e 2}) {1 1 1 1 1}))</span>: Multiply elements by 2 and then multiply all elements",
             "",
             ""

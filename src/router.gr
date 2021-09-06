@@ -30,9 +30,18 @@ fn get_routes() {
             "post_obj": import("pages/posts/" + name).post,
         }
     }), fn (r) {
+        let p = r["post_obj"]
         routes[r["url"]] = {
             "class": "html",
-            "content": r["post_obj"].content,
+            "content": p.content,
+            "metadata": {
+                "date": r["date"],
+                "excerpt": p.excerpt,
+                "title": p.title,
+                "author": p.author,
+                "tags": p.tags,
+                "content_type": "article",
+            }
         }
         posts = posts + [r]
     })
@@ -41,6 +50,14 @@ fn get_routes() {
     routes["/"] = {
         "class": "html",
         "content": import("pages/index.gr").build_index(posts),
+        "metadata": {
+            "excerpt": "Blog",
+            "title": "Blog | mliezun.github.io",
+            "author": "Miguel Liezun",
+            "tags": "software,tech,fun",
+            "date": "",
+            "excerpt": "Blog",
+        }
     }
     
     return routes

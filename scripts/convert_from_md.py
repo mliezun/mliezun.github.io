@@ -75,6 +75,11 @@ def unescapeMd(in_text: str) -> str:
 def escapePhp(in_text: str) -> str:
     return in_text.replace("<?php", "")
 
+def createLi(text_line: str) -> str:
+    if text_line.startswith("- "):
+        return text_line.replace("- ", "<li>", 1)
+    return text_line
+
 def convert(md_lines):
     tmp_dict = {}
     headers_types = ["title", "excerpt", "author", "tags"]
@@ -122,7 +127,7 @@ def convert(md_lines):
             body += [["h2", [], transform(l[1:].strip())]]
             tmp_str = ""
         else:
-            tmp_str += l
+            tmp_str += createLi(l)
 
     if tmp_str:
         body += [["div", [], transform(tmp_str)]]
@@ -135,7 +140,7 @@ let post = base.Post(
     {tmp_dict.get("title")},
     {tmp_dict.get("excerpt")},
     {tmp_dict.get("author")},
-    {json.dumps(list(map(lambda s: s.strip(), tmp_dict.get("tags").split(","))))},
+    {json.dumps(tmp_dict.get("tags").strip())},
     {json.dumps(body, indent=4)}
 )
 """)

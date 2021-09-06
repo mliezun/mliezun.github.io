@@ -6,7 +6,7 @@ let post = base.Post(
     "Writing your own C malloc and free",
     "Challenge for writing your own implementation of malloc and free.",
     "Miguel Liezun",
-    ["malloc", "free", "tutorial"],
+    "malloc,free,tutorial",
     [
     [
         "div",
@@ -245,9 +245,9 @@ let post = base.Post(
             "",
             "How realloc works:",
             "",
-            "- If the pointer to reallocate is null, works just like malloc.",
-            "- If the given size is bigger than the prior size, it allocates a bigger block and copies all data from the original block to the new block.",
-            "- If the given size is smaller than the prior size, it allocates a smaller block and copies just the data that fits into the smaller block.",
+            "<li>If the pointer to reallocate is null, works just like malloc.",
+            "<li>If the given size is bigger than the prior size, it allocates a bigger block and copies all data from the original block to the new block.",
+            "<li>If the given size is smaller than the prior size, it allocates a smaller block and copies just the data that fits into the smaller block.",
             "",
             ""
         ]
@@ -283,8 +283,8 @@ let post = base.Post(
         [],
         [
             "",
-            "- https://danluu.com/malloc-tutorial/",
-            "- http://www.craftinginterpreters.com/chunks-of-bytecode.html",
+            "<li>https://danluu.com/malloc-tutorial/",
+            "<li>http://www.craftinginterpreters.com/chunks-of-bytecode.html",
             ""
         ]
     ]

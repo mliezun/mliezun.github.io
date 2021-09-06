@@ -6,7 +6,7 @@ let post = base.Post(
     "Grotsky Part 4: Writing a service to get your public IP",
     "Part 4 of building my own laguage series. This time I write and deploy a service to Heroku that let's your retrieve your pulbic IP.",
     "Miguel Liezun",
-    ["grotsky", "service", "http", "heroku", "ip"],
+    "grotsky,service,http,heroku,ip",
     [
     [
         "div",

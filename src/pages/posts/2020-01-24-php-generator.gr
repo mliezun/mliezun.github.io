@@ -6,7 +6,7 @@ let post = base.Post(
     "Reinventing the Wheel: PHP Generators",
     "Attempt of a lunatic to recreate functionalities that a language already has using the same language, and failing.",
     "Miguel Liezun",
-    ["php", "generators"],
+    "php, generators",
     [
     [
         "div",

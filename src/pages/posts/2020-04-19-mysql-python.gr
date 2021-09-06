@@ -6,7 +6,7 @@ let post = base.Post(
     "Executing python code from MySQL Server",
     "Evaluate python expressions inside MySQL using a UDF that binds to python interpreter.",
     "Miguel Liezun",
-    ["python", "c++", "mysql", "udf"],
+    "python,c++,mysql,udf",
     [
     [
         "div",
@@ -151,8 +151,8 @@ let post = base.Post(
             "",
             "In our case, we want our MySQL function to be called <span class=\"single-quote\">py_eval</span>, so we have to define the following C++ functions:",
             "",
-            "- py_eval_init or py_eval_deinit",
-            "- py_eval",
+            "<li>py_eval_init or py_eval_deinit",
+            "<li>py_eval",
             "",
             "**py_eval_init**: (Optional) Initializes memory and data structures for the function execution.",
             "",
