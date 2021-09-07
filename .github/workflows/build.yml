@@ -11,5 +11,5 @@ jobs:
     steps:
     - name: Build the site with grotsky
       run: |
-        make generate && \
-        cp -r ./_site ${{ github.workspace }}/_site
+        cd ${{ github.workspace }} && \
+        make generate
