@@ -2,11 +2,10 @@ serve:
 	@ ./scripts/start_dev_server.sh
 
 generate:
-	@ mkdir -p ./_site
-	@ cp -r ./assets ./_site/
+	@ mkdir -p ./docs
+	@ cp -r ./assets ./docs/
 	@ ./scripts/generate_site.sh
 
 clean:
 	@ rm -rf ./.grotsky
-	@ rm -rf ./_site
 
