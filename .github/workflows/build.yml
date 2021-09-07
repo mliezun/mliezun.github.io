@@ -18,4 +18,4 @@ jobs:
         git add . && \
         git commit -m "New build `date`"
         git checkout -b gh-pages && \
-        git push --force
+        git push --set-upstream origin gh-pages --force
