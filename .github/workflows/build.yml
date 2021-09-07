@@ -8,9 +8,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Build the site in the jekyll/builder container
+    - uses: mliezun/generic-build-and-deploy
+    - name: Build the site with grotsky
       run: |
-        apt update -yyqq && \
-        apt install -yyqq make && \
-        make generate
+        make generate && \
+        cp -r ./_site ${{ github.workspace }}/_site
