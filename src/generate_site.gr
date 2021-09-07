@@ -3,7 +3,7 @@ let web = import("web.gr")
 let w = web.Web()
 
 for url, route in w.routes {
-	let basePath = "./_site"
+	let basePath = "./docs"
 	if route["class"] == "html" {
 		let fullPath = ""
 		if url == "/" {
