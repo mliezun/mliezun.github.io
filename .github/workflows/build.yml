@@ -6,10 +6,11 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    container: mliezun/generic-build-and-deploy:latest
 
     steps:
+    - uses: actions/checkout@v2
     - name: Build the site with grotsky
       run: |
-        cd ${{ github.workspace }} && \
-        make generate
+        docker run \
+        -v ${{ github.workspace }}:/app/ -v ${{ github.workspace }}/_site:/app/_site \
+        mliezun/generic-build-and-deploy:latest /bin/bash -c "cd /app && make generate"
