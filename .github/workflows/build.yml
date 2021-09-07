@@ -6,9 +6,9 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    container: mliezun/generic-build-and-deploy:latest
 
     steps:
-    - uses: mliezun/generic-build-and-deploy
     - name: Build the site with grotsky
       run: |
         make generate && \
