@@ -15,6 +15,8 @@ jobs:
         -v ${{ github.workspace }}:/app/ -v ${{ github.workspace }}/_site:/app/_site \
         mliezun/generic-build-and-deploy:latest /bin/bash -c "cd /app && make generate" && \
         cd ${{ github.workspace }} && \
+        git config --global user.email "automated@example.com" && \
+        git config --global user.name "Automated Build" && \
         git add . && \
         git commit -m "New build `date`"
         git checkout -b gh-pages && \
