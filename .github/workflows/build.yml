@@ -13,7 +13,7 @@ jobs:
       run: |
         cd ${{ github.workspace }} && \
         make generate && \
-        git config --global user.email "automated@example.com" && \
+        git config --global user.email "automated@github.com" && \
         git config --global user.name "Automated Build" && \
         git add . && \
         git commit -m "New build `date`"

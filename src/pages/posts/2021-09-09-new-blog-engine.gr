@@ -1,0 +1,92 @@
+
+let base = import("../base.gr")
+
+# Create new Post Object
+let post = base.Post(
+    "I created a programming language and this blog is powered by it",
+    "I created my own programming language using Go, then I built a blog engine and used that engine to build this blog.",
+    "Miguel Liezun",
+    "go,language,interpreters,programming",
+    [
+		["h2", [], "I created a programming language and this blog is powered by it"],
+		["h3", [], "Why did I do it?"],
+		["div", [], [
+			["p", [], "Mostly for fun."],
+			["p", [], [
+				"If you follow my blog or take a look at some of the posts that I made, you will see that I was",
+				"building a programming language called ",
+				["a", ["href", "https://github.com/mliezun/grotsky"], "Grotksy"],
+				". Just a toy programming language that I made based on the book ",
+				["a", ["href", "http://www.craftinginterpreters.com/"], "Crafting Interpreters"],
+				", which I totally recommend buying and reading if you haven't yet."
+			]],
+			["p", [], [
+				"I wanted to build something interesting but simple enough that could be made with Grotsky.",
+				"I tought that replacing Jekyll with my own engine was a task worth a try.",
+				"There is nothing groundbreaking or innovative being made here, just a little experimentation.",
+			]],
+			["p", [], [
+				"I have to give credit to the project ",
+				["a", ["href", "https://github.com/fpereiro/lith"], "lith"],
+				", because the 'templating' engine for the blog is inspired by it. Also I borrowed some of the",
+				" colors and the design of HN."
+			]],
+		]],
+		["h3", [], "How did I do it?"],
+		["div", [], [
+			["p", [], "That's a good question."],
+			["p", [], [
+				"Originally, this blog was powered by Jekyll, that translated markdown to html and hosted",
+				" by Github Pages. I decided that I was going to build a templating engine and generate html",
+				" to keep things simple.",
+			]],
+			["p", [], [
+				"But also, as a challenge I made a simple HTTP server to use as a dev server when trying the blog locally."
+			]],
+		]],
+		["h3", [], "HTTP Server"],
+		["div", [], [
+			["p", [], [
+				"For the purpose of having a custom HTTP Server I had to add support for TCP sockets to the language.",
+				"I wrapped the go standard library in some functions and exposed that to the Grotsky language.",
+				"In grotsky looks something like this"
+			]],
+			["pre", ["class", "triple-quote go"], [
+				"
+let socket = net.listenTcp(host + \":\" + port)
+let conn
+while true {
+	try {
+		conn = socket.accept()
+	} catch err {
+		io.println(\"Error accepting new connection\", err)
+		continue
+	}
+	try {
+		# Call function that handles connection
+		handleConn(conn)
+	} catch err {
+		io.println(\"Error handling connection\", err)
+	}
+	try {
+		conn.close()
+	} catch err {}
+}
+				"
+			]],
+			["p", [], [
+				"This means that the server listens on a socket, accepts connections, writes some text/bytes to the connection",
+				" and then closes the connection."
+			]],
+		]],
+		["h3", [], "Template Engine"],
+		["div", [], [
+			["p", [], [
+				"The templating engine is built using the native support Grotsky provide for lists."
+				"A regular page for the blog looks like this:"
+			]],
+			["pre", ["class", "triple-quote go"], "
+			"]
+		]],
+	]
+)
