@@ -82,11 +82,51 @@ while true {
 		["h3", [], "Template Engine"],
 		["div", [], [
 			["p", [], [
-				"The templating engine is built using the native support Grotsky provide for lists."
+				"The templating engine is built using the native support Grotsky provide for lists.",
 				"A regular page for the blog looks like this:"
 			]],
 			["pre", ["class", "triple-quote go"], "
-			"]
+let base = import(\"../base.gr\")
+# Create new Post Object
+let post = base.Post(
+	\"Title\",
+	\"Brief description of blog post.\",
+	\"Author Name\",
+	\"descriptive,tags\",
+	[
+		[
+			\"h2\",
+			[],
+			[
+				\"Title\"
+			]
+		],
+		[
+			\"div\",
+			[\"class\", \"content\"],
+			[
+				\"Content line 1\",
+				\"Content line 2\",
+			]
+		]
+	]
+)
+			"],
+			["p", [], [
+				"It's pretty straightforward: the first element of the list is the html tag, the second is",
+				"an array of properties for the tag and the last one is a list that contains what will be",
+				"the *content* of enclosed by the tags."
+			]],
 		]],
+		["h3", [], "Resources"],
+		["div", [], [
+			["p", [], [
+				"If you want to take a peek, the source code for both projects is available on github:",
+				["ul", [], [
+					["li", [], [["a", ["href", "https://github.com/mliezun/grotsky"], "Grotsky Programming Language"]]],
+					["li", [], [["a", ["href", "https://github.com/mliezun/mliezun.github.io"], "Blog Source Code"]]],
+				]]
+			]],
+		]]
 	]
 )

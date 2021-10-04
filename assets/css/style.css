@@ -53,6 +53,7 @@ a:visited {
     background-color: #002f5617;
     padding: 10px;
     border-radius: 3px;
+    overflow: auto;
 }
 
 .single-quote {
