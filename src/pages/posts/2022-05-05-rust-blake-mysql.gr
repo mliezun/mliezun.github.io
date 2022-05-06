@@ -10,7 +10,7 @@ let post = base.Post(
     [
 		["h2", [], "Implementing a blake3 hash plugin for MySQL in Rust"],
 		["p", [], [
-			"It's been long since I've written something, I wanted to bring you some new stuff, so here you have a short blog post 🤷.",
+			"It's been long since I've written something, I wanted to bring you some new stuff, so here you have a short blog post.",
 			"I encourage you to try this new plugin that uses this", ["a", ["href", "https://docs.rs/blake3/latest/blake3/"], "blake3"],
 			" hash implementation.",
 			"Blake3 is secure, unlike MD5 and SHA-1. And secure against length extension, unlike SHA-2.",
