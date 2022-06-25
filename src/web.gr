@@ -18,99 +18,126 @@ class Web {
         return ""
     }
 
+    head(url, metadata) {
+        return ["head", [], [
+            ["meta", ["charset", "UTF-8"], []],
+            ["meta", ["http-equiv", "X-UA-Compatible", "content", "IE=edge"], []],
+            ["meta", ["name", "viewport", "content", "width=device-width, initial-scale=1"], []],
+
+            ["title", [], metadata["title"]],
+
+            ["meta", ["name", "generator", "content", "Custom"], []],
+            ["meta", ["property", "og:title", "content", metadata["title"]], []],
+            ["meta", ["property", "og:locale", "content", "en_US"], []],
+            ["meta", ["name", "description", "content", metadata["excerpt"]], []],
+            ["meta", ["property", "og:description", "content", metadata["excerpt"]], []],
+            ["meta", ["name", "keywords", "content", metadata["tags"]], []],
+
+            ["link", ["rel", "canonical", "href", "https://mliezun.github.io" + url], []],
+            ["meta", ["property", "og:url", "content", "https://mliezun.github.io" + url], []],
+            ["meta", ["property", "og:site_name", "content", "mliezun.github.io"], []],
+
+            this.addIf(
+                metadata["content_type"],
+                ["meta", ["property", "og:type", "content", metadata["content_type"]], []],
+            ),
+            ["meta", ["name", "twitter:card", "content", "summary"], []],
+            ["meta", ["property", "twitter:title", "content", metadata["title"]], []],
+
+            this.addIf(
+                metadata["content_type"] != "article",
+                ["script", ["type", "application/ld+json"], [
+                    "{\"name\":\"mliezun.github.io\",\"description\":\"" + metadata["excerpt"] + "\",\"@type\":\"WebSite\",\"url\":\"https://mliezun.github.io/\",\"headline\":\"" + metadata["title"] + "\",\"@context\":\"https://schema.org\"}",
+                ]],
+            ),
+
+            this.addIf(
+                metadata["content_type"] == "article",
+                ["script", ["type", "application/ld+json"], [
+                    "{\"description\":\"" + metadata["excerpt"] + "\",\"author\":{\"@type\":\"Person\",\"name\":\"Miguel Liezun\"},\"@type\":\"BlogPosting\",\"url\":\"https://mliezun.github.io" + url + "\",\"headline\":\"" + metadata["title"] + "\",\"dateModified\":\"" + metadata["date"] + "T00:00:00-03:00\",\"datePublished\":\"" + metadata["date"] + "T00:00:00-03:00\",\"mainEntityOfPage\":{\"@type\":\"WebPage\",\"@id\":\"https://mliezun.github.io" + url + "\"},\"@context\":\"https://schema.org\"}"
+                ]],
+            ),
+
+            # CSS
+            ["link", ["rel", "stylesheet", "href", "/assets/css/style.css"], []],
+        ]]
+    }
+
+    footer() {
+        return ["footer", [], [
+            ["hr", [], []],
+            ["div", ["class", "footer-wrapper"], [
+                ["div", [], [
+                    ["div", [], [
+                        "This blog was made by",
+                        ["a", ["href", "https://github.com/mliezun"], "Miguel Liezun"],
+                        " using",
+                        ["a", ["href", "https://github.com/mliezun/grotsky"], "Grotsky"]
+                    ]],
+                    ["div", [], [
+                        "Blog",
+                        ["a", ["href", "https://github.com/mliezun/mliezun.github.io"], "source code"]
+                    ]]
+                ]],
+                ["div", ["class", "footer-socials"], [
+                    ["a", ["href", "https://www.linkedin.com/in/miguel-liezun-8697a9168/"], [
+                        ["img", ["src", "/assets/images/socials/linkedin.png", "width", "20", "height", "20"], []]
+                    ]],
+                    ["a", ["href", "https://github.com/mliezun"], [
+                        ["img", ["src", "/assets/images/socials/github.png", "width", "20", "height", "20"], []]
+                    ]],
+                    ["a", ["href", "https://twitter.com/migueliezun"], [
+                        ["img", ["src", "/assets/images/socials/twitter.png", "width", "20", "height", "20"], []]
+                    ]]
+                ]]
+            ]]
+        ]]
+    }
+
+    body(content) {
+        return ["body", [], [
+            ["div", ["class", "body-wrapper"], [
+                ["div", ["class", "body-content"], [
+                    ["h1", [], [
+                        ["a", ["href", "/"], "Blog"],
+                    ]],
+                ] + content + [
+                    this.footer(),
+                ]],
+            ]],
+            # Global site tag (gtag.js) - Google Analytics
+            ["script", ["async", "", "src", "https://www.googletagmanager.com/gtag/js?id=G-B0X6717RHT"], []],
+            ["script", [], [
+                "window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                
+                gtag('config', 'G-B0X6717RHT');"
+            ]],
+            # Highlight.js, syntax highlighter
+            ["link", ["rel", "stylesheet", "href", "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/default.min.css"], []],
+            ["script", ["src", "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js"], []],
+            ["script", [], [
+                "document.querySelectorAll('.triple-quote').forEach(function (el) {
+                    if (el.classList.length > 1) hljs.highlightElement(el, {language: el.classList[1]});
+                    else hljs.highlightElement(el);
+                })"
+            ]],
+            ["script", [], [
+                "document.querySelectorAll('.single-quote').forEach(function (el) {
+                    if (el.classList.length > 1) hljs.highlightElement(el, {language: el.classList[1]});
+                    else hljs.highlightElement(el);
+                })"
+            ]],
+        ]]
+    }
+
     wrapBody(url, body, metadata) {
         return [
             ["!DOCTYPE HTML"],
             ["html", ["lang", "en-US"], [
-                ["head", [], [
-                    ["meta", ["charset", "UTF-8"], []],
-                    ["meta", ["http-equiv", "X-UA-Compatible", "content", "IE=edge"], []],
-                    ["meta", ["name", "viewport", "content", "width=device-width, initial-scale=1"], []],
-
-                    ["title", [], metadata["title"]],
-
-                    ["meta", ["name", "generator", "content", "Custom"], []],
-                    ["meta", ["property", "og:title", "content", metadata["title"]], []],
-                    ["meta", ["property", "og:locale", "content", "en_US"], []],
-                    ["meta", ["name", "description", "content", metadata["excerpt"]], []],
-                    ["meta", ["property", "og:description", "content", metadata["excerpt"]], []],
-                    ["meta", ["name", "keywords", "content", metadata["tags"]], []],
-
-                    ["link", ["rel", "canonical", "href", "https://mliezun.github.io" + url], []],
-                    ["meta", ["property", "og:url", "content", "https://mliezun.github.io" + url], []],
-                    ["meta", ["property", "og:site_name", "content", "mliezun.github.io"], []],
-
-                    this.addIf(
-                        metadata["content_type"],
-                        ["meta", ["property", "og:type", "content", metadata["content_type"]], []],
-                    ),
-                    ["meta", ["name", "twitter:card", "content", "summary"], []],
-                    ["meta", ["property", "twitter:title", "content", metadata["title"]], []],
-
-                    this.addIf(
-                        metadata["content_type"] != "article",
-                        ["script", ["type", "application/ld+json"], [
-                            "{\"name\":\"mliezun.github.io\",\"description\":\"" + metadata["excerpt"] + "\",\"@type\":\"WebSite\",\"url\":\"https://mliezun.github.io/\",\"headline\":\"" + metadata["title"] + "\",\"@context\":\"https://schema.org\"}",
-                        ]],
-                    ),
-
-                    this.addIf(
-                        metadata["content_type"] == "article",
-                        ["script", ["type", "application/ld+json"], [
-                            "{\"description\":\"" + metadata["excerpt"] + "\",\"author\":{\"@type\":\"Person\",\"name\":\"Miguel Liezun\"},\"@type\":\"BlogPosting\",\"url\":\"https://mliezun.github.io" + url + "\",\"headline\":\"" + metadata["title"] + "\",\"dateModified\":\"" + metadata["date"] + "T00:00:00-03:00\",\"datePublished\":\"" + metadata["date"] + "T00:00:00-03:00\",\"mainEntityOfPage\":{\"@type\":\"WebPage\",\"@id\":\"https://mliezun.github.io" + url + "\"},\"@context\":\"https://schema.org\"}"
-                        ]],
-                    ),
-
-                    # CSS
-                    ["link", ["rel", "stylesheet", "href", "/assets/css/style.css"], []],
-                ]],
-                ["body", [], [
-                    ["div", ["class", "body-wrapper"], [
-                        ["div", ["class", "body-content"], [
-                            ["h1", [], [
-                                ["a", ["href", "/"], "Blog"],
-                            ]],
-                        ] + body + [
-                            ["footer", [], [
-                                ["hr", [], []],
-                                ["div", ["class", "footer-wrapper"], [
-                                    ["div", [], [
-                                        ["div", [], [
-                                            "This blog was made by",
-                                            ["a", ["href", "https://github.com/mliezun"], "Miguel Liezun"],
-                                            " using",
-                                            ["a", ["href", "https://github.com/mliezun/grotsky"], "Grotsky"]
-                                        ]],
-                                        ["div", [], [
-                                            "Blog",
-                                            ["a", ["href", "https://github.com/mliezun/mliezun.github.io"], "source code"]
-                                        ]]
-                                    ]],
-                                    ["div", ["class", "footer-socials"], [
-                                        ["a", ["href", "https://www.linkedin.com/in/miguel-liezun-8697a9168/"], [
-                                            ["img", ["src", "/assets/images/socials/linkedin.png", "width", "20", "height", "20"], []]
-                                        ]],
-                                        ["a", ["href", "https://github.com/mliezun"], [
-                                            ["img", ["src", "/assets/images/socials/github.png", "width", "20", "height", "20"], []]
-                                        ]],
-                                        ["a", ["href", "https://twitter.com/migueliezun"], [
-                                            ["img", ["src", "/assets/images/socials/twitter.png", "width", "20", "height", "20"], []]
-                                        ]]
-                                    ]]
-                                ]]
-                            ]]
-                        ]],
-                    ]],
-                    # Global site tag (gtag.js) - Google Analytics
-                    ["script", ["async", "", "src", "https://www.googletagmanager.com/gtag/js?id=G-B0X6717RHT"], []],
-                    ["script", [], [
-                        "window.dataLayer = window.dataLayer || [];
-                        function gtag(){dataLayer.push(arguments);}
-                        gtag('js', new Date());
-                        
-                        gtag('config', 'G-B0X6717RHT');"
-                    ]]
-                ]]
+                this.head(url, metadata),
+                this.body(body),
             ]]
         ]
     }

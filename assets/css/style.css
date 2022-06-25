@@ -63,7 +63,7 @@ a:visited {
 
 .single-quote {
     font-family: monospace;
-    white-space: pre;
+    overflow-wrap: break-word;
     color: #000000;
     background-color: #002f5617;
     padding-left: 3px;
