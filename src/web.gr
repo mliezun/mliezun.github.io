@@ -36,6 +36,7 @@ class Web {
             ["link", ["rel", "canonical", "href", "https://mliezun.github.io" + url], []],
             ["meta", ["property", "og:url", "content", "https://mliezun.github.io" + url], []],
             ["meta", ["property", "og:site_name", "content", "mliezun.github.io"], []],
+            ["link", ["rel", "icon", "type", "image/x-icon", "href", "/assets/images/favicon.ico"], []],
 
             this.addIf(
                 metadata["content_type"],

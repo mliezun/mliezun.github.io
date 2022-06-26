@@ -97,7 +97,7 @@ const wrapObject = (parent, key, current) => {
 # Create new Post Object
 let post = base.Post(
     "Playing with Javascript Proxies (getters/setters)",
-    "I this last post of the year I play with proxies in an attempt to create a Javascript object where changes are appended
+    "In this last post of the year I play with proxies in an attempt to create a Javascript object where changes are appended
 	to a log and can be reverted by deleting the last element of the log using getters and setters.",
     "Miguel Liezun",
     "javscript,proxies,append,log,objects,getter,setter",
