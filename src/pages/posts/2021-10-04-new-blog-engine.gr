@@ -28,8 +28,7 @@ let post = base.Post(
 			["p", [], [
 				"I have to give credit to the project ",
 				["a", ["href", "https://github.com/fpereiro/lith"], "lith"],
-				", because the 'templating' engine for the blog is inspired by it. Also I borrowed some of the",
-				" colors and the design of HN."
+				", because the 'templating' engine for the blog is inspired by it."
 			]],
 		]],
 		["h3", [], "How did I do it?"],

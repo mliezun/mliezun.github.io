@@ -47,6 +47,15 @@ fn foldr(list, initial, foldFn) {
     return out
 }
 
+fn any(list) {
+    for el in list {
+        if el {
+            return true
+        }
+    }
+    return false
+}
+
 fn sum(a, b) {
     return a + b
 }

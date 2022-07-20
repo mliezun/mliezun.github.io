@@ -1,7 +1,8 @@
 body {
-    font-family: Verdana, Geneva, sans-serif;
-    font-size: 13pt;
-    color: #828282;
+    font-family: "Ibarra Real Nova", serif;
+    font-size: 14pt;
+    color: #1d1d1d;
+    background-color: #eeeedd;
 }
 
 .body-wrapper {
@@ -11,7 +12,6 @@ body {
 
 .body-content {
     padding: 20px;
-    background-color: #f6f6ef;
     width: 45%;
 }
 
@@ -36,39 +36,35 @@ h6 {
     color: #000000;
 }
 
-.title {
-    font-family: Verdana, Geneva, sans-serif;
-    font-size: 13pt;
-    color: #828282;
-    overflow: hidden;
-}
 
 a:link {
     color: #000000;
     text-decoration: none;
+    font-weight: bold;
 }
 
 a:visited {
-    color: #555555;
+    color: #000000;
     text-decoration: none;
 }
 
 .triple-quote {
+    font-family: "PT Mono", monospace !important;
+    font-size: 13pt;
     color: #000000;
     background-color: #002f5617;
-    padding: 10px;
-    border-radius: 3px;
+    padding: 30px;
+    border-radius: 6px;
     overflow: auto;
 }
 
 .single-quote {
-    font-family: monospace;
+    font-family: "PT Mono", monospace !important;
     overflow-wrap: break-word;
     color: #000000;
     background-color: #002f5617;
-    padding-left: 3px;
-    padding-right: 3px;
-    border-radius: 3px;
+    padding: 6px;
+    border-radius: 6px;
 }
 
 footer {
