@@ -44,6 +44,7 @@ class Web {
             ),
             ["meta", ["name", "twitter:card", "content", "summary"], []],
             ["meta", ["property", "twitter:title", "content", metadata["title"]], []],
+            ["meta", ["name", "twitter:creator", "content", "@migueliezun"]],
 
             this.addIf(
                 metadata["content_type"] != "article",
@@ -85,13 +86,13 @@ class Web {
                 ]],
                 ["div", ["class", "footer-socials"], [
                     ["a", ["href", "https://www.linkedin.com/in/miguel-liezun-8697a9168/"], [
-                        ["img", ["src", "/assets/images/socials/linkedin.png", "width", "20", "height", "20"], []]
+                        ["img", ["alt", "LinkedIn", "src", "/assets/images/socials/linkedin.png", "width", "20", "height", "20"], []]
                     ]],
                     ["a", ["href", "https://github.com/mliezun"], [
-                        ["img", ["src", "/assets/images/socials/github.png", "width", "20", "height", "20"], []]
+                        ["img", ["alt", "Github", "src", "/assets/images/socials/github.png", "width", "20", "height", "20"], []]
                     ]],
                     ["a", ["href", "https://twitter.com/migueliezun"], [
-                        ["img", ["src", "/assets/images/socials/twitter.png", "width", "20", "height", "20"], []]
+                        ["img", ["alt", "Twitter", "src", "/assets/images/socials/twitter.png", "width", "20", "height", "20"], []]
                     ]]
                 ]]
             ]]
@@ -105,7 +106,7 @@ class Web {
             ["p", [], [
                 "Currently working as a Remote Software Engineering contractor at",
                 ["a", ["href", "https://www.gencove.com", "target", "_blank"], "Gencove"],
-                " and running a personal project called ",
+                " and running a side project called ",
                 ["a", ["href", "https://cloud-outdated.com", "target", "_blank"], "Cloud Outdated"],
                 " with a friend."
             ]]

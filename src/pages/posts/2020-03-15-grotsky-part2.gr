@@ -4,7 +4,7 @@ let base = import("../base.gr")
 # Create new Post Object
 let post = base.Post(
     "Grotsky Part 2: Parsing expressions",
-    "Part 2 of building my own laguage series. Parsing expressions, traversing and printing the Abstract Syntax Tree.",
+    "Part 2 of building my own language series. Parsing expressions, traversing and printing the Abstract Syntax Tree.",
     "Miguel Liezun",
     "parser,expression,ast",
     [
