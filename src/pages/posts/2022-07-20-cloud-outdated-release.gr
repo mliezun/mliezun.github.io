@@ -1,0 +1,39 @@
+let base = import("../base.gr")
+
+
+# Create new Post Object
+let post = base.Post(
+    "Webscraping as a side project",
+    "Cloud Outdated is a personalized digest of updates for cloud services. Works like a newsletter where you can choose
+	which services you want to get notified about. For example: Subscribe to AWS Lambda with Python runtime, and you'll get an email
+	when 3.10 is supported.",
+    "Miguel Liezun",
+    "python,webscraping,project,aws",
+    [
+		["h2", [], "Webscraping as a side project"],
+		["p", [], [
+			"A friend and I were looking for a side project to work together. We realized we both faced a similar problem.",
+		]],
+		["p", [], [
+			"Let's use AWS Lambda Python runtime as an example.",
+			["br"],
+			"AWS will send out emails when a version is at the end of life making it difficult to stay ",
+			"on the latest if desired.",
+			"Plus, reacting to them usually means you are many many versions behind already.",
+		]],
+		["p", [], [
+			"Our journey started.", "We made a list of providers for the MVP: AWS, GCP and Azure.",
+			"Then a list of the services that have versions (for example S3 doesn't have versions).",
+			"After that we realized that we could get some versions using APIs.",
+			"Other services exclusively require webscraping.",
+		]],
+		["p", [], [
+			"We support 46 services and counting.",
+			"Take a look at",
+			["a", ["href", "https://cloud-outdated.com/services/", "target", "_blank"], "Cloud Outdated"],
+			" and subscribe to get notified.",
+			"If you are looking for a service that's not there",
+			["a", ["href", "https://gs2azalhg3t.typeform.com/to/Q6oHtttI", "target", "_blank"], "contact us"], ".",
+		]]
+	]
+)

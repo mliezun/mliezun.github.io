@@ -15,9 +15,9 @@ let post = base.Post(
 			["p", [], [
 				"If you follow my blog or take a look at some of the posts that I made, you will see that I was",
 				"building a programming language called ",
-				["a", ["href", "https://github.com/mliezun/grotsky"], "Grotksy"],
+				["a", ["target", "_blank", "href", "https://github.com/mliezun/grotsky"], "Grotksy"],
 				". Just a toy programming language that I made based on the book ",
-				["a", ["href", "http://www.craftinginterpreters.com/"], "Crafting Interpreters"],
+				["a", ["target", "_blank", "href", "http://www.craftinginterpreters.com/"], "Crafting Interpreters"],
 				", which I totally recommend buying and reading if you haven't yet."
 			]],
 			["p", [], [
@@ -27,7 +27,7 @@ let post = base.Post(
 			]],
 			["p", [], [
 				"I have to give credit to the project ",
-				["a", ["href", "https://github.com/fpereiro/lith"], "lith"],
+				["a", ["target", "_blank", "href", "https://github.com/fpereiro/lith"], "lith"],
 				", because the 'templating' engine for the blog is inspired by it."
 			]],
 		]],
@@ -122,8 +122,8 @@ let post = base.Post(
 			["p", [], [
 				"If you want to take a peek, the source code for both projects is available on github:",
 				["ul", [], [
-					["li", [], [["a", ["href", "https://github.com/mliezun/grotsky"], "Grotsky Programming Language"]]],
-					["li", [], [["a", ["href", "https://github.com/mliezun/mliezun.github.io"], "Blog Source Code"]]],
+					["li", [], [["a", ["target", "_blank", "href", "https://github.com/mliezun/grotsky"], "Grotsky Programming Language"]]],
+					["li", [], [["a", ["target", "_blank", "href", "https://github.com/mliezun/mliezun.github.io"], "Blog Source Code"]]],
 				]]
 			]],
 		]]

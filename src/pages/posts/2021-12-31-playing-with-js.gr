@@ -108,7 +108,7 @@ let post = base.Post(
 			["p", [], "Happy New Year!"],
 			["p", [], [
 				"This is my final post for the 2021. This year I didn't post that much, but a lot of work was put into
-				the blog to rewrite it using ", ["a", ["href", "https://github.com/mliezun/grotsky"], "Grotksy"], ".",
+				the blog to rewrite it using ", ["a", ["target", "_blank", "href", "https://github.com/mliezun/grotsky"], "Grotksy"], ".",
 				"I hope everyone has a great 2022 and that next year is much better than the last one."
 			]],
 			["p", [], [
@@ -353,7 +353,7 @@ console.log(store.objects.users.jdoe.email)
             ]],
             ["p", [], [
                 "The full source code is available in a",
-                ["a", ["href", "https://gist.github.com/mliezun/5946c8af80e3747519175027579414fb"], "public gist"], ".",
+                ["a", ["target", "_blank", "href", "https://gist.github.com/mliezun/5946c8af80e3747519175027579414fb"], "public gist"], ".",
             ]],
         ]],
 		["script", [], [
