@@ -16,7 +16,6 @@ let post = base.Post(
 		]],
 		["p", [], [
 			"Let's use AWS Lambda Python runtime as an example.",
-			["br"],
 			"AWS will send out emails when a version is at the end of life making it difficult to stay ",
 			"on the latest if desired.",
 			"Plus, reacting to them usually means you are many many versions behind already.",
@@ -34,6 +33,22 @@ let post = base.Post(
 			" and subscribe to get notified.",
 			"If you are looking for a service that's not there",
 			["a", ["href", "https://gs2azalhg3t.typeform.com/to/Q6oHtttI", "target", "_blank"], "contact us"], ".",
+		]],
+		["h2", [], "Picking a language, framework and platform"],
+		["p", [], [
+			"We're both Python programmers. The choice was obvious.",
+			"\"Let's use Python and Django framework for the job\" we said.",
+			"We didn't want to spend our innovation tokens on new language/framework.",
+			"So we chose Boring Technology.",
+		]],
+		["p", [], [
+			"For the db we spent our first innovation token.",
+			"We decided to go with the flashy new serverless postgres-compatible",
+			["a", ["href", "https://www.cockroachlabs.com/lp/serverless/", "target", "_blank"], "CockroachDB"],".",
+		]],
+		["p", [], [
+			"On the hosting side we're using AWS Lambda. Taking advantage of the free compute time.",
+			"Helps mantaining the costs down.",
 		]]
 	]
 )
