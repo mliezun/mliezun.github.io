@@ -49,6 +49,89 @@ let post = base.Post(
 		["p", [], [
 			"On the hosting side we're using AWS Lambda. Taking advantage of the free compute time.",
 			"Helps mantaining the costs down.",
-		]]
+		]],
+		["h2", [], "Make webscraping reliable"],
+		["p", [], [
+			"A webpage that's being scraped can change at any time. First thing we did was account for those edge cases.",
+			"We created a custom exception that is triggered when something changed. So that we can react to that downstream.",
+			["pre", ["class", "triple-quote python"], [
+"
+class ScrapingError(Exception):
+    pass
+"
+			]],
+			"We wanted to keep the implementation simple. Each service is scraped by a single function.",
+			"The signature of the function is something like",
+			["span", ["class", "single-quote"], "aws_lambda_python() -> List[Version]"],".",
+			"All the implementations follow a similar pattern:",
+			["pre", ["class", "triple-quote python"], [
+"
+def aws_lambda_python():
+    # Read versions from aws docs website:
+    # https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html
+
+    if not found_versions:
+        raise ScrappingError
+
+    # Process and return versions
+"
+			]],
+			"That's ^ what we call a poll function.",
+		]],
+		["p", [], [
+			"We pass poll functions through a polling class that handles all the errors and results.",
+			"When we detect an scraping error we have a special case. We send an email with the details",
+			"of what happened. Because the problem is something that requires manual action. We receive",
+			"that email in our personal inboxes and fix the problem ASAP.",
+		]],
+		["p", [], [
+			"The poll class that handles all the magic behind cloud outdated is actually very simple:",
+			["pre", ["class", "triple-quote python"], [
+"
+class PollService:
+    def __init__(self, service: Service, poll_fn: Callable):
+        self.poll_fn = poll_fn
+        # Some other attributes...
+
+    def poll(self):
+        try:
+            results = self.poll_fn()
+            self.process_results(results)
+        except ScrapingError as e:
+            notify_operator(
+                f\"{type(e).__name__} at line {e.__traceback__.tb_lineno} of {__file__}: {e.__str__()}\"
+            )
+
+    def process_results(self, results):
+        # if results contains new versions:
+        #     save new versions to db
+        # if results contains deprecated versions:
+        #     set versions in db as depreacted
+"
+			]],
+		]],
+		["p", [], [
+			"That's the hearth of Cloud Outdated.",
+			"After that we have to send notifications to subscribed users.",
+			"That part is trivial.",
+			"We send an email that contains the difference between what was last sent to a user and what we",
+			"have stored in the db at the moment.",
+		]],
+		["h2", [], "Last toughts"],
+		["p", [], [
+			"Having a side project is usually a good idea.",
+			"For us has been a journey were we got to know some new stuff (CockroachDB).",
+			"We also learned about how to build a product and keep a MVP mentality.",
+			"The most difficult challenge we face is to bring more users to the platform.",
+		]],
+		["p", [], [
+			"We'd love to see more people subscribed.",
+			"If this blogpost sparked your interest go to",
+			["a", ["href", "https://cloud-outdated.com/services/", "target", "_blank"], "Cloud Outdated"],
+			" and subscribe to start getting emails.",
+		]],
+		["p", [], [
+			"See you next time!",
+		]],
 	]
 )
