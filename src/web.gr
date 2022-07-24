@@ -35,7 +35,7 @@ class Web {
 
             ["link", ["rel", "canonical", "href", "https://mliezun.github.io" + url], []],
             ["meta", ["property", "og:url", "content", "https://mliezun.github.io" + url], []],
-            ["meta", ["property", "og:site_name", "content", metadata["title"]], []],
+            ["meta", ["property", "og:site_name", "content", "mliezun.github.io"], []],
             ["meta", ["property", "og:image", "content", "https://mliezun.github.io/assets/images/kandinsky.jpeg"], []],
             ["link", ["rel", "icon", "type", "image/x-icon", "href", "/assets/images/favicon.ico"], []],
 
