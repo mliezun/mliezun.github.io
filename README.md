@@ -2,7 +2,7 @@
 
 This blog is made with [Grotsky](https://github.com/mliezun/grotsky) a toy programming language I made to learn about interpreters and compilers.
 
-The favicon of the page is a painting from Kandinsky as seen here: [https://artwizard.eu/the-bright-colours-of-wassily-kandinsky-ar-39](https://web.archive.org/web/20210826214126/https://artwizard.eu///the-bright-colours-of-wassily-kandinsky-ar-39/).
+The image of the page is a painting from Kandinsky as seen here: [https://artwizard.eu/the-bright-colours-of-wassily-kandinsky-ar-39](https://web.archive.org/web/20210826214126/https://artwizard.eu///the-bright-colours-of-wassily-kandinsky-ar-39/).
 
 [Visit the blog](https://mliezun.github.io)
 

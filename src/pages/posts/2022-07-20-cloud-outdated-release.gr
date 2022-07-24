@@ -62,7 +62,7 @@ class ScrapingError(Exception):
 			]],
 			"We wanted to keep the implementation simple. Each service is scraped by a single function.",
 			"The signature of the function is something like",
-			["span", ["class", "single-quote"], "aws_lambda_python() -> List[Version]"],".",
+			["span", ["class", "single-quote python"], "aws_lambda_python() -> List[Version]"],".",
 			"All the implementations follow a similar pattern:",
 			["pre", ["class", "triple-quote python"], [
 "

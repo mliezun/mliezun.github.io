@@ -35,7 +35,8 @@ class Web {
 
             ["link", ["rel", "canonical", "href", "https://mliezun.github.io" + url], []],
             ["meta", ["property", "og:url", "content", "https://mliezun.github.io" + url], []],
-            ["meta", ["property", "og:site_name", "content", "mliezun.github.io"], []],
+            ["meta", ["property", "og:site_name", "content", metadata["title"]], []],
+            ["meta", ["property", "og:image", "content", "https://mliezun.github.io/assets/images/kandinsky.jpeg"], []],
             ["link", ["rel", "icon", "type", "image/x-icon", "href", "/assets/images/favicon.ico"], []],
 
             this.addIf(
@@ -45,6 +46,7 @@ class Web {
             ["meta", ["name", "twitter:card", "content", "summary"], []],
             ["meta", ["property", "twitter:title", "content", metadata["title"]], []],
             ["meta", ["name", "twitter:creator", "content", "@migueliezun"]],
+            ["meta", ["name", "twitter:image", "content", "https://mliezun.github.io/assets/images/kandinsky.jpeg"]],
 
             this.addIf(
                 metadata["content_type"] != "article",
@@ -126,12 +128,14 @@ class Web {
                 "document.querySelectorAll('.triple-quote').forEach(function (el) {
                     if (el.classList.length > 1) hljs.highlightElement(el, {language: el.classList[1]});
                     else hljs.highlightElement(el);
+                    el.classList.remove('hljs');
                 })"
             ]],
             ["script", [], [
                 "document.querySelectorAll('.single-quote').forEach(function (el) {
                     if (el.classList.length > 1) hljs.highlightElement(el, {language: el.classList[1]});
                     else hljs.highlightElement(el);
+                    el.classList.remove('hljs');
                 })"
             ]],
         ]]

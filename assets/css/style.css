@@ -51,7 +51,7 @@ a:visited {
 .triple-quote {
     font-family: "PT Mono", monospace !important;
     font-size: 13pt;
-    color: #000000;
+    color: #444;
     background-color: #002f5617;
     padding: 30px;
     border-radius: 6px;
@@ -60,8 +60,9 @@ a:visited {
 
 .single-quote {
     font-family: "PT Mono", monospace !important;
+    font-size: 12pt;
     overflow-wrap: break-word;
-    color: #000000;
+    color: #444;
     background-color: #002f5617;
     padding: 6px;
     border-radius: 6px;
