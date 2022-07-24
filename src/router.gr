@@ -51,12 +51,11 @@ fn get_routes() {
         "class": "html",
         "content": import("pages/index.gr").build_index(posts),
         "metadata": {
-            "excerpt": "Blog about programming and side projects",
             "title": "Blog | mliezun.github.io",
             "author": "Miguel Liezun",
             "tags": "software,tech,fun",
             "date": "",
-            "excerpt": "Blog",
+            "excerpt": "Blog about programming and side projects",
         }
     }
     
