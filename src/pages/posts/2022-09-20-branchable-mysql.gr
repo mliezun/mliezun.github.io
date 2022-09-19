@@ -1,0 +1,95 @@
+let base = import("../base.gr")
+
+
+let firstParagraph = "When teams start to grow, having a single dev environment becomes an issue. People start stepping on each others toes.
+A common problem is that two people want to apply incompatible migrations on the database. That problem is impossible 
+to fix if folks are working on parallel branches.
+If we can have a database for each branch of a project, that will remove much of the pain of having multiple devs applying
+changes to the db."
+
+# Create new Post Object
+let post = base.Post(
+    "Branchable MySQL: Managing multiple dev environments",
+    firstParagraph,
+    "Miguel Liezun",
+    "python,docker,mysql,dev,team,management",
+    [
+		["h2", [], "Branchable MySQL: Managing multiple dev environments"],
+		["p", [], firstParagraph],
+		["p", [], [
+			"There are already projects that solve this problem: ",
+			["a", ["href", "https://planetscale.com/docs/concepts/branching"], "PlanetScale"],
+			" and ",
+			["a", ["href", "https://neon.tech/"], "Neon"],
+			".",
+		]],
+		["p", [], [
+			"A common case where this problem arises is when two devs want to add a column to the same table. ",
+		]],
+		["img", ["alt", "Two devs applying changes to the same table in the database.", "src", "/assets/images/branchable-mysql/diagram1.png"], []],
+		["p", [], [
+			"We have a ",
+			["span", ["class", "single-quote sql"], "people"],
+			" table in the database. One of the devs wants to add the ",
+			["span", ["class", "single-quote sql"], "last_name"],
+			" column and the other one wants to add the ",
+			["span", ["class", "single-quote sql"], "address"],
+			".",
+		]],
+		["p", [], [
+			"Dev1's code thinks the table will have 3 columns after he applies his operation: ",
+			["span", ["class", "single-quote sql"], "id, name, last_name"],
+			".",
+		]],
+		["p", [], ["Dev2's code also thinks the table will have 3 columns: ",
+		["span", ["class", "single-quote sql"], "id, name, address"],
+		".",]],
+		["p", [], [
+			"In reality the table will have 4 columns.",
+			"So neither of them will be able to run their code unless they talk to each other and figure out how to make this work."
+		]],
+		["p", [], [
+			"This is far from ideal."
+		]],
+		["p", [], [
+			"What we want instead, is that each one of them can develop their features independently."
+		]],
+		["img", ["alt", "Two devs applying changes to the same table in different database branches.", "src", "/assets/images/branchable-mysql/diagram2.png"], []],
+		["p", [], [
+			"They both apply to the same table, but each table lives on an instance that was 'replicated' from the original."
+		]],
+		["h2", [], "How can we implement the ideal case?"],
+		["p", [], [
+			"MySQL writes data (by default) to the directory ",
+			["span", ["class", "single-quote bash"], "/var/lib/mysql/data"],
+			".",
+		]],
+		["p", [], [
+			"We can use an ",
+			["a", ["href", "https://en.wikipedia.org/wiki/UnionFS"], "Union filesystem"],
+			". And configure MySQL to use a different directory to read and write data.",
+		]],
+		["p", [], [
+			"That way we can have a feature/user-last-name 'branch' read and write data from a directory like ",
+			["span", ["class", "single-quote bash"], "/app/user-last-name/mysql/data"],
+			".",
+		]],
+		["p", [], [
+			"And a feature/user-address 'branch' read and write data from a directory like ",
+			["span", ["class", "single-quote bash"], "/app/user-address/mysql/data"],
+			".",
+		]],
+		["p", [], [
+			"Those branches can be mounted using fuse-overlayfs by executing the following commands: ",
+		]],
+		["pre", ["class", "triple-quote bash"], [
+				"
+# Directory /app/base contains data from the original branch
+
+fuse-overlayfs -o lowerdir=/app/base,upperdir=/app/user-last-name,workdir=/tmp/user-last-name overlayfs /app/user-last-name
+
+fuse-overlayfs -o lowerdir=/app/base,upperdir=/app/user-address,workdir=/tmp/user-address overlayfs /app/user-address
+"
+			]],
+	]
+)
