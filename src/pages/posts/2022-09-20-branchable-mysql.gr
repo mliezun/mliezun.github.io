@@ -18,9 +18,9 @@ let post = base.Post(
 		["p", [], firstParagraph],
 		["p", [], [
 			"There are already projects that solve this problem: ",
-			["a", ["href", "https://planetscale.com/docs/concepts/branching"], "PlanetScale"],
+			["a", ["href", "https://planetscale.com/docs/concepts/branching", "target", "_blank"], "PlanetScale"],
 			" and ",
-			["a", ["href", "https://neon.tech/"], "Neon"],
+			["a", ["href", "https://neon.tech/", "target", "_blank"], "Neon"],
 			".",
 		]],
 		["p", [], [
@@ -66,7 +66,7 @@ let post = base.Post(
 		]],
 		["p", [], [
 			"We can use an ",
-			["a", ["href", "https://en.wikipedia.org/wiki/UnionFS"], "Union filesystem"],
+			["a", ["href", "https://en.wikipedia.org/wiki/UnionFS", "target", "_blank"], "Union filesystem"],
 			". And configure MySQL to use a different directory to read and write data.",
 		]],
 		["p", [], [
@@ -91,5 +91,21 @@ fuse-overlayfs -o lowerdir=/app/base,upperdir=/app/user-last-name,workdir=/tmp/u
 fuse-overlayfs -o lowerdir=/app/base,upperdir=/app/user-address,workdir=/tmp/user-address overlayfs /app/user-address
 "
 			]],
+		["p", [], [
+			"This means both 'branches' of the database are able to coexist and have different schemas during their lifetime.",
+		]],
+		["h2", [], "Experimenting with a use case"],
+		["p", [], [
+			"I had this idea in my head for months. I finally convinced myself that it was worth a shot.",
+		]],
+		["p", [], [
+			"I decided to do a little implementation using Docker and python FastAPI.",
+			"Exposing a simple interface so that it's easy to create and delete branches.",
+		]],
+		["p", [], [
+			"The project is live on github ",
+			["a", ["href", "https://github.com/mliezun/branchable-mysql", "target", "_blank"], "branchable-mysql"],
+			"."
+		]],
 	]
 )
