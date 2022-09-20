@@ -107,5 +107,10 @@ fuse-overlayfs -o lowerdir=/app/base,upperdir=/app/user-address,workdir=/tmp/use
 			["a", ["href", "https://github.com/mliezun/branchable-mysql", "target", "_blank"], "branchable-mysql"],
 			"."
 		]],
+		["p", [], [
+			"The container image is published on Docker Hub ",
+			["a", ["href", "https://hub.docker.com/repository/docker/mliezun/branchable-mysql", "target", "_blank"], "branchable-mysql"],
+			"."
+		]],
 	]
 )
