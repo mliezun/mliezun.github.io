@@ -1,9 +1,30 @@
+class ReadingTimeWidget {
+    render() {
+        return ["p", [], [
+            "Reading time: ",
+            ["span", ["id", "reading-time"], ""],
+            ["script", [], [
+                "window.onload = function () {
+                    var text = document.getElementsByTagName('article')[0].innerText;
+                    var wpm = 255;
+                    var words = text.trim().split(/\\s+/).length;
+                    var time = Math.ceil(words/wpm);
+                    document.getElementById('reading-time').innerText = (time || 1) + (time > 1 ? ' minutes' : ' minute');
+                };"
+            ]],
+        ]]
+    }
+}
+
 class Post {
     init(title, excerpt, author, tags, content) {
         this.title = title
         this.excerpt = excerpt
         this.author = author
         this.tags = tags
-        this.content = content
+        this.content = [
+            ReadingTimeWidget().render(),
+            ["article", [], content],
+        ]
     }
 }
