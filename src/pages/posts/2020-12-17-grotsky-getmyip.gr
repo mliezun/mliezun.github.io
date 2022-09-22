@@ -284,7 +284,15 @@ let post = base.Post(
             "I have my own version running under: https://peaceful-lowlands-45821.herokuapp.com/",
             "",
             "",
-            ""
+            "",
+        ]
+    ],
+    [
+        "p",
+        [],
+        [
+            "Deployed to Fly.io after Heroku killed the free plan: ",
+            "http://morning-breeze-4255.fly.dev",
         ]
     ],
     [
@@ -300,7 +308,7 @@ let post = base.Post(
         [
             "",
             "<pre class=\"triple-quote bash\">",
-            "$ curl https://peaceful-lowlands-45821.herokuapp.com/",
+            "$ curl http://morning-breeze-4255.fly.dev",
             "</pre>",
             "",
             ""

@@ -1,0 +1,119 @@
+let base = import("../base.gr")
+
+
+let firstParagraph = "A couple weeks ago Heroku announced the removal. I have plenty of projects running on free dynos.
+ I have taken some time to move my code to Fly.io. And also I've written a little tutorial of how to perform the migration."
+
+# Create new Post Object
+let post = base.Post(
+    "Migrate from Heroku to Fly.io",
+    firstParagraph,
+    "Miguel Liezun",
+    "heroku,fly,migration,tutorial,howto",
+    [
+		["h2", [], "How to migrate from Heroku to Fly.io"],
+		["p", [], firstParagraph],
+		["p", [], [
+			"I'll use one of my public repos as an example ",
+			["a", ["href", "https://github.com/mliezun/getmyip", "target", "_blank"], "https://github.com/mliezun/getmyip"],
+			". It's a simple service that returns the IP from which you're making the request. It's useful when you want to know",
+			" your public IP.",
+		]],
+		["p", [], [
+			"That project ^ was covered in a previous ",
+			["a", ["href", "https://mliezun.github.io/2020/12/17/grotsky-getmyip.html", "target", "_blank"], "blogpost"],
+			".",
+		]],
+		["h3", [], "Migration instructions"],
+		["p", [], [
+			"The first thing we need to do is to remove heroku from the remotes. ",
+			"Inside your project run:",
+		]],
+		["pre", ["class", "triple-quote bash"], "git remote remove heroku"],
+		["p", [], [
+			"If you have a heroku.yml file, delete it.",
+		]],
+		["pre", ["class", "triple-quote bash"], "rm -rf heroku.yml"],
+		["p", [], [
+			"Then, we're ready to start using fly. ",
+			"There are tutorials on the ",
+			["a", ["href", "https://fly.io/docs/languages-and-frameworks/dockerfile/", "target", "_blank"], "official fly.io docs"],
+			" for many frameworks and languages. We're going to be following the one for a Docker app,",
+			" since it's the most general case."
+		]],
+		["p", [], [
+			"First thing you need to do is create an account in ",
+			["a", ["href", "https://fly.io/", "target", "_blank"], "Fly.io"],
+			" if you don't have one yet."
+		]],
+		["p", [], [
+			"Once you created your account, install the flyctl command line tool.",
+			" After that, login by running the following command:",
+		]],
+		["pre", ["class", "triple-quote bash"], "flyctl auth login"],
+		["p", [], [
+			"After you've logged in to your account, you're ready to launch your application.",
+			" Execute the next command and follow the interactive setup."
+		]],
+		["pre", ["class", "triple-quote bash"],
+"$ flyctl launch
+Scanning source code
+Detected a Dockerfile app
+? App Name (leave blank to use an auto-generated name): 
+Automatically selected personal organization: Miguel Liezun
+? Select region: mia (Miami, Florida (US))
+Created app morning-breeze-4255 in organization personal
+Wrote config file fly.toml
+? Would you like to set up a Postgresql database now? No
+? Would you like to deploy now? Yes
+Deploying morning-breeze-4255
+==> Validating app configuration
+--> Validating app configuration done
+Services
+TCP 80/443 -> 8080
+Remote builder fly-builder-green-pond-8004 ready
+==> Creating build context
+--> Creating build context done
+==> Building image with Docker
+--> docker host: 20.10.12 linux x86_64
+...
+"],
+		["p", [], [
+			"Make sure your app listens to port 8080, that's the default for fly apps.",
+			" You can change the port inside the file fly.toml if you want",
+			", just search for the internal port and change it. Remember to run launch again if you change the port."
+		]],
+		["pre", ["class", "triple-quote text"],
+"# fly.toml file generated for morning-breeze-4255 on 2022-09-21T21:50:20-03:00
+
+app = \"morning-breeze-4255\"
+kill_signal = \"SIGINT\"
+kill_timeout = 5
+processes = []
+
+[env]
+
+[experimental]
+  allowed_public_ports = []
+  auto_rollback = true
+
+[[services]]
+  http_checks = []
+  internal_port = 8080 # <- Put your desired port here
+# ...
+"],
+		["p", [], [
+			"Finally, you only need to open the app and enjoy!",
+			"You migrated your first app from heroku to fly :-)"
+		]],
+		["pre", ["class", "triple-quote text"],
+"$ flyctl open
+opening http://morning-breeze-4255.fly.dev ...
+"],
+		["p", [], [
+			"Access the newly deployed 'getmyip' service using the link ",
+			["a", ["href", "http://morning-breeze-4255.fly.dev", "target", "_blank"], "http://morning-breeze-4255.fly.dev"],
+			".",
+		]],
+	]
+)
