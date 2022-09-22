@@ -36,6 +36,14 @@ h6 {
     color: #000000;
 }
 
+h4 {
+    font-size: 1.07em;
+}
+
+h5 {
+    font-size: 0.95em;
+}
+
 
 a:link {
     color: #000000;
