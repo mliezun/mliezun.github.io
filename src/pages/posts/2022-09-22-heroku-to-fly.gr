@@ -55,7 +55,7 @@ let post = base.Post(
 			"After you've logged in to your account, you're ready to launch your application.",
 			" Execute the next command and follow the interactive setup."
 		]],
-		["pre", ["class", "triple-quote bash"],
+		["pre", ["class", "triple-quote text"],
 "$ flyctl launch
 Scanning source code
 Detected a Dockerfile app
@@ -83,7 +83,7 @@ Remote builder fly-builder-green-pond-8004 ready
 			" You can change the port inside the file fly.toml if you want",
 			", just search for the internal port and change it. Remember to run launch again if you change the port."
 		]],
-		["pre", ["class", "triple-quote text"],
+		["pre", ["class", "triple-quote toml"],
 "# fly.toml file generated for morning-breeze-4255 on 2022-09-21T21:50:20-03:00
 
 app = \"morning-breeze-4255\"
