@@ -1,0 +1,116 @@
+let base = import("../base.gr")
+
+
+let firstParagraph = "Grotsky is a toy programming language that I made for fun. Today we're visinting the concept of Quines, 
+a.k.a. self replicating programs. It's said that any turing-complete language should be able to write a program that replicates
+ itself. And grotsky is no exception."
+
+# Create new Post Object
+let post = base.Post(
+    "How to write a program that can replicate itself",
+    firstParagraph,
+    "Miguel Liezun",
+    "replication,programming,grotsky,duplication,quine,turing-complete",
+    [
+		["h2", [], "How to write a program that can replicate itself"],
+		["p", [], firstParagraph],
+		["p", [], [
+			"Read more about grotsky in previous blogposts:",
+			["ul", [], [
+				["li", [], [
+					["a", ["href", "https://mliezun.github.io/2020/02/21/grotsky-part1.html"], "Grotsky Part 1: Syntax"]
+				]],
+				["li", [], [
+					["a", ["href", "https://mliezun.github.io/2020/03/15/grotsky-part2.html"], "Grotsky Part 2: Parsing expressions"]
+				]],
+				["li", [], [
+					["a", ["href", "https://mliezun.github.io/2020/04/01/grotsky-part3.html"], "Grotsky Part 3: Interpreting"]
+				]],
+				["li", [], [
+					["a", ["href", "https://mliezun.github.io/2020/12/17/grotsky-getmyip.html"], "Grotsky Part 4: Writing a service to get your public IP"]
+				]],
+				["li", [], [
+					["a", ["href", "https://mliezun.github.io/2021/10/04/new-blog-engine.html"], "I created a programming language and this blog is powered by it"]
+				]],
+			]]
+		]],
+		["p", [], [
+			"Quines are very easy to write. The language that you're using needs to be able to do a couple things:",
+			["ul", [], [
+				["li", [], "Write to a file or stdout (print)"],
+				["li", [], "Support for string arrays"],
+				["li", [], "Translate numbers/integers to character ascii representation"],
+				["li", [], "Concatenate strings"],
+				["li", [], "Loop through arrays from arbitrary indexes"],
+			]]
+		]],
+		["h3", [], "Super simple quine: less than 30 lines of code"],
+		["p", [], [
+			["pre", ["class", "triple-quote go"], [
+				"let tabChar = 9
+let quoteChar = 34
+let commaChar = 44
+let code = [
+	\"let tabChar = 9\",
+	\"let quoteChar = 34\",
+	\"let commaChar = 44\",
+	\"let code = [\",
+	\"]\",
+	\"for let i = 0; i < 4; i = i+1 {\",
+	\"	io.println(code[i])\",
+	\"}\",
+	\"for let i = 0; i < code.length; i = i+1 {\",
+	\"	io.println(strings.chr(tabChar) + strings.chr(quoteChar) + code[i] + strings.chr(quoteChar) + strings.chr(commaChar))\",
+	\"}\",
+	\"for let i = 4; i < code.length; i = i+1 {\",
+	\"	io.println(code[i])\",
+	\"}\",
+]
+for let i = 0; i < 4; i = i+1 {
+	io.println(code[i])
+}
+for let i = 0; i < code.length; i = i+1 {
+	io.println(strings.chr(tabChar) + strings.chr(quoteChar) + code[i] + strings.chr(quoteChar) + strings.chr(commaChar))
+}
+for let i = 4; i < code.length; i = i+1 {
+	io.println(code[i])
+}
+"
+			]],
+		]],
+		["p", [], [
+			"Now we can use grotksy cli to run the program and compare the output to the original source.",
+		]],
+		["p", [], [
+			"Save the original source to a file called ",
+			["span", ["class", "single-quote"], "quine.gr"],
+			" then run the following commands:",
+			["pre", ["class", "triple-quote bash"], [
+"
+$ grotsky quine.gr > quine_copy.gr
+$ cmp quine.gr quine_copy.gr
+$ echo $?
+0
+"
+			]]
+		]],
+		["p", [], [
+			"If you see a 0 as the final output that means the files are the same.",
+			" Otherwise if you saw an error message or a different output, that means something has gone wrong."
+		]],
+		["p", [], [
+			"How exciting is this?!!",
+			"We've just written a program that gives itself as an output. ",
+			"That sounds impossible when you hear it for the first time. But it was actually pretty easy!"
+		]],
+		["p", [], [
+			"Source code available here: ",
+			["a", ["href", "https://gist.github.com/mliezun/c750ba701608850bd86d646a3ebf700f"], "https://gist.github.com/mliezun/c750ba701608850bd86d646a3ebf700f"],
+			".",
+		]],
+		["p", [], [
+			"Grotsky cli binary available here:",
+			["a", ["href", "https://github.com/mliezun/grotsky/releases/tag/v0.0.6"], "https://github.com/mliezun/grotsky/releases/tag/v0.0.6"]
+		]]
+	]
+)
