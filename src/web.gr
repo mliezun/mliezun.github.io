@@ -65,7 +65,7 @@ class Web {
             # Fonts & CSS
             ["link", ["rel", "preconnect", "href", "https://fonts.googleapis.com"]],
             ["link", ["rel", "preconnect", "href", "https://fonts.gstatic.com", "crossorigin"]],
-            ["link", ["rel", "stylesheet", "href", "https://fonts.googleapis.com/css2?family=Ibarra+Real+Nova&family=PT+Mono&display=swap"]],
+            ["link", ["rel", "stylesheet", "href", "https://fonts.googleapis.com/css2?family=Ibarra+Real+Nova:wght@400;700&display=swap"]],
             ["link", ["rel", "stylesheet", "href", "/assets/css/style.css"], []],
         ]]
     }
