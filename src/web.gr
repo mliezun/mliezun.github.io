@@ -36,7 +36,7 @@ class Web {
             ["link", ["rel", "canonical", "href", "https://mliezun.github.io" + url], []],
             ["meta", ["property", "og:url", "content", "https://mliezun.github.io" + url], []],
             ["meta", ["property", "og:site_name", "content", "mliezun.github.io"], []],
-            ["meta", ["property", "og:image", "content", "https://mliezun.github.io/assets/images/nyc.jpeg"], []],
+            ["meta", ["property", "og:image", "content", "https://mliezun.github.io/assets/images/nyc.jpg"], []],
             ["link", ["rel", "icon", "type", "image/x-icon", "href", "/assets/images/favicon.ico"], []],
 
             this.addIf(
@@ -46,7 +46,7 @@ class Web {
             ["meta", ["name", "twitter:card", "content", "summary"], []],
             ["meta", ["property", "twitter:title", "content", metadata["title"]], []],
             ["meta", ["name", "twitter:creator", "content", "@migueliezun"]],
-            ["meta", ["name", "twitter:image", "content", "https://mliezun.github.io/assets/images/nyc.jpeg"]],
+            ["meta", ["name", "twitter:image", "content", "https://mliezun.github.io/assets/images/nyc.jpg"]],
 
             this.addIf(
                 metadata["content_type"] != "article",
