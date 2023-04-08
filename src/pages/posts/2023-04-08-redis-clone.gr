@@ -1,0 +1,426 @@
+let base = import("../base.gr")
+
+
+let firstParagraph = "In this post we're going to write a basic Redis clone in Go that implements the most simple commands: GET, 
+SET, DEL and QUIT. At the end you'll know how to parse a byte stream from a live TCP connection, and hopefully have a working
+implementation of Redis."
+
+fn optionFormat(op, time, desc) {
+	return "<span class=\"single-quote\">" + op + "</span>" + " <em>" + time + "</em> -- " + desc
+}
+
+# Create new Post Object
+let post = base.Post(
+    "Writing a Redis clone in Go from scratch",
+    firstParagraph,
+    "Miguel Liezun",
+    "programming,go,redis,diy,golang",
+    [
+		["h2", [], "Writing a Redis clone in Go from scratch"],
+		["p", [], firstParagraph],
+		["p", [], "What's intersting about this project is that it's <em>production ready</em> (not really).
+		It's being used in production in an old Web app that I made for a client in 2017. 
+		<strong>It has been running for a few months now without issues</strong>."],
+		["p", [], "I mantain that app to this day and I charge like 50 bucks a month for it. I do it because
+		Im friends with the person that uses the app."],
+		["p", [], "Long story short, the app's backend is written in PHP and uses Redis for caching, only GET, SET and DEL commands. 
+		I asked my friend if I could replace it with my custom version and said yes, so I decided to give it a go."],
+
+		["p", [], "If you're looking for C/C++ implementation, go check out this <a href='https://build-your-own.org/redis/' target='_blank'>book</a>."],
+		
+		["h3", [], "What we'll be building"],
+		["p", [], [
+			"If you go to the ",
+			["a", ["href", "https://redis.io/commands/"], "command list"],
+			" on redis webpage you'll see that there are 463 commands to this day (maybe more if you're in the future).",
+		]],
+		["p", [], [
+			"That's a crazy number. Here, we're only implementing 4 commands: <span class=\"single-quote language-undefined\">GET, SET, DEL, QUIT</span>,",
+			" <em>the other 459 commands are left as an exercise to the reader</em>.",
+		]],
+		["h4", [], "GET"],
+		["p", [], [
+			["pre", ["class", "triple-quote redis language-css"], [
+				"GET key"
+			]],
+		]],
+		["p", [], [
+			"Returns the value referenced by <span class=\"single-quote language-undefined\">key</span>.",
+			" If the key does not exist then <span class=\"single-quote language-undefined\">nil</span> is returned."
+		]],
+		["h4", [], "SET"],
+		["p", [], [
+			"SET command gains more features on newer versions of Redis. We're going to implement one that has all features",
+			" that were realeased up until version 6.0.0.",
+		]],
+		["p", [], [
+			["pre", ["class", "triple-quote redis"], [
+				"SET key value [NX | XX] [EX seconds | PX milliseconds]"
+			]],
+		]],
+		["p", [], [
+			"Stores <span class=\"single-quote language-undefined\">value</span> as a string that is referenced by <span class=\"single-quote language-undefined\">key</span>.",
+			" Overwrites any data that was previously referenced by the key."
+		]],
+		["h5", [], "Options"],
+		["p", [], [
+			["ul", [], [
+				["li", [], optionFormat("EX", "seconds", "Set the specified expire time, in seconds.")],
+				["li", [], optionFormat("PX", "milliseconds", "Set the specified expire time, in seconds.")],
+				["li", [], optionFormat("NX", "", "Only set the key if it does not already exist.")],
+				["li", [], optionFormat("XX", "", "Only set the key if it already exist.")],
+			]]
+		]],
+		["h4", [], "DEL"],
+		["p", [], [
+			["pre", ["class", "triple-quote redis"], [
+				"DEL key [key ...]"
+			]],
+		]],
+		["p", [], [
+			"Takes 'any' amount of keys as input and removes all of them from storage. If a key doesn't exist it is ignored.",
+			" Returns the amount of keys that were deleted."
+		]],
+		["h4", [], "QUIT"],
+		["p", [], [
+			["pre", ["class", "triple-quote redis"], [
+				"QUIT"
+			]],
+		]],
+		["p", [], [
+			"When receiving this command the server closes the connection. It's useful for interactive sessions.",
+			" For production environments the client should close the connection without sending any commands."
+		]],
+		["h4", [], "Examples"],
+		["p", [], [
+			"Let's start an interactive session of redis to test some commands.",
+			" We can install redis-server with docker and run it locally.",
+			" Then we can use telnet to connect directly via TCP.",
+			" Open a terminal and execute the following instructions:"
+		]],
+		["p", [], [
+			["pre", ["class", "triple-quote bash"], [
+"$ docker run -d --name redis-server -p 6379:6379 redis:alpine
+
+$ telnet 127.0.0.1 6379
+Trying 127.0.0.1...
+Connected to localhost.
+Escape character is '^]'."
+			]],
+		]],
+		["p", [], [
+			"At this point the prompt should be waiting for you to write something. We're gonna test a couple of commands.",
+			" In the code boxes below the first line is the command, following lines are the response."
+		]],
+		["p", [], [
+			["pre", ["class", "triple-quote redis language-css"], [
+"GET a
+$-1"
+			]],
+			"^ That weird $-1 is the special <em>nil</em> value. Which means there's nothing stored here."
+		]],
+		["p", [], [
+			["pre", ["class", "triple-quote redis language-css"], [
+"set a 1
++OK"
+			]],
+			"^ First thing to notice here is that we can use lowercase version of SET.",
+			" Also, when the command is successful returns +OK."
+		]],
+		["p", [], [
+			["pre", ["class", "triple-quote redis language-css"], [
+"set b 2
++OK"
+			]],
+		]],
+		["p", [], [
+			["pre", ["class", "triple-quote redis language-css"], [
+"SET c 3
++OK"
+			]],
+			"^ Just storing a couple more values.",
+		]],
+		["p", [], [
+			["pre", ["class", "triple-quote redis language-css"], [
+"GET a
+$1
+1"
+			]],
+			"^ Here the response is returned in two lines. First line is the length of the string. Second line",
+			" is the actual string."
+		]],
+		["p", [], [
+			["pre", ["class", "triple-quote redis language-css"], [
+"get b
+$1
+2"
+			]],
+			"^ We can also use lowercase version of GET, I bet commands are case-insensitive."
+		]],
+		["p", [], [
+			["pre", ["class", "triple-quote redis language-css"], [
+"get C
+$-1"
+			]],
+			"^ Testing with uppercase C gives a <em>nil</em>. Keys seem to be case-sensitive, probably values too.",
+			" That makes sense."
+		]],
+		["p", [], [
+			["pre", ["class", "triple-quote redis language-css"], [
+"del a b c
+:3"
+			]],
+			"^ Deleting everything returns the amount of keys deleted. Integers are indicated by ':'."
+		]],
+		["p", [], [
+			["pre", ["class", "triple-quote redis language-css"], [
+"quit
++OK
+Connection closed by foreign host."
+			]],
+			"^ When we send QUIT, the server closes the connection and we're back to our terminal session."
+		]],
+		["p", [], [
+			"With those tests we have enough information to start building. We learned a little bit about the",
+			" redis protocol and what the responses look like."
+		]],
+		["h4", [], "Sending commands"],
+		["p", [], [
+			"Until now we've been using the <em>inline</em> version of redis command.",
+			" There's another kind that follows the ",
+			["a", ["href", "https://redis.io/docs/reference/protocol-spec/", "target", "_blank"], "RESP (Redis serialization protocol)."],
+		]],
+		["p", [], [
+			"The RESP protocol is quite similar to what we've seen in the examples above.",
+			"The most important addition is <em>arrays</em>. Let's see a Client<>Server interaction",
+			" using arrays."
+		]],
+		["p", [], [
+			["strong", [], "Client"],
+			["pre", ["class", "triple-quote redis language-css"], [
+"*2
+$3
+GET
+$1
+a"
+			]],
+			["strong", [], "Server"],
+			["pre", ["class", "triple-quote redis language-css"], [
+"$-1"
+			]],
+			"The server response looks the same as in the inline version.",
+			" But what the client sends looks very different:",
+		]],
+		["ul", [], [
+			["li", [], [
+				"In this case, the first thing the client sends is '*' followed by the number of elements in the array,",
+				" so '*2' indicates that there are 2 elements in the array and they would be found in the following lines."
+			]],
+			["li", [], [
+				"After that we have '$3' which means we're expecting the first element to be a string of length 3.",
+				" Next line is the actual string, in our case is the command 'GET'."
+			]],
+			["li", [], [
+				"The next value is also a string and is the key passed to the command.",
+			]],
+		]],
+		["p", [], [
+			"That's almost everything we need to start building a client. There's one last thing: <strong>error responses</strong>.",
+			["pre", ["class", "triple-quote redis language-css"], [
+"-Example error message
+-ERR unknown command 'foo'
+-WRONGTYPE Operation against a key holding the wrong kind of value"
+			]],
+			"A response that starts with a '-' is considered an error. The first word is the error type.",
+			" We'll only gonna be using 'ERR' as a generic response."
+		]],
+		["p", [], [
+			"RESP protocol is what client libraries use to communicate with Redis.",
+			" With all that in our toolbox we're ready to start building."
+		]],
+		["h3", [], "Receiving connections"],
+		["p", [], [
+			"A crucial part of our serve is the ability to receive client's information.",
+			" The way that this is done is that the server listens on a TCP port and waits",
+			" for client connections. Let's start building the basic structure."
+		]],
+		["p", [], [
+			"Create a new go module, open main.go and create a main function as follows."
+		]],
+		["pre", ["class", "triple-quote go language-go"], [
+"package main
+
+import (
+	\"bufio\"
+	\"fmt\"
+	\"log\"
+	\"net\"
+	\"strconv\"
+	\"strings\"
+	\"sync\"
+	\"time\"
+)
+
+var cache sync.Map
+
+func main() {
+	listener, err := net.Listen(\"tcp\", \":6380\")
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println(\"Listening on tcp://0.0.0.0:6380\")
+
+	for {
+		conn, err := listener.Accept()
+		log.Println(\"New connection\", conn)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		go startSession(conn)
+	}
+}"
+		]],
+		["p", [], [
+			"After declaring the package and imports, we create a global sync.Map that would be our cache.",
+			" That's where keys are gonna be stored and retrieved."
+		]],
+		["p", [], [
+			"On the main function we start listening on port 6380. After that we have an infinite loop that accepts",
+			" new connections and spawns a goroutine to handle the session."
+		]],
+		["h4", [], "Session handling"],
+		["pre", ["class", "triple-quote go language-go"], [
+"// startSession handles the client's session. Parses and executes commands and writes
+// responses back to the client.
+func startSession(conn net.Conn) {
+	defer func() {
+		log.Println(\"Closing connection\", conn)
+		conn.Close()
+	}()
+	defer func() {
+		if err := recover(); err != nil {
+			log.Println(\"Recovering from error\", err)
+		}
+	}()
+	p := NewParser(conn)
+	for {
+		cmd, err := p.command()
+		if err != nil {
+			log.Println(\"Error\", err)
+			break
+		}
+		if !cmd.handle() {
+			break
+		}
+	}
+}"
+		]],
+		["p", [], [
+			"It's super important that we close the connection when things are done. That's why we set a deferred function,",
+			" to close the connection when the session finishes."
+		]],
+		["p", [], [
+			"After that we handle any panics using recover. We do this mainly because at some point we might be reading from",
+			" a connection that was closed by the client. And we don't want the entire server to die in case of an error."
+		]],
+		["p", [], [
+			"Then we create a new parser and start trying to parse commands from the live connection. If we encounter an error",
+			" or cmd.handle() returns false (signaling end of session) we break the loop and the session finishes."
+		]],
+		["h3", [], "Parsing commands"],
+		["p", [], [
+			"Basic parser structure:",
+		]],
+		["pre", ["class", "triple-quote go language-go"], [
+"// Parser contains the logic to read from a raw tcp connection and parse commands.
+type Parser struct {
+	conn net.Conn
+	r    *bufio.Reader
+	// Used for inline parsing
+	line []byte
+	pos  int
+}
+
+// NewParser returns a new Parser that reads from the given connection.
+func NewParser(conn net.Conn) *Parser {
+	return &Parser{
+		conn: conn,
+		r:    bufio.NewReader(conn),
+		line: make([]byte, 0),
+		pos:  0,
+	}
+}"
+		]],
+		["p", [], [
+			"This is pretty straight-forward. We store a reference to the connection, a reader and then some",
+			" attributes that will help us with parsing."
+		]],
+		["p", [], [
+			"The NewParser() function should be used as a contructor for Parser objects."
+		]],
+		["p", [], [
+			"We need some helper functions that will make parsing easier:"
+		]],
+		["pre", ["class", "triple-quote go language-go"], [
+"func (p *Parser) current() byte {
+	if p.atEnd() {
+		return '\\r'
+	}
+	return p.line[p.pos]
+}
+
+func (p *Parser) advance() {
+	p.pos++
+}
+
+func (p *Parser) atEnd() bool {
+	return p.pos >= len(p.line)
+}"
+		]],
+		["p", [], [
+			"Also quite simple.",
+			["ul", [], [
+				["li", [], "current(): Returns the character being pointed at by pos inside the line."],
+				["li", [], "advance(): Point to the next character in the line."],
+				["li", [], "atEnd(): Indicates if we're at the end of the line."],
+			]]
+		]],
+		["h4", [], "Parsing strings"],
+		["p", [], [
+			"In Redis we can send commands like so:"
+		]],
+		["pre", ["class", "triple-quote redis language-css"], [
+			"SET longkey \"very long \\\"text\\\"",
+			"that continues on the next line\""
+		]],
+		["p", [], [
+			"This means we need a way to handle \\, \", \\r and \\n chars inside a string."
+		]],
+		["p", [], [
+			"For that we need a special parsing function that will handle strings:",
+		]],
+		["pre", ["class", "triple-quote go language-go"], [
+"// consumeString reads a string argument from the current line.
+func (p *Parser) consumeString() (s []byte) {
+	for p.current() != '\"' {
+		cur := p.current()
+		p.advance()
+		next := p.current()
+		if cur == '\\\\' && next == '\"' {
+			s = append(s, '\"')
+			p.advance()
+		} else {
+			s = append(s, cur)
+		}
+	}
+	p.advance()
+	return
+}"
+		]],
+		["p", [], [
+			"From the functions that we've declared up to this point it's pretty clear that our parser",
+			" will be reading the input line by line. And the consuming the line one char at a time."
+		]],
+	]
+)
