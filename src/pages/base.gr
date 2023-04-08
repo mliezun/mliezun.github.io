@@ -6,7 +6,7 @@ class ReadingTimeWidget {
             ["script", [], [
                 "window.onload = function () {
                     var text = document.getElementsByTagName('article')[0].innerText;
-                    var wpm = 255;
+                    var wpm = 220;
                     var words = text.trim().split(/\\s+/).length;
                     var time = Math.ceil(words/wpm);
                     document.getElementById('reading-time').innerText = (time || 1) + (time > 1 ? ' minutes' : ' minute');

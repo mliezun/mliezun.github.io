@@ -308,6 +308,7 @@ func startSession(conn net.Conn) {
 		cmd, err := p.command()
 		if err != nil {
 			log.Println(\"Error\", err)
+			conn.Write([]uint8(\"-ERR \" + err.Error() + \"\\r\\n\"))
 			break
 		}
 		if !cmd.handle() {
@@ -326,7 +327,10 @@ func startSession(conn net.Conn) {
 		]],
 		["p", [], [
 			"Then we create a new parser and start trying to parse commands from the live connection. If we encounter an error",
-			" or cmd.handle() returns false (signaling end of session) we break the loop and the session finishes."
+			" we write the error message back to the client and we finish the session."
+		]],
+		["p", [], [
+			"When cmd.handle() returns false (signaling end of session) we break the loop and the session finishes."
 		]],
 		["h3", [], "Parsing commands"],
 		["p", [], [
@@ -376,6 +380,17 @@ func (p *Parser) advance() {
 
 func (p *Parser) atEnd() bool {
 	return p.pos >= len(p.line)
+}
+
+func (p *Parser) readLine() ([]byte, error) {
+	line, err := p.r.ReadBytes('\\r')
+	if err != nil {
+		return nil, err
+	}
+	if _, err := p.r.ReadByte(); err != nil {
+		return nil, err
+	}
+	return line[:len(line)-1], nil
 }"
 		]],
 		["p", [], [
@@ -384,6 +399,7 @@ func (p *Parser) atEnd() bool {
 				["li", [], "current(): Returns the character being pointed at by pos inside the line."],
 				["li", [], "advance(): Point to the next character in the line."],
 				["li", [], "atEnd(): Indicates if we're at the end of the line."],
+				["li", [], "readLine(): Reads the input from the connection up to the carriage return char. Skips the '\\n' char."],
 			]]
 		]],
 		["h4", [], "Parsing strings"],
@@ -391,19 +407,18 @@ func (p *Parser) atEnd() bool {
 			"In Redis we can send commands like so:"
 		]],
 		["pre", ["class", "triple-quote redis language-css"], [
-			"SET longkey \"very long \\\"text\\\"",
-			"that continues on the next line\""
+			"SET text \"quoted \\\"text\\\" here\"",
 		]],
 		["p", [], [
-			"This means we need a way to handle \\, \", \\r and \\n chars inside a string."
+			"This means we need a way to handle \\, \" chars inside a string."
 		]],
 		["p", [], [
 			"For that we need a special parsing function that will handle strings:",
 		]],
 		["pre", ["class", "triple-quote go language-go"], [
 "// consumeString reads a string argument from the current line.
-func (p *Parser) consumeString() (s []byte) {
-	for p.current() != '\"' {
+func (p *Parser) consumeString() (s []byte, err error) {
+	for p.current() != '\"' && !p.atEnd() {
 		cur := p.current()
 		p.advance()
 		next := p.current()
@@ -414,6 +429,9 @@ func (p *Parser) consumeString() (s []byte) {
 			s = append(s, cur)
 		}
 	}
+	if p.current() != '\"' {
+		return nil, errors.New(\"unbalanced quotes in request\")
+	}
 	p.advance()
 	return
 }"
@@ -421,6 +439,354 @@ func (p *Parser) consumeString() (s []byte) {
 		["p", [], [
 			"From the functions that we've declared up to this point it's pretty clear that our parser",
 			" will be reading the input line by line. And the consuming the line one char at a time."
+		]],
+		["p", [], [
+			"The way consumeString() works is quite tricky.",
+			" It assumes that the initial \" has been consumed before entering the function.",
+			" And it consumes all characters in the current line up until it reaches the closing quotes character",
+			" or the end of the line."
+		]],
+		["p", [], [
+			"Inside the loop we can see that we're reading the current character and advancing the pointer, then",
+			" the next character.",
+			" When the user is sending an escaped quote inside the string we detect that by checking the current",
+			" and the next characters.",
+			" In this special case we end up advancing the pointer twice. Because we consumed two: chars the backslash",
+			" and the quote. But we added only one char to the output: \"."
+		]],
+		["p", [], [
+			"We append all other characters to the output buffer."
+		]],
+		["p", [], [
+			"When the loop finishes, if we're not pointing to the end quote char, that means that the user",
+			" sent an invalid command and we return an error."
+		]],
+		["p", [], [
+			"Otherwise we advance the pointer and return normally."
+		]],
+		["h4", [], "Parsing commands"],
+		["pre", ["class", "triple-quote go language-go"], [
+"// command parses and returns a Command.
+func (p *Parser) command() (Command, error) {
+	b, err := p.r.ReadByte()
+	if err != nil {
+		return Command{}, err
+	}
+	if b == '*' {
+		log.Println(\"resp array\")
+		return p.respArray()
+	} else {
+		line, err := p.readLine()
+		if err != nil {
+			return Command{}, err
+		}
+		p.pos = 0
+		p.line = append([]byte{}, b)
+		p.line = append(p.line, line...)
+		return p.inline()
+	}
+}"
+		]],
+		["p", [], [
+			"We read the first character sent by the client. If it's an asterisk we handle it",
+			" using the RESP protocol. Otherwise we assume that it's an inline command."
+		]],
+		["p", [], [
+			"Let's start by parsing the inline commands first."
+		]],
+		["pre", ["class", "triple-quote go language-go"], [
+"// Command implements the behavior of the commands.
+type Command struct {
+	args []string
+	conn net.Conn
+}
+
+// inline parses an inline message and returns a Command. Returns an error when there's
+// a problem reading from the connection or parsing the command.
+func (p *Parser) inline() (Command, error) {
+	// skip initial whitespace if any
+	for p.current() == ' ' {
+		p.advance()
+	}
+	cmd := Command{conn: p.conn}
+	for !p.atEnd() {
+		arg, err := p.consumeArg()
+		if err != nil {
+			return cmd, err
+		}
+		if arg != \"\" {
+			cmd.args = append(cmd.args, arg)
+		}
+	}
+	return cmd, nil
+}"
+		]],
+		["p", [], [
+			"This is also quite easy to skim through. We skip any leading whitespace",
+			" in case the user sent something like '     GET a'.",
+		]],
+		["p", [], [
+			"We create a new Command object with a reference to the session connection.",
+		]],
+		["p", [], [
+			"While we're not at the end of the line we consume args and append them to the",
+			" arg list of the command object if they are not empty."
+		]],
+		["p", [], [
+			["strong", [], "Consuming arguments"]
+		]],
+		["pre", ["class", "triple-quote go language-go"], [
+"// consumeArg reads an argument from the current line.
+func (p *Parser) consumeArg() (s string, err error) {
+	for p.current() == ' ' {
+		p.advance()
+	}
+	if p.current() == '\"' {
+		p.advance()
+		buf, err := p.consumeString()
+		return string(buf), err
+	}
+	for !p.atEnd() && p.current() != ' ' && p.current() != '\\r' {
+		s += string(p.current())
+		p.advance()
+	}
+	return
+}"
+		]],
+		["p", [], [
+			"Same as before we consume any leading whitespace."
+		]],
+		["p", [], [
+			"If we find a quoted string we call our function from before: consumeString()."
+		]],
+		["p", [], [
+			"We append all characters to the output until we reach a carriage return \\r, a whitespace",
+			" or the end of the line."
+		]],
+		["h4", [], "Parsing RESP protocol"],
+		["pre", ["class", "triple-quote go language-go"], [
+"// respArray parses a RESP array and returns a Command. Returns an error when there's
+// a problem reading from the connection.
+func (p *Parser) respArray() (Command, error) {
+	cmd := Command{}
+	elementsStr, err := p.readLine()
+	if err != nil {
+		return cmd, err
+	}
+	elements, _ := strconv.Atoi(string(elementsStr))
+	log.Println(\"Elements\", elements)
+	for i := 0; i < elements; i++ {
+		tp, err := p.r.ReadByte()
+		if err != nil {
+			return cmd, err
+		}
+		switch tp {
+		case ':':
+			arg, err := p.readLine()
+			if err != nil {
+				return cmd, err
+			}
+			cmd.args = append(cmd.args, string(arg))
+		case '$':
+			arg, err := p.readLine()
+			if err != nil {
+				return cmd, err
+			}
+			length, _ := strconv.Atoi(string(arg))
+			text := make([]byte, 0)
+			for i := 0; len(text) <= length; i++ {
+				line, err := p.readLine()
+				if err != nil {
+					return cmd, err
+				}
+				text = append(text, line...)
+			}
+			cmd.args = append(cmd.args, string(text[:length]))
+		case '*':
+			next, err := p.respArray()
+			if err != nil {
+				return cmd, err
+			}
+			cmd.args = append(cmd.args, next.args...)
+		}
+	}
+	return cmd, nil
+}"
+		]],
+		["p", [], [
+			"As we know, the leading asterisk has already been consumed from the connection input.",
+			" So, at this point, the first line contains the number of elements to be consumed.",
+			" We read that into an integer."
+		]],
+		["p", [], [
+			"We create a for loop with that will parse all the elements in the array.",
+			" We consume the first character to detect which kind of element we need to consume: int, string or array."
+		]],
+		["p", [], [
+			"The int case is quite simple, we just read until the rest of the line.",
+		]],
+		["p", [], [
+			"The array case is also quite simple, we call respArray() and append the args of the result,",
+			" to the current command object."
+		]],
+		["p", [], [
+			"For strings we read the first line and get the size of the string.",
+			" We keep reading lines until we have read the indicated amount of characters."
+		]],
+		["h3", [], "Handling commands"],
+		["p", [], [
+			"This is the 'fun' part of the implementation. Were our server becomes alive.",
+			" In this section we'll implement the actual functionality of the commands."
+		]],
+		["p", [], [
+			"Let's start with the cmd.handle() function that we saw in handleSession()."
+		]],
+		["pre", ["class", "triple-quote go language-go"], [
+"// handle Executes the command and writes the response. Returns false when the connection should be closed.
+func (cmd Command) handle() bool {
+	switch strings.ToUpper(cmd.args[0]) {
+	case \"GET\":
+		return cmd.get()
+	case \"SET\":
+		return cmd.set()
+	case \"DEL\":
+		return cmd.del()
+	case \"QUIT\":
+		return cmd.quit()
+	default:
+		log.Println(\"Command not supported\", cmd.args[0])
+		cmd.conn.Write([]uint8(\"-ERR unknown command '\" + cmd.args[0] + \"'\\r\\n\"))
+	}
+	return true
+}"
+		]],
+		["p", [], [
+			"Needs no further explanation. Let's implement the easiest command: QUIT."
+		]],
+		["pre", ["class", "triple-quote go language-go"], [
+"// quit Used in interactive/inline mode, instructs the server to terminate the connection.
+func (cmd *Command) quit() bool {
+	if len(cmd.args) != 1 {
+		cmd.conn.Write([]uint8(\"-ERR wrong number of arguments for '\" + cmd.args[0] + \"' command\\r\\n\"))
+		return true
+	}
+	log.Println(\"Handle QUIT\")
+	cmd.conn.Write([]uint8(\"+OK\\r\\n\"))
+	return false
+}"
+		]],
+		["p", [], [
+			"If any extra arguments were passed to QUIT, it returns an error."
+		]],
+		["p", [], [
+			"Otherwise write +OK to the client and return false.",
+			" Which if you remember handleSession() is the value to indicate that the session has finished.",
+			" After that the connection will be automatically closed."
+		]],
+		["p", [], [
+			"The next easieast command is DEL",
+		]],
+		["pre", ["class", "triple-quote go language-go"], [
+"// del Deletes a key from the cache.
+func (cmd *Command) del() bool {
+	count := 0
+	for _, k := range cmd.args[1:] {
+		if _, ok := cache.LoadAndDelete(k); ok {
+			count++
+		}
+	}
+	cmd.conn.Write([]uint8(fmt.Sprintf(\":%d\\r\\n\", count)))
+	return true
+}"
+		]],
+		["p", [], [
+			"Iterates through all the keys passed, deletes the ones that exists and",
+			" writes back to the client the amount of keys deleted."
+		]],
+		["p", [], [
+			"Returns true, which means the connection is kept alive."
+		]],
+		["h4", [], "Handling GET"],
+		["pre", ["class", "triple-quote go language-go"], [
+"// get Fetches a key from the cache if exists.
+func (cmd Command) get() bool {
+	if len(cmd.args) != 2 {
+		cmd.conn.Write([]uint8(\"-ERR wrong number of arguments for '\" + cmd.args[0] + \"' command\\r\\n\"))
+		return true
+	}
+	log.Println(\"Handle GET\")
+	val, _ := cache.Load(cmd.args[1])
+	if val != nil {
+		res, _ := val.(string)
+		if strings.HasPrefix(res, \"\\\"\") {
+			res, _ = strconv.Unquote(res)
+		}
+		log.Println(\"Response length\", len(res))
+		cmd.conn.Write([]uint8(fmt.Sprintf(\"$%d\\r\\n\", len(res))))
+		cmd.conn.Write(append([]uint8(res), []uint8(\"\\r\\n\")...))
+	} else {
+		cmd.conn.Write([]uint8(\"$-1\\r\\n\"))
+	}
+	return true
+}"
+		]],
+		["p", [], [
+			"As before, we validate that the correct number of arguments were passed to the command."
+		]],
+		["p", [], [
+			"We load the value from the global variable cache."
+		]],
+		["p", [], [
+			"If the value is nil we write back to the client the special $-1."
+		]],
+		["p", [], [
+			"When we have a value we cast it as string and unquote it in case it's quoted.",
+			" Then we write the length as the first line of the response and the string as the",
+			" second line of the response."
+		]],
+		["h4", [], "Handling SET"],
+		["p", [], [
+			"This is the most complicated command that we'll implement."
+		]],
+		["pre", ["class", "triple-quote go language-go"], [
+"// set Stores a key and value on the cache. Optionally sets expiration on the key.
+func (cmd Command) set() bool {
+	if len(cmd.args) < 3 || len(cmd.args) > 6 {
+		cmd.conn.Write([]uint8(\"-ERR wrong number of arguments for '\" + cmd.args[0] + \"' command\\r\\n\"))
+		return true
+	}
+	log.Println(\"Handle SET\")
+	log.Println(\"Value length\", len(cmd.args[2]))
+	if len(cmd.args) > 3 {
+		pos := 3
+		option := strings.ToUpper(cmd.args[pos])
+		switch option {
+		case \"NX\":
+			log.Println(\"Handle NX\")
+			if _, ok := cache.Load(cmd.args[1]); ok {
+				cmd.conn.Write([]uint8(\"$-1\\r\\n\"))
+				return true
+			}
+			pos++
+		case \"XX\":
+			log.Println(\"Handle XX\")
+			if _, ok := cache.Load(cmd.args[1]); !ok {
+				cmd.conn.Write([]uint8(\"$-1\\r\\n\"))
+				return true
+			}
+			pos++
+		}
+		if len(cmd.args) > pos {
+			if err := cmd.setExpiration(pos); err != nil {
+				cmd.conn.Write([]uint8(\"-ERR \" + err.Error() + \"\\r\\n\"))
+				return true
+			}
+		}
+	}
+	cache.Store(cmd.args[1], cmd.args[2])
+	cmd.conn.Write([]uint8(\"+OK\\r\\n\"))
+	return true
+}"
 		]],
 	]
 )
