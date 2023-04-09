@@ -788,5 +788,90 @@ func (cmd Command) set() bool {
 	return true
 }"
 		]],
+		["p", [], [
+			"As always, first thing we do is validate the number of arguments.",
+			" But in this case, SET is more tricky than the others."
+		]],
+		["p", [], [
+			"When more than 3 arguments are passed we check for the NX or XX flags and handle them accordingly.",
+		]],
+		["ul", [], [
+			["li", [], optionFormat("NX", "", "Only set the key if it does not already exist.")],
+			["li", [], optionFormat("XX", "", "Only set the key if it already exist.")],
+		]],
+		["p", [], [
+			"Then we parse the expiration flags if any. We'll see how that's done in a second.",
+		]],
+		["p", [], [
+			"After handling all those special cases we finally store the key and value in the cache,",
+			" write the +OK response and return true to keep the connection alive."
+		]],
+		["p", [], [
+			["strong", [], "Expiration"]
+		]],
+		["pre", ["class", "triple-quote go language-go"], [
+"// setExpiration Handles expiration when passed as part of the 'set' command.
+func (cmd Command) setExpiration(pos int) error {
+	option := strings.ToUpper(cmd.args[pos])
+	value, _ := strconv.Atoi(cmd.args[pos+1])
+	var duration time.Duration
+	switch option {
+	case \"EX\":
+		duration = time.Second * time.Duration(value)
+	case \"PX\":
+		duration = time.Millisecond * time.Duration(value)
+	default:
+		return fmt.Errorf(\"expiration option is not valid\")
+	}
+	go func() {
+		log.Printf(\"Handling '%s', sleeping for %v\\n\", option, duration)
+		time.Sleep(duration)
+		cache.Delete(cmd.args[1])
+	}()
+	return nil
+}"
+		]],
+		["p", [], [
+			"We read the option and the expiration value, then we compute the duration",
+			" for each case and we spawn a new goroutine that sleeps for that amount of",
+			" time and the deletes the key from the cache."
+		]],
+		["p", [], [
+			"This is not the most efficient way to do it, but it's simple and it works for us."
+		]],
+		["h2", [], "Working server"],
+		["p", [], [
+			"At this point we have an usable implementation of Redis.",
+		]],
+		["p", [], [
+			"Let's start the server the server and test it.",
+		]],
+		["pre", ["class", "triple-quote redis language-css"], [
+			"$ go run main.go",
+			"2023/04/08 21:09:40 Listening on tcp://0.0.0.0:6380",
+		]],
+		["p", [], [
+			"On a different terminal connect to the server.",
+		]],
+		["pre", ["class", "triple-quote redis language-css"], [
+			"$ telnet 127.0.0.1 6380",
+			"GET a",
+			"$-1",
+			"set a \"test \\\"quotes\\\" are working\"",
+			"+OK",
+			"get a",
+			"$25",
+			"test \"quotes\" are working",
+		]],
+		["p", [], [
+			"It's alive!! Go have fun."
+		]],
+		["p", [], [
+			"If you'd like to access the source code of this project there's a public gist",
+			" containing all of the code displayed here."
+		]],
+		["p", [], [
+			["a", ["href", "https://gist.github.com/mliezun/f55baa4cd024c1cdf3030e49c5f87875", "target", "_blank"], "Link to source code"]
+		]]
 	]
 )
