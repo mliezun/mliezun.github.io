@@ -16,6 +16,36 @@ class ReadingTimeWidget {
     }
 }
 
+class CommentSectionWidget {
+    render () {
+        return ["div", [], [
+            ["div", ["id", "graphcomment"], []],
+            ["script", [], [
+                "var __semio__params = {
+                    graphcommentId: 'Mliezun-Blog', // make sure the id is yours
+                
+                    behaviour: {
+                        uid: window.location.pathname, // uniq identifer for the comments thread on your page (ex: your page id)
+                    },
+                }
+                
+                /* - - - DON'T EDIT BELOW THIS LINE - - - */
+            
+                function __semio__onload() {
+                    __semio__gc_graphlogin(__semio__params);
+                }
+            
+            
+                (function() {
+                    var gc = document.createElement('script'); gc.type = 'text/javascript'; gc.async = true;
+                    gc.onload = __semio__onload; gc.defer = true; gc.src = 'https://integration.graphcomment.com/gc_graphlogin.js?' + Date.now();
+                    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(gc);
+                })();"
+            ]]
+        ]]
+    }
+}
+
 class Post {
     init(title, excerpt, author, tags, content) {
         this.title = title
@@ -25,6 +55,7 @@ class Post {
         this.content = [
             ReadingTimeWidget().render(),
             ["article", [], content],
+            CommentSectionWidget().render(),
         ]
     }
 }
