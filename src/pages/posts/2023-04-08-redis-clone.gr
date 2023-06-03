@@ -31,7 +31,7 @@ let post = base.Post(
 		["h3", [], "What we'll be building"],
 		["p", [], [
 			"If you go to the ",
-			["a", ["href", "https://redis.io/commands/"], "command list"],
+			["a", ["href", "https://redis.io/commands/", "target", "_blank"], "command list"],
 			" on redis webpage you'll see that there are 463 commands to this day (maybe more if you're in the future).",
 		]],
 		["p", [], [
