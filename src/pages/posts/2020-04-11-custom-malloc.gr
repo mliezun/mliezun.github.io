@@ -49,9 +49,13 @@ let post = base.Post(
             "",
             "> You are allowed to call malloc() once, at the beginning of the interpreters execution, to allocate a single big block of memory which your reallocate() function has access to. It parcels out blobs of memory from that single region, your own personal heap. Its your job to define how it does that.",
             "",
-            ""
+            "",
         ]
     ],
+    ["p", [], [
+        "Check out this ",
+        ["a", ["href", "https://xeiaso.net/blog/anything-message-queue", "target", "_blank"], "comparison of malloc() to S3."],
+    ]],
     [
         "h3",
         [],
