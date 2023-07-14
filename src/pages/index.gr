@@ -6,9 +6,9 @@ fn aboutme() {
         ["p", [], "Hi folks!"],
         ["p", [], "I'm Miguel. Here I write mainly about programming and side projects."],
         ["p", [], [
-            "Currently running a side project called ",
-            ["a", ["href", "https://cloud-outdated.com", "target", "_blank"], "Cloud Outdated"],
-            " with a friend."
+            "I've written my own programming language called Grotsky, and im ",
+            ["a", ["href", "https://mliezun.github.io/2023/06/02/rewrite-grotsky-rust.html", "target", "_blank"], "rewriting it in Rust"],
+            "."
         ]]
     ]]
 }
