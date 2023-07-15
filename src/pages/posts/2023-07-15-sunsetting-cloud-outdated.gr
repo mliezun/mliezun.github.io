@@ -1,0 +1,98 @@
+let base = import("../base.gr")
+
+
+# Create new Post Object
+let post = base.Post(
+    "The end of a side project",
+    "Cloud Outdated was a personalized digest of updates for cloud services. It's sad to see it go,
+	but it was a fun project to work on, learn some new stuff and collab with a friend.
+	There are some takeaways from this that I'd like to share.",
+    "Miguel Liezun",
+    "python,webscraping,project,aws",
+    [
+		["h2", [], "The end of a side project"],
+		["p", [], [
+			"Cloud Outdated was a personalized digest of updates for cloud services. It's sad to see it go,
+			but it was a fun project to work on, learn some new stuff and collab with a friend.
+			There are some takeaways from this that I'd like to share.",
+		]],
+		["h3", [], "Building something simple is hard"],
+		["p", [], [
+			"From the beginning we were trying to build a simple product to get notified when new versions
+			of Python were supported in AWS Lambda. But we figured we could support other things too, like
+			all Lambda runtimes, then also GCP and Azure, then more services of each one.",
+			"Features started piling up pretty quickly."
+		]],
+		["p", [], [
+			"When building stuff I try to think of every edge case, even the most improbable ones, and make
+			the software infalible. Of course, it's impossible to succeed at that, software will always be fallible.",
+			"And this premature optimization ends up making the project more complex than it should be."
+		]],
+		["p", [], [
+			"We planned to work on this for a 1 or 2 months, and it ended up taking 6+ months :-)."
+		]],
+		["p", [], [
+			"My takeaway here is: start building the dumbest thing possible that gets the job done, then adjust as needed."
+		]],
+		["h3", [], "Getting users is hard"],
+		["p", [], [
+			"We're killing this project because nobody uses it.",
+			"And nobody except us has used it since it was launched more than a year ago.",
+			"Some people subscribed but never even opened an email.",
+		]],
+		["p", [], [
+			"We tried to advertise in our social media and post it in different builders communities.",
+			"But that will get you so far if you're not an influencer that has the right audience.",
+		]],
+		["p", [], [
+			"We thought that we'll get more traffic from organic search or people telling their friends about this.",
+			"But in the end I think nobody really needed something like this that much.",
+		]],
+		["p", [], [
+			"My takeaway here is: building something that people really want and getting the product to the hands
+			of the people that want it is very complicated. You should think very deeply about what problem your
+			product is solving and how your users will find you."
+		]],
+		["h3", [], "The money"],
+		["p", [], [
+			"This has costed like $200 (US dollars) since inception. For two people that's like $100 each.",
+			"It's not a lot, but for something that has no users that's quite expensive."
+		]],
+		["p", [], [
+			"We used Lambdas to serve this project.",
+			"I feel like we were promised that the cloud and serverless are cheap and easy solution.",
+			"But in my opinion it doesn't seem to be the case.",
+			"It's definitely not easier nor cheaper than having a PHP website in this case.",
+			"Im sure there are other cases in which it makes more sense."
+		]],
+		["p", [], [
+			"This is also a reason of why we're killing the project.",
+			"Our service started failing because after a deploy dependencies were updated and the code
+			was to big to fit on a Lambda.",
+			"It would have been a lot of work to fix it, so we decided to kill it and save some bucks every month."
+		]],
+		["p", [], [
+			"For personal projects which you're not sure how they're going to scale,
+			I think serverless is probably not the right choice.",
+			"Serverless make sense if you're going to have huge burst of traffics and don't want
+			to handle a lot of infra."
+		]],
+		["p", [], [
+			"My takeaway here is: beware of the cloud, if you're just building a small side project
+			or don't have huge infra needs stick with the cheapest providers (Hostinger, PythonAnywhere, Hetzner)
+			and avoid cloud providers (GCP, Azure, AWS).",
+		]],
+		["h3", [], "Final thougths"],
+		["p", [], [
+			"If I haven't made this clear enough, building a successful product is *hard*.",
+			"There are many things to think about when starting, and the technical stuff hopefully
+			is the easy part.",
+			"I think this are the 3 most important lessons that I've learned working on this:",
+			["ul", [], [
+				["li", [], "Build the dumbest thing that does the job, improve as needed."],
+				["li", [], "Think deeply about what problem are you solving and how you're going to deliver the solution to the people that need it."],
+				["li", [], "Beware of the cloud, if possible use a cheaper provider. It will save you money and headaches."],
+			]],
+		]],
+	]
+)
