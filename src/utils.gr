@@ -10,8 +10,8 @@ fn find(list, obj) {
 fn filter(list, predicate) {
     let out = []
     for el in list {
-        if predicate(e) {
-            out = out + [e]
+        if predicate(el) {
+            out = out + [el]
         }
     }
     return out

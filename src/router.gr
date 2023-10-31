@@ -56,6 +56,7 @@ fn get_routes() {
             "tags": "software,tech,fun",
             "date": "",
             "excerpt": "Blog about programming and side projects",
+            "content_type": nil
         }
     }
     

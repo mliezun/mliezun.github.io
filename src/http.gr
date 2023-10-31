@@ -109,8 +109,14 @@ class Request {
         this.parseMethod()
         this.parseHeaders()
 
-        if this.headers["content-length"] {
-            let size = strings.asNumber(this.headers["content-length"])
+        let content_length = "0"
+        try {
+            content_length = this.headers["content-length"]
+        } catch e {
+        }
+
+        if content_length != "0" and content_length != nil {
+            let size = strings.asNumber(content_length)
             this.readBody(size)
         }
     }
@@ -221,7 +227,7 @@ class Server {
         this.socket = net.listenTcp(host + ":" + port)
     }
 
-    handleErrors(rq) {
+    handleErrors(rq, conn) {
         let rw = ResponseWriter(rq)
         if rq.readError or rq.badRequest {
             rw.setStatus("400")
@@ -252,7 +258,7 @@ class Server {
     handleConn(conn) {
         let rq = Request(conn)
         rq.parse()
-        if not this.handleErrors(rq) {
+        if not this.handleErrors(rq, conn) {
             let rw = ResponseWriter(rq)
             this.handler(rq, rw)
             conn.write(this.buildResponse(rq, rw))
@@ -266,12 +272,13 @@ class Server {
                 conn = this.socket.accept()
             } catch err {
                 io.println("Error accepting new connection", err)
-                continue
+                return
             }
             try {
                 this.handleConn(conn)
             } catch err {
                 io.println("Error handling connection", err)
+                return
             }
             try {
                 conn.close()
