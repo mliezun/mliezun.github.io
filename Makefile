@@ -1,4 +1,7 @@
 serve:
+	@ docker compose up
+
+serve_local:
 	@ ./scripts/start_dev_server.sh
 
 generate:
@@ -8,4 +11,3 @@ generate:
 
 clean:
 	@ rm -rf ./.grotsky
-

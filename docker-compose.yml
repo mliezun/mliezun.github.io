@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+  blog:
+    image: ubuntu:latest
+    platform: linux/amd64
+    volumes:
+      - .:/app
+    expose:
+      - "8802"
+    ports:
+      - "8802:8802"
+    entrypoint: /app/scripts/docker_entrypoint.sh
+    working_dir: /app
