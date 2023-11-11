@@ -46,6 +46,10 @@ fn get_routes() {
         posts = posts + [r]
     })
 
+    posts = u.sortBy(posts, fn (pa, pb) {
+        return strings.compare(pa["url"], pb["url"])
+    })
+
     # Build index using posts dicts
     routes["/"] = {
         "class": "html",

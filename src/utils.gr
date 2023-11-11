@@ -66,3 +66,25 @@ fn endsWith(str, substr) {
     }
     return str[str.length-1] == substr[substr.length-1] and endsWith(str[:str.length-1], substr[:substr.length-1])
 }
+
+fn copy(list) {
+    let out = []
+    for el in list {
+        out = out + [el]
+    }
+    return out
+}
+
+fn sortBy(list, compareFn) {
+    let out = copy(list)
+    for let i = 0; i < out.length-1; i = i + 1 {
+        for let j = i+1; j < out.length; j = j + 1 {
+            if compareFn(out[i], out[j]) > 0 {
+                let tmp = out[i]
+                out[i] = out[j]
+                out[j] = tmp
+            }
+        }
+    }
+    return out
+}
