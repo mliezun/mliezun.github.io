@@ -1,0 +1,233 @@
+let base = import("../base.gr")
+
+
+let firstParagraph = "Im rewriting Grotsky (my toy programming language) in Rust, the previous implementation
+was done in Go. The goal of the rewrite is to improve my Rust skills, and to improve the performance of Grotsky,
+by at least 10x. This has been a serious of posts, this one is the latest one. Hopefully the best and most insightful
+of them all."
+
+let tittle = "I rewrote my toy language interpreter in Rust"
+
+let code_loop_program = "let start = io.clock()
+fn test() {
+    let a = 1
+    while a < 10000000 {
+        a = a + 1
+    }
+}
+test()
+io.println(io.clock() - start)"
+
+let code_loop_program_result = "trial #1
+build/grotsky   best 5.135s  3.877x time of best
+build/grotsky-rs   best 1.325s  287.6800% faster
+trial #2
+build/grotsky   best 5.052s  3.814x time of best
+build/grotsky-rs   best 1.325s  281.4182% faster
+trial #3
+build/grotsky   best 5.035s  3.802x time of best
+build/grotsky-rs   best 1.325s  280.1663% faster
+trial #4
+build/grotsky   best 5.003s  3.777x time of best
+build/grotsky-rs   best 1.325s  277.6831% faster
+trial #5
+build/grotsky   best 5.003s  3.777x time of best
+build/grotsky-rs   best 1.325s  277.6831% faster"
+
+
+let code_fib_program = "let start = io.clock()
+fn fib(n) {
+	if n <= 2 {
+		return n
+	}
+	return fib(n-2) + fib(n-1)
+}
+fib(28)
+io.println(io.clock() - start)"
+
+let code_fib_program_result = "trial #1
+build/grotsky   best 0.8409s  294.5155% faster
+build/grotsky-rs   best 3.317s  3.945x time of best
+trial #2
+build/grotsky   best 0.8168s  271.3829% faster
+build/grotsky-rs   best 3.033s  3.714x time of best
+trial #3
+build/grotsky   best 0.797s  245.6835% faster
+build/grotsky-rs   best 2.755s  3.457x time of best
+trial #4
+build/grotsky   best 0.7784s  249.9964% faster
+build/grotsky-rs   best 2.724s  3.5x time of best
+trial #5
+build/grotsky   best 0.7784s  249.9964% faster
+build/grotsky-rs   best 2.724s  3.5x time of best"
+
+let code_compile_program = "grotsky compile example.gr  # Compile file
+grotsky example.grc  # Run compiled file"
+
+let code_value_model_program = "pub struct MutValue&lt;T&gt;(pub Rc&lt;RefCell&lt;T&gt;&gt;);
+
+impl&lt;T&gt; MutValue&lt;T&gt; {
+    pub fn new(obj: T) -&gt; Self {
+        MutValue::&lt;T&gt;(Rc::new(RefCell::new(obj)))
+    }
+}
+
+pub enum Value {
+    Class(MutValue&lt;ClassValue&gt;),
+    Object(MutValue&lt;ObjectValue&gt;),
+    Dict(MutValue&lt;DictValue&gt;),
+    List(MutValue&lt;ListValue&gt;),
+    Fn(MutValue&lt;FnValue&gt;),
+    Native(NativeValue),
+    Number(NumberValue),
+    String(StringValue),
+    Bytes(BytesValue),
+    Bool(BoolValue),
+    Slice(SliceValue),
+    Nil,
+}
+
+pub enum Record {
+    Val(Value),
+    Ref(MutValue&lt;Value&gt;),
+}
+
+pub struct VM {
+    pub activation_records: Vec&lt;Record&gt;,
+}"
+
+# Create new Post Object
+let post = base.Post(
+    tittle,
+    firstParagraph,
+    "Miguel Liezun",
+    "rust,rewrite,programming,go,golang",
+    [
+		["h2", [], tittle],
+		["p", [], firstParagraph],
+		["p", [], [
+			"In previous posts:",
+			["ul", [], [
+				["li", [], [
+					["a", ["href", "https://mliezun.github.io/2023/06/02/rewrite-grotsky-rust.html"], ["Rewrite my toy language interpreter in Rust"]],
+				]]
+			]],
+			["ul", [], [
+				["li", [], [
+					["a", ["href", "https://mliezun.github.io/2023/09/23/grotsky-rust-part2.html"], ["Rewrite my toy language interpreter in Rust, an update"]],
+				]]
+			]],
+			" I've outlined a plan to migrate Grotsky to a Rust based platform.",
+		]],
+		["p", [], [
+			"
+			Originally, my plan was very ambitious and I thought I would be able to finish the transition
+			in like two months.
+			In reality it took five months :-)
+			"
+		]],
+		["h3", [], "Performance improvement"],
+		["p", [], [
+			"I was aiming at a 10x improvement. In reality is not that much.",
+			" I ran various benchmarks and get at most a 4x improvement.",
+			" Which is not great, but also not that bad given that I know very little",
+			" of how to do high performance Rust.",
+			" The interpreter is written in the most dumbest and easiest way I managed to do it."
+		]],
+		["p", [], [
+			"Let's look at some numbers for different programs."
+		]],
+		["h4", [], "Loop program"],
+		["p", [], [
+			["pre", ["class", "triple-quote js language-css"], [
+				code_loop_program
+			]],
+		]],
+		["p", [], [
+			"The result is:",
+			["pre", ["class", "triple-quote js language-css"], [
+				code_loop_program_result
+			]]
+		]],
+		["h4", [], "Recusive fibonacci"],
+		["p", [], [
+			["pre", ["class", "triple-quote js language-css"], [
+				code_fib_program
+			]],
+		]],
+		["p", [], [
+			"The result is:",
+			["pre", ["class", "triple-quote js language-css"], [
+				code_fib_program_result
+			]]
+		]],
+		["p", [], [
+			"In this case is like 3.5x slower. This is due to function calls.",
+			" Im not very well versed in Rust, so on each call im copying a lot of",
+			" data over and over. In the go implementation everything is just pointers",
+			" so there's less copying."
+		]],
+		["h3", [], "Compile to bytecode"],
+		["p", [], [
+			"With the Rust implementation, generating and compiling to bytecode was added.",
+			" Now it's possible to generate a bytecode file to later read it.",
+			" This is a way of distributing files without giving away source code and also ",
+			" a little bit more performant because you skip parsing and compilation phases."
+		]],
+		["p", [], [
+			"How it works:",
+			["pre", ["class", "triple-quote bash language-css"], [
+				code_compile_program
+			]],
+		]],
+		["h3", [], "Memory model"],
+		["p", [], [
+			"Grotsky is a reference-counted language. We're using Rust's Rc and RefCell to keep track of values."
+		]],
+		["p", [], [
+			["pre", ["class", "triple-quote rust language-rust"], [
+				code_value_model_program
+			]],
+		]],
+		["p", [], [
+			"Most of the simple values are just stored as-is: Native (builtin functions), Number, String,",
+			" Bytes, Bool, Slice and Nil.",
+		]],
+		["p", [], [
+			"For the other complex values we need to use 'pointers' which in this case are MutValue."
+		]],
+		["p", [], [
+			"Then the Grotsky VM uses Records which can be a plain Value or a reference to a Value.",
+			" The records are registers, each function has up to 255 registers.",
+			" The reference to values are used to store upvalues.",
+			" A register is turned into an upvalue when a variable is closed by another function.",
+		]],
+		["p", [], [
+			"This implementation ends up being very slow, but easy to manage. Because Rust stdlib",
+			" does all the work."
+		]],
+		["h3", [], "Using Rust in this blogpost"],
+		["p", [], [
+			"As you may know, this <a href='https://mliezun.github.io/2021/10/04/new-blog-engine.html' target='_blank'>blog is powered by grotsky</a>.",
+			" Im happy to say that I successfully migrated from grotsky to grostky-rs as the backend for the blog.",
+			" And what you're reading now is generated by the latest implementation of the language using Rust.",
+		]],
+		["p", [], [
+			"Even for local development the Rust version is used. Which means Im using a TCP server and an HTTP",
+			" implementation written in Grotsky.",
+		]],
+		["h3", [], "Closing remarks"],
+		["p", [], [
+			"This has been a great learning, Im happy to have finished because it required a lot of effort.",
+			" Im not gonna announce any new work on this interpreter but I would like to keep adding stuff.",
+			" Improving it further to make it more performant and more usable."
+		]],
+		["p", [], [
+			"In the end I encourage everyone to try it and also start their own project. Is always cool to see",
+			" what everyone else is doing.",
+		]],
+		["p", [], [
+			"Thanks for reading and please leave a comment."
+		]],
+	]
+)
