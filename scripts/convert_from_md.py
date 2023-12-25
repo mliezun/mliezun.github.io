@@ -46,7 +46,7 @@ def replaceQuotes(in_text: str):
     return in_text
 
 def generateMultilineString(in_text: str):
-    return in_text.split("\n")
+    return [t for t in in_text.split("\n") if t.strip()]
 
 def combineTransformations(transformations: List) -> Callable[[str], str]:
     def foo(text):
@@ -64,7 +64,7 @@ def unescapeMd(in_text: str) -> str:
         matches = p.search(in_text)
         start, end = matches.span(0)
         _, _, content, _, link = matches.groups()
-        in_text = instertReplacement(in_text, (start, end), f'<a href="{link}">{content}</a>')
+        in_text = instertReplacement(in_text, (start, end), f'<a target="_blank" href="{link}">{content}</a>')
 
     # Patch for javascript wasm post
     in_text = in_text.replace("\\quote", "`")
