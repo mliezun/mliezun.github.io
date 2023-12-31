@@ -530,6 +530,16 @@ let post = base.Post(
             "</pre>"
         ]
     ],
+    ["div", [], [
+        ["p", [], [
+            "Edit: ",
+            "As some people have pointed out in the <a href='https://news.ycombinator.com/item?id=38807477' target='_blank'>",
+            "HN discussion</a>, just multiplying the numbers together only works because the numbers are ",
+            "<a href='https://en.wikipedia.org/wiki/Coprime_integers' target='_blank'>coprimes</a>",
+            " and the correct solution is to use <a href='https://en.wikipedia.org/wiki/Least_common_multiple' target='_blank'>",
+            "LCM</a>."
+        ]]
+    ]],
     [
         "h2",
         [],
