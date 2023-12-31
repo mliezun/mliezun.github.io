@@ -44,7 +44,7 @@ let post = base.Post(
             ["p", [], [
                 "There is also some \"dummy\" modules:"
             ]],
-            "<li><strong>Broadcaster</strong>: has 1 input and N outputs. It replicates the input in all it's outputs.",
+            "<li><strong>Broadcaster</strong>: has 1 input and N outputs. It replicates the input in all its outputs.",
             "<li><strong>Button</strong>: when pressed sends a <em>low</em> pulse. The button is always connected as the broadcaster input. This is similar to a <a target=\"_blank\" href=\"https://instrumentationtools.com/basics-of-switches/\">normally closed switch</a>.",
             "<li><strong>Test module</strong>: module that receive and process inputs but has no output.",
             ["p", [], [
@@ -72,7 +72,7 @@ let post = base.Post(
             "&inv -> a",
             "</pre>",
             ["p", [], [
-                "There will always be just one Broadcaster module called \"broadcaster\" that has the Button connected as input. In this case it has module's \"a\", \"b\" and \"c\" connected to it's output."
+                "There will always be just one Broadcaster module called \"broadcaster\" that has the Button connected as input. In this case it has module's \"a\", \"b\" and \"c\" connected to its output."
             ]],
             ["p", [], [
                 "The arrow <span class=\"single-quote\">-></span> indicates what modules are connected to the output of the module to the left."
@@ -209,7 +209,7 @@ let post = base.Post(
             ["p", [], [
                 "In <span class=\"single-quote\">process_pulse()</span> we implement the behaviour:"
             ]],
-            "<li>If receives a <em>low</em> pulse, toggles the state and sends a pulse equals to the state to all it's outputs.",
+            "<li>If receives a <em>low</em> pulse, toggles the state and sends a pulse equals to the state to all its outputs.",
             "<li>Otherwise it doesn't do anything.",
             "<pre class=\"triple-quote python\">",
             "class Conjunction(Module):",
@@ -227,16 +227,16 @@ let post = base.Post(
             "        return self.propagate_pulse(1)",
             "</pre>",
             ["p", [], [
-                "The conjunction initializes it's memory as empty. See <span class=\"single-quote\">__init__()</span>."
+                "The conjunction initializes its memory as empty. See <span class=\"single-quote\">__init__()</span>."
             ]],
             ["p", [], [
                 "Each time a module is plugged in as an input it remembers it as OFF (<span class=\"single-quote\">0</span>). See <span class=\"single-quote\">remember_input()</span>."
             ]],
             ["p", [], [
-                "The way it processes pulses is by first recording the pulse for the input in it's memory. Then if all inputs are <span class=\"single-quote\">1</span>s it sends a <span class=\"single-quote\">0</span> pulse to all it's outputs."
+                "The way it processes pulses is by first recording the pulse for the input in its memory. Then if all inputs are <span class=\"single-quote\">1</span>s it sends a <span class=\"single-quote\">0</span> pulse to all its outputs."
             ]],
             ["p", [], [
-                "Otherwise it sends a <span class=\"single-quote\">1</span> pulse to all it's outputs."
+                "Otherwise it sends a <span class=\"single-quote\">1</span> pulse to all its outputs."
             ]],
             ["p", [], [
                 "At this point we have all our building blocks for solving this problem. We only need to parse the input and something that pushes the button and makes sure signals are propagated to the end."
@@ -275,7 +275,7 @@ let post = base.Post(
             "    return modules_by_name",
             "</pre>",
             ["p", [], [
-                "If we parse our example using that function we will receive a dictionary as it's output. Keys are module names and values are the objects representing the module."
+                "If we parse our example using that function we will receive a dictionary as its output. Keys are module names and values are the objects representing the module."
             ]],
             ["p", [], [
                 "If we parse the example we get something like this:"
@@ -396,7 +396,7 @@ let post = base.Post(
             "...",
             "</pre>",
             ["p", [], [
-                "That means <span class=\"single-quote\">rx</span> is a <span class=\"single-quote\">TestModule</span> (a dummy module that has nothing connected to it's output). And that has only one input: a Conjunction called <span class=\"single-quote\">lv</span>."
+                "That means <span class=\"single-quote\">rx</span> is a <span class=\"single-quote\">TestModule</span> (a dummy module that has nothing connected to its output). And that has only one input: a Conjunction called <span class=\"single-quote\">lv</span>."
             ]],
             "Ok, that feels like progress. Let's see what lv is connected to:",
             "<pre class=\"triple-quote \">",
@@ -408,7 +408,7 @@ let post = base.Post(
             "...",
             "</pre>",
             ["p", [], [
-                "Other 4 Conjunctions are connected as inputs of lv. That's interesting. Because <span class=\"single-quote\">lv</span> is a Conjuction it means that to send the <em>low</em> pulse required by <span class=\"single-quote\">rx</span> it should receive all <em>high</em> pulses from it's inputs."
+                "Other 4 Conjunctions are connected as inputs of lv. That's interesting. Because <span class=\"single-quote\">lv</span> is a Conjuction it means that to send the <em>low</em> pulse required by <span class=\"single-quote\">rx</span> it should receive all <em>high</em> pulses from its inputs."
             ]],
             ["p", [], [
                 "The solution from here is kind of intuitive at this point. If we figure out how many button pulses does it take for each of the input devices to send a 1 signal we can multiply them together and get the result."
