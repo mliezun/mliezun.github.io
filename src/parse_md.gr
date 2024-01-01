@@ -19,5 +19,9 @@ fn parseHeader(content) {
 		headers[attr] = val
 	}
 	headers["tags"] = u.map(u.split(headers["tags"], ","), u.trimspaces)
-	return headers
+	return [content[end+2:], headers]
+}
+
+fn parseBody(content) {
+
 }
