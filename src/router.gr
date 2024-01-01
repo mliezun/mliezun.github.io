@@ -47,19 +47,18 @@ fn get_routes() {
         posts = posts + [r]
     })
 
-    let mdPostList = io.listDir("src/pages/md")
-
-    u.each(u.map(mdPostList, fn (p) {
-        let name = p["name"]
-        let content = io.readFile("src/pages/md/" + name)
-        let parsed = md.parseHeader(content)
-        let body = md.parseBody(parsed[0])
-        let header = parsed[1]
-        return {
-            "body": body,
-            "header": header,
-        }
-    }), io.println)
+    # let mdPostList = io.listDir("src/pages/md")
+    # u.each(u.map(mdPostList, fn (p) {
+    #     let name = p["name"]
+    #     let content = io.readFile("src/pages/md/" + name)
+    #     let parsed = md.parseHeader(content)
+    #     let body = md.parseBody(parsed[0])
+    #     let header = parsed[1]
+    #     return {
+    #         "body": body,
+    #         "header": header,
+    #     }
+    # }), io.println)
 
     posts = u.sortBy(posts, fn (pa, pb) {
         return strings.compare(pa["url"], pb["url"])
