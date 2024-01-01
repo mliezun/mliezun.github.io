@@ -52,10 +52,12 @@ fn get_routes() {
     u.each(u.map(mdPostList, fn (p) {
         let name = p["name"]
         let content = io.readFile("src/pages/md/" + name)
-        let header = md.parseHeader(content)
-        io.println(header)
+        let parsed = md.parseHeader(content)
+        let body = md.parseBody(parsed[0])
+        let header = parsed[1]
         return {
-            "header": header
+            "body": body,
+            "header": header,
         }
     }), io.println)
 

@@ -23,5 +23,5 @@ fn parseHeader(content) {
 }
 
 fn parseBody(content) {
-
+	return content
 }
