@@ -88,3 +88,42 @@ fn sortBy(list, compareFn) {
     }
     return out
 }
+
+fn split(str, char) {
+    let out = []
+    let current = ""
+    for let c = 0; c < str.length; c = c + 1 {
+        if str[c] == char {
+            out = out + [current]
+            current = ""
+        } else {
+            current = current + str[c]
+        }
+    }
+    out = out + [current]
+    return out
+}
+
+fn splitlines(str) {
+    return split(str, "\n")
+}
+
+fn trimchar(str, char) {
+    if str.length == 0 {
+        return str
+    }
+    while char == str[0] {
+        str = str[1:]
+    }
+    if str.length == 0 {
+        return str
+    }
+    while char == str[str.length-1] {
+        str = str[:str.length-1]
+    }
+    return str
+}
+
+fn trimspaces(str) {
+    return trimchar(str, " ")
+}

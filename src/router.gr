@@ -1,5 +1,6 @@
 let u = import("./utils.gr")
 let static = import("./static.gr")
+let md = import("./parse_md.gr")
 
 fn get_routes() {
     # Store routes here
@@ -45,6 +46,18 @@ fn get_routes() {
         }
         posts = posts + [r]
     })
+
+    let mdPostList = io.listDir("src/pages/md")
+
+    u.each(u.map(mdPostList, fn (p) {
+        let name = p["name"]
+        let content = io.readFile("src/pages/md/" + name)
+        let header = md.parseHeader(content)
+        io.println(header)
+        return {
+            "header": header
+        }
+    }), io.println)
 
     posts = u.sortBy(posts, fn (pa, pb) {
         return strings.compare(pa["url"], pb["url"])
