@@ -138,3 +138,10 @@ fn join(list, char) {
     }
     return out
 }
+
+fn startswith(str, substr) {
+    if str.length < substr.length {
+        return false
+    }
+    return str[:substr.length] == substr
+}

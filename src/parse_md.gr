@@ -18,10 +18,45 @@ fn parseHeader(content) {
 		)
 		headers[attr] = val
 	}
-	headers["tags"] = u.map(u.split(headers["tags"], ","), u.trimspaces)
 	return [content[end+2:], headers]
 }
 
+fn parseHeading(line) {
+	if u.startswith(line, "######") {
+		return ["h6", [], [u.trimspaces(line[6:])]]
+	}
+	if u.startswith(line, "#####") {
+		return ["h5", [], [u.trimspaces(line[5:])]]
+	}
+	if u.startswith(line, "####") {
+		return ["h4", [], [u.trimspaces(line[4:])]]
+	}
+	if u.startswith(line, "###") {
+		return ["h3", [], [u.trimspaces(line[3:])]]
+	}
+	if u.startswith(line, "##") {
+		return ["h2", [], [u.trimspaces(line[2:])]]
+	}
+	if u.startswith(line, "#") {
+		return ["h1", [], [u.trimspaces(line[1:])]]
+	}
+	# Empty div
+	return ["div", [], [""]]
+}
+
+fn asParagraph(text) {
+	return ["p", [], [text]]
+}
+
 fn parseBody(content) {
-	return content
+	let out = []
+	for let i = 0; i < content.length; i = i + 1 {
+		let line = content[i]
+		if u.startswith(line, "#") {
+			out = out + [parseHeading(line)]
+		} elif u.trimspaces(line) {
+			out = out + [asParagraph(line)]
+		}
+	}
+	return out
 }
