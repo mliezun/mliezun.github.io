@@ -8,4 +8,15 @@ tags: advent-of-code, programming, solution, 2023, day-20
 
 # Hello
 
-Im here
+Im here.
+Also here.
+
+Second paragraph.
+
+### Code block check
+
+```python
+from functools import reduce
+
+reduce(lambda a, b: b**a%(2**20-1), range(1, 10))
+```

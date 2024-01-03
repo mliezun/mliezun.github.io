@@ -7,6 +7,15 @@ fn find(list, obj) {
     return -1
 }
 
+fn findBy(list, byFn) {
+    for let i = 0; i < list.length; i = i + 1 {
+        if byFn(list[i]) {
+            return i
+        }
+    }
+    return -1
+}
+
 fn filter(list, predicate) {
     let out = []
     for el in list {

@@ -44,18 +44,44 @@ fn parseHeading(line) {
 	return ["div", [], [""]]
 }
 
-fn asParagraph(text) {
-	return ["p", [], [text]]
+fn asParagraph(content) {
+	return ["p", [], [u.join(content, "\n")]]
+}
+
+fn processLink(line) {
+	# TODO: turn link into anchor
+	return line
+}
+
+fn parseCodeBlock(content) {
+	let lang = u.trimspaces(content[0][3:])
+	let code = u.join(content[1:content.length], "\n")
+	return ["pre", ["class", "triple-quote " + lang], [code]]
 }
 
 fn parseBody(content) {
 	let out = []
 	for let i = 0; i < content.length; i = i + 1 {
-		let line = content[i]
+		let line = processLink(content[i])
 		if u.startswith(line, "#") {
 			out = out + [parseHeading(line)]
-		} elif u.trimspaces(line) {
-			out = out + [asParagraph(line)]
+		} elif u.startswith(line, "```") {
+			let end = u.find(content[i+1:], "```")
+			out = out + [
+				parseCodeBlock(content[i:i+1+end])
+			]
+			i = i+1+end
+		} else {
+			let end = u.findBy(content[i:], fn (l) {
+				return u.trimspaces(l) == ""
+			})
+			if end == -1 {
+				end = content.length - i
+			}
+			out = out + [
+				asParagraph(content[i:i+end])
+			]
+			i = i+end
 		}
 	}
 	return out
