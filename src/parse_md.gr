@@ -64,6 +64,33 @@ fn processLink(line) {
 	return line[:start] + "<a target='_blank' href='" + target + "'>" + text + "</a>" + line[final+1:]
 }
 
+fn processImage(line) {
+	let start = u.findSubstr(line, "![")
+	if start == -1 {
+		return line
+	}
+	let end = u.find(line[start+2:], "]")
+	if end == -1 or start+2+end == line.length-1 or line[start+end+3] != "(" {
+		return line
+	}
+	end = start+2+end
+	let final = u.find(line[end+1:], ")")
+	if final == -1 {
+		return line
+	}
+	final = end+1+final
+	let text = line[start+2:end]
+	let target = u.split(line[end+2:final], " ")
+	let alt = ""
+	if target.length > 1 {
+		alt = u.join(target[1:], " ")
+		target = target[0]
+	} else {
+		target = target[0]
+	}
+	return line[:start] + "<img alt=" + alt + " src='" + target + "'>" + line[final+1:]
+}
+
 fn processBold(line) {
 	let start = u.findSubstr(line, "**")
 	if start == -1 {
@@ -108,6 +135,7 @@ fn processLine(line) {
 		processBold,
 		processItalic,
 		processInlineCode,
+		processImage,
 		processLink,
 	]
 	for t in transformations {
