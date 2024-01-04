@@ -49,8 +49,7 @@ fn get_routes() {
     })
 
     # List markdown files and append to post list
-    # let mdPostList = io.listDir("src/pages/md")
-    let mdPostList = []
+    let mdPostList = io.listDir("src/pages/md")
     u.each(u.map(mdPostList, fn (p) {
         let name = p["name"]
         let url = "/" + name[0:4] + "/" + name[5:7] + "/" + name[8:10] + "/" + name[11:name.length-3] + ".html"
@@ -75,7 +74,6 @@ fn get_routes() {
             }
         }
     }), fn (r) {
-        routes[r["url"]] = r["post"]
         let p = {
             "url": r["url"],
             "date": r["post"]["metadata"]["date"],
@@ -87,6 +85,8 @@ fn get_routes() {
                 r["post"]["content"],
             ),
         }
+        r["post"]["content"] = p["post_obj"].content
+        routes[r["url"]] = r["post"]
         posts = posts + [p]
     })
 
