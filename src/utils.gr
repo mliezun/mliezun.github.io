@@ -108,18 +108,7 @@ fn sortBy(list, compareFn) {
 }
 
 fn split(str, char) {
-    let out = []
-    let current = ""
-    for let c = 0; c < str.length; c = c + 1 {
-        if str[c] == char {
-            out = out + [current]
-            current = ""
-        } else {
-            current = current + str[c]
-        }
-    }
-    out = out + [current]
-    return out
+    return strings.split(str, char)
 }
 
 fn splitlines(str) {
