@@ -18,10 +18,179 @@ fn parseHeader(content) {
 		)
 		headers[attr] = val
 	}
-	headers["tags"] = u.map(u.split(headers["tags"], ","), u.trimspaces)
 	return [content[end+2:], headers]
 }
 
+fn parseHeading(line) {
+	if u.startswith(line, "######") {
+		return ["h6", [], [u.trimspaces(line[6:])]]
+	}
+	if u.startswith(line, "#####") {
+		return ["h5", [], [u.trimspaces(line[5:])]]
+	}
+	if u.startswith(line, "####") {
+		return ["h4", [], [u.trimspaces(line[4:])]]
+	}
+	if u.startswith(line, "###") {
+		return ["h3", [], [u.trimspaces(line[3:])]]
+	}
+	if u.startswith(line, "##") {
+		return ["h2", [], [u.trimspaces(line[2:])]]
+	}
+	if u.startswith(line, "#") {
+		return ["h1", [], [u.trimspaces(line[1:])]]
+	}
+	# Empty div
+	return ["div", [], [""]]
+}
+
+fn processLink(line) {
+	let start = u.find(line, "[")
+	if start == -1 {
+		return line
+	}
+	let end = u.find(line[start+1:], "]")
+	if end == -1 or start+1+end == line.length-1 or line[start+end+2] != "(" {
+		return line
+	}
+	end = start+1+end
+	let final = u.find(line[end+1:], ")")
+	if final == -1 {
+		return line
+	}
+	final = end+1+final
+	let text = line[start+1:end]
+	let target = line[end+2:final]
+	return line[:start] + "<a target='_blank' href='" + target + "'>" + text + "</a>" + line[final+1:]
+}
+
+fn processImage(line) {
+	let start = u.findSubstr(line, "![")
+	if start == -1 {
+		return line
+	}
+	let end = u.find(line[start+2:], "]")
+	if end == -1 or start+2+end == line.length-1 or line[start+end+3] != "(" {
+		return line
+	}
+	end = start+2+end
+	let final = u.find(line[end+1:], ")")
+	if final == -1 {
+		return line
+	}
+	final = end+1+final
+	let text = line[start+2:end]
+	let target = u.split(line[end+2:final], " ")
+	let alt = ""
+	if target.length > 1 {
+		alt = u.join(target[1:], " ")
+		target = target[0]
+	} else {
+		target = target[0]
+	}
+	return line[:start] + "<img alt=" + alt + " src='" + target + "'>" + line[final+1:]
+}
+
+fn processBold(line) {
+	let start = u.findSubstr(line, "**")
+	if start == -1 {
+		return line
+	}
+	let end = u.findSubstr(line[start+2:], "**")
+	if end == -1 {
+		return line
+	}
+	end = start+2+end
+	return line[:start] + "<strong>" + line[start+2:end] + "</strong>" + line[end+2:]
+}
+
+fn processItalic(line) {
+	let start = u.findSubstr(line, "*")
+	if start == -1 {
+		return line
+	}
+	let end = u.findSubstr(line[start+1:], "*")
+	if end == -1 {
+		return line
+	}
+	end = start+1+end
+	return line[:start] + "<em>" + line[start+1:end] + "</em>" + line[end+1:]
+}
+
+fn processInlineCode(line) {
+	let start = u.findSubstr(line, "`")
+	if start == -1 or start == line.length-1 or line[start+1] == "`" {
+		return line
+	}
+	let end = u.findSubstr(line[start+1:], "`")
+	if end == -1 {
+		return line
+	}
+	end = start+1+end
+	return line[:start] + "<span class='single-quote'>" + line[start+1:end] + "</span>" + line[end+1:]
+}
+
+fn processLine(line) {
+	let transformations = [
+		processBold,
+		processItalic,
+		processInlineCode,
+		processImage,
+		processLink,
+	]
+	for t in transformations {
+		line = t(line)
+	}
+	return line
+}
+
+fn asParagraph(content) {
+	return ["p", [], [u.join(u.map(content, processLine), "\n")]]
+}
+
+fn parseCodeBlock(content) {
+	let lang = u.trimspaces(content[0][3:])
+	let code = u.join(content[1:content.length], "\n")
+	return ["pre", ["class", "triple-quote " + lang], [code]]
+}
+
 fn parseBody(content) {
-	return content
+	let out = []
+	for let i = 0; i < content.length; i = i + 1 {
+		let line = processLine(content[i])
+		if u.startswith(line, "#") {
+			out = out + [parseHeading(line)]
+		} elif u.startswith(line, "```") {
+			let end = u.find(content[i+1:], "```")
+			out = out + [
+				parseCodeBlock(content[i:i+1+end])
+			]
+			i = i+1+end
+		} elif u.startswith(line, "- ") {
+			let end = i+1
+			while end < content.length and u.startswith(content[end], "- ") {
+				end = end + 1
+			}
+			out = out + [
+				["ul", [], u.map(content[i:end], fn (l) {
+					return ["li", [], [processLine(l[2:])]]
+				})]
+			]
+			# Grotsky Bug: assignment doesnt work unless
+			# there is an operation on the right
+			i = end+0
+		} else {
+			let end = u.findBy(content[i:], fn (l) {
+				return u.trimspaces(l) == ""
+			})
+			if end == -1 {
+				end = content.length - i
+			}
+			out = out + [
+				asParagraph(content[i:i+end])
+			]
+			i = i+end
+		}
+	}
+	return out
 }

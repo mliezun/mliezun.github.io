@@ -1,6 +1,7 @@
 let u = import("./utils.gr")
 let static = import("./static.gr")
 let md = import("./parse_md.gr")
+let pages = import("./pages/base.gr")
 
 fn get_routes() {
     # Store routes here
@@ -47,18 +48,47 @@ fn get_routes() {
         posts = posts + [r]
     })
 
+    # List markdown files and append to post list
     # let mdPostList = io.listDir("src/pages/md")
-    # u.each(u.map(mdPostList, fn (p) {
-    #     let name = p["name"]
-    #     let content = io.readFile("src/pages/md/" + name)
-    #     let parsed = md.parseHeader(content)
-    #     let body = md.parseBody(parsed[0])
-    #     let header = parsed[1]
-    #     return {
-    #         "body": body,
-    #         "header": header,
-    #     }
-    # }), io.println)
+    let mdPostList = []
+    u.each(u.map(mdPostList, fn (p) {
+        let name = p["name"]
+        let url = "/" + name[0:4] + "/" + name[5:7] + "/" + name[8:10] + "/" + name[11:name.length-3] + ".html"
+        let date = p["name"][:10]
+        let content = io.readFile("src/pages/md/" + name)
+        let parsed = md.parseHeader(content)
+        let body = md.parseBody(parsed[0])
+        let header = parsed[1]
+        return {
+            "url": url,
+            "post": {
+                "class": "html",
+                "content": body,
+                "metadata": {
+                    "date": date,
+                    "excerpt": header["excerpt"],
+                    "title": header["title"],
+                    "author": header["author"],
+                    "tags": header["tags"],
+                    "content_type": "article",
+                }
+            }
+        }
+    }), fn (r) {
+        routes[r["url"]] = r["post"]
+        let p = {
+            "url": r["url"],
+            "date": r["post"]["metadata"]["date"],
+            "post_obj": pages.Post(
+                r["post"]["metadata"]["title"],
+                r["post"]["metadata"]["excerpt"],
+                r["post"]["metadata"]["author"],
+                r["post"]["metadata"]["tags"],
+                r["post"]["content"],
+            ),
+        }
+        posts = posts + [p]
+    })
 
     posts = u.sortBy(posts, fn (pa, pb) {
         return strings.compare(pa["url"], pb["url"])

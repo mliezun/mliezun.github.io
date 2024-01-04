@@ -7,6 +7,24 @@ fn find(list, obj) {
     return -1
 }
 
+fn findBy(list, byFn) {
+    for let i = 0; i < list.length; i = i + 1 {
+        if byFn(list[i]) {
+            return i
+        }
+    }
+    return -1
+}
+
+fn findSubstr(str, substr) {
+    for let i = 0; i < str.length - substr.length + 1; i = i + 1 {
+        if str[i:i+substr.length] == substr {
+            return i
+        }
+    }
+    return -1    
+}
+
 fn filter(list, predicate) {
     let out = []
     for el in list {
@@ -90,18 +108,7 @@ fn sortBy(list, compareFn) {
 }
 
 fn split(str, char) {
-    let out = []
-    let current = ""
-    for let c = 0; c < str.length; c = c + 1 {
-        if str[c] == char {
-            out = out + [current]
-            current = ""
-        } else {
-            current = current + str[c]
-        }
-    }
-    out = out + [current]
-    return out
+    return strings.split(str, char)
 }
 
 fn splitlines(str) {
@@ -137,4 +144,11 @@ fn join(list, char) {
         }
     }
     return out
+}
+
+fn startswith(str, substr) {
+    if str.length < substr.length {
+        return false
+    }
+    return str[:substr.length] == substr
 }
