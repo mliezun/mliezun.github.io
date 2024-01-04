@@ -90,10 +90,24 @@ fn processItalic(line) {
 	return line[:start] + "<em>" + line[start+1:end] + "</em>" + line[end+1:]
 }
 
+fn processInlineCode(line) {
+	let start = u.findSubstr(line, "`")
+	if start == -1 or start == line.length-1 or line[start+1] == "`" {
+		return line
+	}
+	let end = u.findSubstr(line[start+1:], "`")
+	if end == -1 {
+		return line
+	}
+	end = start+1+end
+	return line[:start] + "<span class='single-quote'>" + line[start+1:end] + "</span>" + line[end+1:]
+}
+
 fn processLine(line) {
 	let transformations = [
 		processBold,
 		processItalic,
+		processInlineCode,
 		processLink,
 	]
 	for t in transformations {
