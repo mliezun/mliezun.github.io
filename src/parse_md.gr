@@ -77,9 +77,23 @@ fn processBold(line) {
 	return line[:start] + "<strong>" + line[start+2:end] + "</strong>" + line[end+2:]
 }
 
+fn processItalic(line) {
+	let start = u.findSubstr(line, "*")
+	if start == -1 {
+		return line
+	}
+	let end = u.findSubstr(line[start+1:], "*")
+	if end == -1 {
+		return line
+	}
+	end = start+1+end
+	return line[:start] + "<em>" + line[start+1:end] + "</em>" + line[end+1:]
+}
+
 fn processLine(line) {
 	let transformations = [
 		processBold,
+		processItalic,
 		processLink,
 	]
 	for t in transformations {
