@@ -64,8 +64,28 @@ fn processLink(line) {
 	return line[:start] + "<a target='_blank' href='" + target + "'>" + text + "</a>" + line[final+1:]
 }
 
+fn processBold(line) {
+	let start = u.findSubstr(line, "**")
+	if start == -1 {
+		return line
+	}
+	let end = u.findSubstr(line[start+2:], "**")
+	if end == -1 {
+		return line
+	}
+	end = start+2+end
+	return line[:start] + "<strong>" + line[start+2:end] + "</strong>" + line[end+2:]
+}
+
 fn processLine(line) {
-	return processLink(line)
+	let transformations = [
+		processBold,
+		processLink,
+	]
+	for t in transformations {
+		line = t(line)
+	}
+	return line
 }
 
 fn asParagraph(content) {
