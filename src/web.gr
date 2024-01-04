@@ -87,15 +87,15 @@ class Web {
                     ]]
                 ]],
                 ["div", ["class", "footer-socials"], [
-                    ["a", ["target", "_blank", "href", "https://www.linkedin.com/in/miguel-liezun-8697a9168/"], [
-                        ["img", ["alt", "LinkedIn", "src", "/assets/images/socials/linkedin.png", "width", "20", "height", "20"], []]
-                    ]],
                     ["a", ["target", "_blank", "href", "https://github.com/mliezun"], [
                         ["img", ["alt", "Github", "src", "/assets/images/socials/github.png", "width", "20", "height", "20"], []]
                     ]],
-                    ["a", ["target", "_blank", "href", "https://twitter.com/migueliezun"], [
-                        ["img", ["alt", "Twitter", "src", "/assets/images/socials/twitter.png", "width", "20", "height", "20"], []]
-                    ]]
+                    ["a", ["target", "_blank", "href", "https://x.com/migueliezun"], [
+                        ["img", ["alt", "X (Twitter)", "src", "/assets/images/socials/x.ico", "width", "20", "height", "20", "style", "border-radius: 5px"], []]
+                    ]],
+                    ["a", ["target", "_blank", "href", "https://www.linkedin.com/in/miguel-liezun-8697a9168/"], [
+                        ["img", ["alt", "LinkedIn", "src", "/assets/images/socials/linkedin.png", "width", "20", "height", "20"], []]
+                    ]],
                 ]]
             ]]
         ]]

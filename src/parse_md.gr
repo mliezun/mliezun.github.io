@@ -44,13 +44,32 @@ fn parseHeading(line) {
 	return ["div", [], [""]]
 }
 
-fn asParagraph(content) {
-	return ["p", [], [u.join(content, "\n")]]
+fn processLink(line) {
+	let start = u.find(line, "[")
+	if start == -1 {
+		return line
+	}
+	let end = u.find(line[start+1:], "]")
+	if end == -1 or start+1+end == line.length-1 or line[start+end+2] != "(" {
+		return line
+	}
+	end = start+1+end
+	let final = u.find(line[end+1:], ")")
+	if final == -1 {
+		return line
+	}
+	final = end+1+final
+	let text = line[start+1:end]
+	let target = line[end+2:final]
+	return line[:start] + "<a target='_blank' href='" + target + "'>" + text + "</a>" + line[final+1:]
 }
 
-fn processLink(line) {
-	# TODO: turn link into anchor
-	return line
+fn processLine(line) {
+	return processLink(line)
+}
+
+fn asParagraph(content) {
+	return ["p", [], [u.join(u.map(content, processLine), "\n")]]
 }
 
 fn parseCodeBlock(content) {
@@ -62,7 +81,7 @@ fn parseCodeBlock(content) {
 fn parseBody(content) {
 	let out = []
 	for let i = 0; i < content.length; i = i + 1 {
-		let line = processLink(content[i])
+		let line = processLine(content[i])
 		if u.startswith(line, "#") {
 			out = out + [parseHeading(line)]
 		} elif u.startswith(line, "```") {
@@ -71,6 +90,19 @@ fn parseBody(content) {
 				parseCodeBlock(content[i:i+1+end])
 			]
 			i = i+1+end
+		} elif u.startswith(line, "- ") {
+			let end = i+1
+			while end < content.length and u.startswith(content[end], "- ") {
+				end = end + 1
+			}
+			out = out + [
+				["ul", [], u.map(content[i:end], fn (l) {
+					return ["li", [], [processLine(l[2:])]]
+				})]
+			]
+			# Grotsky Bug: assignment doesnt work unless
+			# there is an operation on the right
+			i = end+0
 		} else {
 			let end = u.findBy(content[i:], fn (l) {
 				return u.trimspaces(l) == ""
