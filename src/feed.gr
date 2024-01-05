@@ -1,0 +1,3 @@
+fn generate_feed(posts) {
+	return ""
+}
