@@ -2,6 +2,7 @@ let u = import("./utils.gr")
 let static = import("./static.gr")
 let md = import("./parse_md.gr")
 let pages = import("./pages/base.gr")
+let feed = import("./feed.gr")
 
 fn get_routes() {
     # Store routes here
@@ -93,6 +94,12 @@ fn get_routes() {
     posts = u.sortBy(posts, fn (pa, pb) {
         return strings.compare(pa["url"], pb["url"])
     })
+
+    # Build rss feed
+    routes["/feed.xml"] = {
+        "class": "static",
+        "content": feed.generate_feed(posts)
+    }
 
     # Build index using posts dicts
     routes["/"] = {
