@@ -249,9 +249,9 @@ let post = base.Post(
             "",
             "How realloc works:",
             "",
-            "<li>If the pointer to reallocate is null, works just like malloc.",
-            "<li>If the given size is bigger than the prior size, it allocates a bigger block and copies all data from the original block to the new block.",
-            "<li>If the given size is smaller than the prior size, it allocates a smaller block and copies just the data that fits into the smaller block.",
+            "<li>If the pointer to reallocate is null, works just like malloc.</li>",
+            "<li>If the given size is bigger than the prior size, it allocates a bigger block and copies all data from the original block to the new block.</li>",
+            "<li>If the given size is smaller than the prior size, it allocates a smaller block and copies just the data that fits into the smaller block.</li>",
             "",
             ""
         ]
@@ -287,8 +287,8 @@ let post = base.Post(
         [],
         [
             "",
-            "<li>https://danluu.com/malloc-tutorial/",
-            "<li>http://www.craftinginterpreters.com/chunks-of-bytecode.html",
+            "<li>https://danluu.com/malloc-tutorial/</li>",
+            "<li>http://www.craftinginterpreters.com/chunks-of-bytecode.html</li>",
             ""
         ]
     ]
