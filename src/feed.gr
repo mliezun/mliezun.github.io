@@ -45,6 +45,11 @@ fn generate_feed(posts) {
 	let replacements = {
 		"< ": "&lt; ",
 		" >": " &gt;",
+		"<=": "&lt;=",
+		"\">\"": "\"&gt;\"",
+		"\">=\"": "\"&gt;=\"",
+		"\"<\"": "\"&lt;\"",
+		"\"<=\"": "\"&lt;=\"",
 	}
 	text = u.replace(text, "&", "&amp;")
 	for r, n in replacements {
