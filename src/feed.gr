@@ -1,3 +1,45 @@
+let u = import("./utils.gr")
+let html = import("./html.gr")
+
 fn generate_feed(posts) {
-	return ""
+	let renderer = html.Renderer()
+	posts = u.sortBy(posts, fn (a, b) {
+		if a["date"] < b["date"] {
+			return 1
+		} elif a["date"] > b["date"] {
+			return -1
+		} else {
+			return 0
+		}
+	})
+	let content = ["xml", ["xmlns", "http://www.w3.org/2005/Atom"], [
+		["generator", ["uri", "https://github.com/mliezun/mliezun.github.io", "version", "20240110"], [
+			"mliezun.github.io"
+		]],
+		["link", ["href", "https://mliezun.github.io/feed.xml", "rel", "self", "type", "application/atom+xml"]],
+		["link", ["href", "https://mliezun.github.io/", "rel", "alternate", "type", "text/html"]],
+		["id", [], ["https://mliezun.github.io/"]],
+		["title", [], ["mliezun.github.io"]],
+		["updated", [], [posts[0]["date"]]],
+		["subtitle", [], ["I'm Miguel. Here I write mainly about programming and side projects."]],
+	]]
+	let entries = u.map(posts, fn (p) {
+		let post_obj = p["post_obj"]
+		let url = "https://mliezun.github.io" + p["url"]
+		let date = p["date"]
+		return ["entry", [], [
+			["title", ["type", "html"], [post_obj.title]],
+			["id", [], [url]],
+			["updated", [], [date]],
+			["link", ["href", url, "rel", "alternate", "type", "text/html"]],
+			["content", ["type", "html", "xml:base", url], post_obj.content],
+			["author", [], [
+				["name", [], "Miguel Liezun"]
+			]],
+			["category", ["term", "posts"]],
+			["summary", ["type", "html"], [post_obj.excerpt]]
+		]]
+	})
+	content[2] = content[2] + entries
+	return renderer.render([content])
 }

@@ -96,9 +96,10 @@ fn get_routes() {
     })
 
     # Build rss feed
+    io.println("feed", feed.generate_feed(posts))
     routes["/feed.xml"] = {
         "class": "static",
-        "content": feed.generate_feed(posts)
+        "content": feed.generate_feed(posts),
     }
 
     # Build index using posts dicts
@@ -110,7 +111,7 @@ fn get_routes() {
             "author": "Miguel Liezun",
             "tags": "software,tech,fun",
             "date": "",
-            "excerpt": "Blog about programming and side projects",
+            "excerpt": "I'm Miguel. Here I write mainly about programming and side projects.",
             "content_type": nil
         }
     }
