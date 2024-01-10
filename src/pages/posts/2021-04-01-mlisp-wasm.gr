@@ -159,7 +159,7 @@ let post = base.Post(
             "<div class=\"container-centered\">",
             "    <div class=\"vertical-centered\" style=\"width: 40vw\">",
             "        <textarea id=\"show-repl\" disabled=\"true\" style=\"min-width: 40vw; max-width: 40vw; min-height: 20vh\"></textarea>",
-            "        <input id=\"input-command\" type=\"text\" style=\"min-width: 40vw; max-width: 40vw\" placeholder=\"&gt; Input some commands\"&gt;",
+            "        <input id=\"input-command\" type=\"text\" style=\"min-width: 40vw; max-width: 40vw\" placeholder=\"&gt; Input some commands\">",
             "    </div>",
             "</div>",
             "",
