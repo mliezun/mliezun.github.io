@@ -117,7 +117,7 @@ let post = base.Post(
         "h3",
         [],
         [
-            "Automated Build & Release from github"
+            "Automated Build &amp; Release from github"
         ]
     ],
     [

@@ -223,7 +223,7 @@ let post = base.Post(
             "Make sure you have <span class=\"single-quote\">g++</span> installed. Try executing: <span class=\"single-quote\">g++ --help</span>. And some version of python running of your system, for this tutorial I'll be using version _3.8_.",
             "",
             "<pre class=\"triple-quote bash\">",
-            "$ mkdir py_eval && cd py_eval",
+            "$ mkdir py_eval &amp;&amp; cd py_eval",
             "$ git clone https://github.com/pybind/pybind11",
             "</pre>",
             "",
