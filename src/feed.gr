@@ -54,6 +54,8 @@ fn generate_feed(posts) {
 		"\"<=\"": "\"&lt;=\"",
 		"->": "-&gt;",
 		"<-": "-&lt;",
+		"<<": "&lt;&lt;",
+		">>": "&gt;&gt;",
 	}
 	for r, n in replacements {
 		text = u.replace(text, r, n)
