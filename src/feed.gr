@@ -41,5 +41,6 @@ fn generate_feed(posts) {
 		]]
 	})
 	content[2] = content[2] + entries
-	return renderer.render([content])
+	let text = renderer.render([content])
+	return u.replace(text, "&", "&amp;")
 }

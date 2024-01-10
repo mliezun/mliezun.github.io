@@ -152,3 +152,14 @@ fn startswith(str, substr) {
     }
     return str[:substr.length] == substr
 }
+
+fn replace(str, findStr, replaceStr) {
+    if startswith(str, findStr) {
+        return replaceStr + replace(str[findStr.length:], findStr, replaceStr)
+    }
+    let ix = findSubstr(str, findStr)
+    if ix == -1 {
+        return str
+    }
+    return str[:ix] + replaceStr + replace(str[ix+findStr.length:], findStr, replaceStr)
+}
