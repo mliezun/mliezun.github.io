@@ -88,7 +88,7 @@ fn processImage(line) {
 	} else {
 		target = target[0]
 	}
-	return line[:start] + "<img alt=" + alt + " src='" + target + "'>" + line[final+1:]
+	return line[:start] + "<img alt=" + alt + " src='" + target + "'/>" + line[final+1:]
 }
 
 fn processBold(line) {

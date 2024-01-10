@@ -74,15 +74,21 @@ class Renderer {
             return ""
         }
 
+        # Find if tag needs to be closed
+        let voidTag = (u.find(this.voidTags, tag) >= 0)
+
         # Start writing out tag and properties
-        let out = "<" + tag + this.renderProps(props) + ">"
+        let out = "<" + tag + this.renderProps(props)
+        if voidTag {
+            out = out + "/>"
+        } else {
+            out = out + ">"
+        }
 
         # Render contents of tag
         out = out + this.render(content)
         
-        # Find if tag needs to be closed
-        ix = u.find(this.voidTags, tag)
-        if ix == -1 {
+        if not voidTag {
             out = out + "</" + tag + ">"
         }
 
