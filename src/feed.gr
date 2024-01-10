@@ -44,8 +44,9 @@ fn generate_feed(posts) {
 	let text = renderer.render([content])
 	let replacements = {
 		"< ": "&lt; ",
-		" >": " &gt;",
 		"<=": "&lt;=",
+		" >": " &gt;",
+		">=": "&gt;=",
 		"\">\"": "\"&gt;\"",
 		"\">=\"": "\"&gt;=\"",
 		"\"<\"": "\"&lt;\"",
