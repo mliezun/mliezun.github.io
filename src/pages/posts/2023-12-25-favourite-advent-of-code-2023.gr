@@ -69,7 +69,7 @@ let post = base.Post(
             "%a -> b",
             "%b -> c",
             "%c -> inv",
-            "&inv -> a",
+            "&amp;inv -> a",
             "</pre>",
             ["p", [], [
                 "There will always be just one Broadcaster module called \"broadcaster\" that has the Button connected as input. In this case it has module's \"a\", \"b\" and \"c\" connected to its output."
@@ -81,7 +81,7 @@ let post = base.Post(
                 "Lines that start with <span class=\"single-quote\">%</span> means the module is a <strong>Flip flop</strong>, for example: <span class=\"single-quote\">%a -> b</span> indicates that there's a flip flop called \"a\" whose output is connected to module's \"b\" input."
             ]],
             ["p", [], [
-                "Lines that start with <span class=\"single-quote\">&</span> means the module is a <strong>Conjunction</strong>, for example: <span class=\"single-quote\">&inv -> a</span> indicates that there's a conjunction called \"inv\" whose output is connected to module's \"a\" input."
+                "Lines that start with <span class=\"single-quote\">&amp;</span> means the module is a <strong>Conjunction</strong>, for example: <span class=\"single-quote\">&amp;inv -> a</span> indicates that there's a conjunction called \"inv\" whose output is connected to module's \"a\" input."
             ]],
             "Let's analyze how this circuit behaves once the button is pushed:",
             "<pre class=\"triple-quote \">",
@@ -258,7 +258,7 @@ let post = base.Post(
             "        elif module_type.startswith(\"%\"):",
             "            modules_by_name[module_type[1:]] = FlipFlop(module_type[1:])",
             "            outputs_by_name[module_type[1:]] = module_outputs",
-            "        elif module_type.startswith(\"&\"):",
+            "        elif module_type.startswith(\"&amp;\"):",
             "            modules_by_name[module_type[1:]] = Conjunction(module_type[1:])",
             "            outputs_by_name[module_type[1:]] = module_outputs",
             "    # Once all the modules are parsed use connect their outputs.",
@@ -285,7 +285,7 @@ let post = base.Post(
             "%a -> b",
             "%b -> c",
             "%c -> inv",
-            "&inv -> a\"\"\"",
+            "&amp;inv -> a\"\"\"",
             "example_modules = [m.split(\" -> \") for m in example.splitlines() if m.strip()]",
             "print(parse_modules(example_modules))",
             "",
@@ -392,7 +392,7 @@ let post = base.Post(
             "Following is for my case (I don't know if all problem inputs are the same). Looking up \"rx\" in the input I find a single line:",
             "<pre class=\"triple-quote \">",
             "...",
-            "&lv -> rx",
+            "&amp;lv -> rx",
             "...",
             "</pre>",
             ["p", [], [
@@ -401,10 +401,10 @@ let post = base.Post(
             "Ok, that feels like progress. Let's see what lv is connected to:",
             "<pre class=\"triple-quote \">",
             "...",
-            "&st -> lv",
-            "&tn -> lv",
-            "&hh -> lv",
-            "&dt -> lv",
+            "&amp;st -> lv",
+            "&amp;tn -> lv",
+            "&amp;hh -> lv",
+            "&amp;dt -> lv",
             "...",
             "</pre>",
             ["p", [], [

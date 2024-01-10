@@ -51,7 +51,6 @@ fn generate_feed(posts) {
 		"\"<\"": "\"&lt;\"",
 		"\"<=\"": "\"&lt;=\"",
 	}
-	text = u.replace(text, "&", "&amp;")
 	for r, n in replacements {
 		text = u.replace(text, r, n)
 	}
