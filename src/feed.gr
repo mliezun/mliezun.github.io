@@ -42,5 +42,13 @@ fn generate_feed(posts) {
 	})
 	content[2] = content[2] + entries
 	let text = renderer.render([content])
-	return u.replace(text, "&", "&amp;")
+	let replacements = {
+		"< ": "&lt; ",
+		"> ": "&gt; ",
+	}
+	text = u.replace(text, "&", "&amp;")
+	for r, n in replacements {
+		text = u.replace(text, r, n)
+	}
+	return text
 }
