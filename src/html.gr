@@ -31,6 +31,7 @@ class Renderer {
             # XML Tags
             "category",
         ]
+        this.renderXML = false
     }
 
     # Renders [tag, props, content]
@@ -97,6 +98,9 @@ class Renderer {
 
     renderDocument(document) {
         if type(document) == "string" {
+            if this.renderXML {
+                return document
+            }
             return document + "\n"
         }
         if type(document) == "list" {
