@@ -28,12 +28,21 @@ fn generate_feed(posts) {
 		let post_obj = p["post_obj"]
 		let url = "https://mliezun.github.io" + p["url"]
 		let date = p["date"]
+		let content = renderer.render(post_obj.content)
+		let replacements = {
+			">": "&gt;",
+			"<": "&lt;",
+			"\"": "&quot;",
+		}
+		for r, n in replacements {
+			content = u.replace(content, r, n)
+		}
 		return ["entry", [], [
 			["title", ["type", "html"], [post_obj.title]],
 			["id", [], [url]],
 			["updated", [], [date + "T00:00:00Z"]],
 			["link", ["href", url, "rel", "alternate", "type", "text/html"]],
-			["content", ["type", "html", "xml:base", url], post_obj.content],
+			["content", ["type", "html", "xml:base", url], content],
 			["author", [], [
 				["name", [], "Miguel Liezun"]
 			]],
