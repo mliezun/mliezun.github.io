@@ -12,7 +12,7 @@ fn generate_feed(posts) {
 			return 0
 		}
 	})
-	let content = ["xml", ["xmlns", "http://www.w3.org/2005/Atom"], [
+	let content = ["feed", ["xmlns", "http://www.w3.org/2005/Atom"], [
 		["generator", ["uri", "https://github.com/mliezun/mliezun.github.io", "version", "20240110"], [
 			"mliezun.github.io"
 		]],

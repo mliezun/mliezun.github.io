@@ -21,7 +21,7 @@ class Renderer {
             "tbody", "td", "textarea", "tfoot", "th", "thead", "time", "title", "tr", "track", "u",
             "ul", "var", "video", "wbr",
             # XML Tags
-            "xml", "id", "updated", "subtitle", "entry", "author", "name", "updated", "content",
+            "feed", "id", "updated", "subtitle", "entry", "author", "name", "updated", "content",
             "generator", "category", "summary",
         ]
         this.voidTags = [
