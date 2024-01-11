@@ -4,7 +4,7 @@ let w = web.Web()
 
 for url, route in w.routes {
 	let basePath = "./docs"
-	if route["class"] == "html" {
+	if route["class"] == "html" or url == "/feed.xml" {
 		let fullPath = ""
 		if url == "/" {
 			fullPath = basePath + "/index.html"

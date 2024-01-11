@@ -348,7 +348,7 @@ type Parser struct {
 
 // NewParser returns a new Parser that reads from the given connection.
 func NewParser(conn net.Conn) *Parser {
-	return &Parser{
+	return &amp;Parser{
 		conn: conn,
 		r:    bufio.NewReader(conn),
 		line: make([]byte, 0),
@@ -418,11 +418,11 @@ func (p *Parser) readLine() ([]byte, error) {
 		["pre", ["class", "triple-quote go language-go"], [
 "// consumeString reads a string argument from the current line.
 func (p *Parser) consumeString() (s []byte, err error) {
-	for p.current() != '\"' && !p.atEnd() {
+	for p.current() != '\"' &amp;&amp; !p.atEnd() {
 		cur := p.current()
 		p.advance()
 		next := p.current()
-		if cur == '\\\\' && next == '\"' {
+		if cur == '\\\\' &amp;&amp; next == '\"' {
 			s = append(s, '\"')
 			p.advance()
 		} else {
@@ -546,7 +546,7 @@ func (p *Parser) consumeArg() (s string, err error) {
 		buf, err := p.consumeString()
 		return string(buf), err
 	}
-	for !p.atEnd() && p.current() != ' ' && p.current() != '\\r' {
+	for !p.atEnd() &amp;&amp; p.current() != ' ' &amp;&amp; p.current() != '\\r' {
 		s += string(p.current())
 		p.advance()
 	}

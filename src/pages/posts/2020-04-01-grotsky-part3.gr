@@ -250,7 +250,7 @@ let post = base.Post(
             "}",
             "",
             "func newEnv(state *state, enclosing *env) *env {",
-            "\treturn &env{",
+            "\treturn &amp;env{",
             "\t\tstate:     state,",
             "\t\tenclosing: enclosing,",
             "\t\tvalues:    make(map[string]interface{}),",

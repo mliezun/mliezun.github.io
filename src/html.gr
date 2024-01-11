@@ -7,8 +7,31 @@ let u = import("utils.gr")
 
 class Renderer {
     init() {
-        this.tags = ["!DOCTYPE HTML", "LITERAL", "a", "abbr", "address", "area", "article", "aside", "audio", "b", "base", "bdi", "bdo", "blockquote", "body", "br", "button", "canvas", "caption", "cite", "code", "col", "colgroup", "command", "datalist", "dd", "del", "details", "dfn", "div", "dl", "dt", "em", "embed", "fieldset", "figcaption", "figure", "footer", "form", "h1", "h2", "h3", "h4", "h5", "h6", "head", "header", "hgroup", "hr", "html", "i", "iframe", "img", "input", "ins", "kbd", "keygen", "label", "legend", "li", "link", "map", "mark", "menu", "meta", "meter", "nav", "noscript", "object", "ol", "optgroup", "option", "output", "p", "param", "pre", "progress", "q", "rp", "rt", "ruby", "s", "samp", "script", "section", "select", "small", "source", "span", "strong", "style", "sub", "summary", "sup", "table", "tbody", "td", "textarea", "tfoot", "th", "thead", "time", "title", "tr", "track", "u", "ul", "var", "video", "wbr"]
-        this.voidTags = ["!DOCTYPE HTML", "area", "base", "br", "col", "command", "embed", "hr", "img", "input", "keygen", "link", "meta", "param", "source", "track", "wbr"]
+        this.tags = [
+            # HTML Tags
+            "!DOCTYPE HTML", "LITERAL", "a", "abbr", "address", "area", "article", "aside", "audio",
+            "b", "base", "bdi", "bdo", "blockquote", "body", "br", "button", "canvas", "caption",
+            "cite", "code", "col", "colgroup", "command", "datalist", "dd", "del", "details", "dfn",
+            "div", "dl", "dt", "em", "embed", "fieldset", "figcaption", "figure", "footer", "form",
+            "h1", "h2", "h3", "h4", "h5", "h6", "head", "header", "hgroup", "hr", "html", "i", "iframe",
+            "img", "input", "ins", "kbd", "keygen", "label", "legend", "li", "link", "map", "mark",
+            "menu", "meta", "meter", "nav", "noscript", "object", "ol", "optgroup", "option", "output",
+            "p", "param", "pre", "progress", "q", "rp", "rt", "ruby", "s", "samp", "script", "section",
+            "select", "small", "source", "span", "strong", "style", "sub", "summary", "sup", "table",
+            "tbody", "td", "textarea", "tfoot", "th", "thead", "time", "title", "tr", "track", "u",
+            "ul", "var", "video", "wbr",
+            # XML Tags
+            "feed", "id", "updated", "subtitle", "entry", "author", "name", "updated", "content",
+            "generator", "category", "summary",
+        ]
+        this.voidTags = [
+            # HTML Tags
+            "!DOCTYPE HTML", "area", "base", "br", "col", "command", "embed", "hr", "img", "input",
+            "keygen", "link", "meta", "param", "source", "track", "wbr",
+            # XML Tags
+            "category",
+        ]
+        this.renderXML = false
     }
 
     # Renders [tag, props, content]
@@ -52,15 +75,21 @@ class Renderer {
             return ""
         }
 
+        # Find if tag needs to be closed
+        let voidTag = (u.find(this.voidTags, tag) >= 0)
+
         # Start writing out tag and properties
-        let out = "<" + tag + this.renderProps(props) + ">"
+        let out = "<" + tag + this.renderProps(props)
+        if voidTag {
+            out = out + "/>"
+        } else {
+            out = out + ">"
+        }
 
         # Render contents of tag
         out = out + this.render(content)
         
-        # Find if tag needs to be closed
-        ix = u.find(this.voidTags, tag)
-        if ix == -1 {
+        if not voidTag {
             out = out + "</" + tag + ">"
         }
 
@@ -69,6 +98,9 @@ class Renderer {
 
     renderDocument(document) {
         if type(document) == "string" {
+            if this.renderXML {
+                return document
+            }
             return document + "\n"
         }
         if type(document) == "list" {

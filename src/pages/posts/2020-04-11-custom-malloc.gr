@@ -99,7 +99,7 @@ let post = base.Post(
             "struct block_meta *find_free_block(struct block_meta **last, size_t size)",
             "{",
             "    struct block_meta *current = first_block;",
-            "    while (current && !(current->free && current->size >= size))",
+            "    while (current &amp;&amp; !(current->free &amp;&amp; current->size >= size))",
             "    {",
             "        *last = current;",
             "        current = current->next;",
@@ -157,7 +157,7 @@ let post = base.Post(
             "            printf(\"Cannot allocate enough memory\\n\");",
             "            exit(ENOMEM);",
             "        }",
-            "        required >>= 1;",
+            "        required &gt;&gt;= 1;",
             "    }",
             "}",
             "",
@@ -175,7 +175,7 @@ let post = base.Post(
             "struct block_meta *request_block(size_t size)",
             "{",
             "    struct block_meta *last = NULL;",
-            "    struct block_meta *block = find_free_block(&last, size);",
+            "    struct block_meta *block = find_free_block(&amp;last, size);",
             "    if (block)",
             "    {",
             "        block->free = 0;",
@@ -249,9 +249,9 @@ let post = base.Post(
             "",
             "How realloc works:",
             "",
-            "<li>If the pointer to reallocate is null, works just like malloc.",
-            "<li>If the given size is bigger than the prior size, it allocates a bigger block and copies all data from the original block to the new block.",
-            "<li>If the given size is smaller than the prior size, it allocates a smaller block and copies just the data that fits into the smaller block.",
+            "<li>If the pointer to reallocate is null, works just like malloc.</li>",
+            "<li>If the given size is bigger than the prior size, it allocates a bigger block and copies all data from the original block to the new block.</li>",
+            "<li>If the given size is smaller than the prior size, it allocates a smaller block and copies just the data that fits into the smaller block.</li>",
             "",
             ""
         ]
@@ -287,8 +287,8 @@ let post = base.Post(
         [],
         [
             "",
-            "<li>https://danluu.com/malloc-tutorial/",
-            "<li>http://www.craftinginterpreters.com/chunks-of-bytecode.html",
+            "<li>https://danluu.com/malloc-tutorial/</li>",
+            "<li>http://www.craftinginterpreters.com/chunks-of-bytecode.html</li>",
             ""
         ]
     ]

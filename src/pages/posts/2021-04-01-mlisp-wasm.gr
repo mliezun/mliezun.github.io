@@ -117,7 +117,7 @@ let post = base.Post(
         "h3",
         [],
         [
-            "Automated Build & Release from github"
+            "Automated Build &amp; Release from github"
         ]
     ],
     [
@@ -158,8 +158,8 @@ let post = base.Post(
             "",
             "<div class=\"container-centered\">",
             "    <div class=\"vertical-centered\" style=\"width: 40vw\">",
-            "        <textarea id=\"show-repl\" disabled style=\"min-width: 40vw; max-width: 40vw; min-height: 20vh\"></textarea>",
-            "        <input id=\"input-command\" type=\"text\" style=\"min-width: 40vw; max-width: 40vw\" placeholder=\"> Input some commands\">",
+            "        <textarea id=\"show-repl\" disabled=\"true\" style=\"min-width: 40vw; max-width: 40vw; min-height: 20vh\"></textarea>",
+            "        <input id=\"input-command\" type=\"text\" style=\"min-width: 40vw; max-width: 40vw\" placeholder=\"&gt; Input some commands\"/>",
             "    </div>",
             "</div>",
             "",
@@ -192,7 +192,7 @@ let post = base.Post(
             "        const output = document.getElementById('show-repl');",
             "        const result = this.mlisp.interpret(cmd);",
             "        node.value = null;",
-            "        output.value += `> ${cmd}\\n\\t${result}\\n`;",
+            "        output.value += `&gt; ${cmd}\\n\\t${result}\\n`;",
             "    }",
             "};",
             "",
@@ -217,11 +217,11 @@ let post = base.Post(
         [
             "",
             "<li><span class=\"single-quote\">foldl</span>: Fold left (same as reduce left)",
-            "    - <span class=\"single-quote\">(foldl + 0 {1 2 3 4 5})</span>: Sum of elements",
+            "    - <span class=\"single-quote\">(foldl + 0 {1 2 3 4 5})</span>: Sum of elements</li>",
             "<li><span class=\"single-quote\">filter</span>",
-            "    - <span class=\"single-quote\">(filter (\\ {e} {> e 3}) {1 2 3 4 5 6})</span>: Elements bigger than 3",
+            "    - <span class=\"single-quote\">(filter (\\ {e} {> e 3}) {1 2 3 4 5 6})</span>: Elements bigger than 3</li>",
             "<li><span class=\"single-quote\">map</span>",
-            "    - <span class=\"single-quote\">(foldl * 1 (map (\\ {e} {* e 2}) {1 1 1 1 1}))</span>: Multiply elements by 2 and then multiply all elements",
+            "    - <span class=\"single-quote\">(foldl * 1 (map (\\ {e} {* e 2}) {1 1 1 1 1}))</span>: Multiply elements by 2 and then multiply all elements</li>",
             "",
             ""
         ]
