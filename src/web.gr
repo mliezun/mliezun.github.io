@@ -105,8 +105,13 @@ class Web {
         return ["body", [], [
             ["div", ["class", "body-wrapper"], [
                 ["div", ["class", "body-content"], [
-                    ["h1", [], [
-                        ["a", ["href", "/"], "Blog"],
+                    ["div", ["class", "site-header"], [
+                        ["h1", [], [
+                            ["a", ["href", "/"], "Blog"],
+                        ]],
+                        ["a", ["href", "/feed.xml", "class", "btn btn-rss", "target", "_blank"], [
+                            "RSS Feed",
+                        ]],
                     ]],
                 ] + content + [
                     this.footer(),

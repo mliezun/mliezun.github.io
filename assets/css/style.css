@@ -112,3 +112,22 @@ footer {
 li {
     margin-bottom: 10px;
 }
+
+.site-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.btn {
+    color: white !important;
+    display: inline-block;
+    font-size: 0.75rem;
+    padding: 3px 9px 3px 9px;
+    text-align: center;
+    text-decoration: none !important;
+}
+
+.btn-rss {
+    background-color: #b9501f;
+}
