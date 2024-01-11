@@ -240,7 +240,7 @@ let post = base.Post(
             "",
             "int main(void) {",
             "    auto obj = py::eval(\"[i for i in range(10)]\");",
-            "    std::cout << std::string(py::str(obj)) << std::endl;",
+            "    std::cout &lt;&lt; std::string(py::str(obj)) &lt;&lt; std::endl;",
             "}",
             "</pre>",
             "",

@@ -157,7 +157,7 @@ let post = base.Post(
             "            printf(\"Cannot allocate enough memory\\n\");",
             "            exit(ENOMEM);",
             "        }",
-            "        required >>= 1;",
+            "        required &gt;&gt;= 1;",
             "    }",
             "}",
             "",

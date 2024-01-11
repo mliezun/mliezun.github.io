@@ -21,7 +21,7 @@ fn generate_feed(posts) {
 		["link", ["href", "https://mliezun.github.io/", "rel", "alternate", "type", "text/html"]],
 		["id", [], ["https://mliezun.github.io/"]],
 		["title", [], ["mliezun.github.io"]],
-		["updated", [], [posts[0]["date"] + "T15:00:00Z"]],
+		["updated", [], [posts[0]["date"] + "T00:00:00Z"]],
 		["subtitle", [], ["I'm Miguel. Here I write mainly about programming and side projects."]],
 	]]
 	let entries = u.map(posts, fn (p) {
@@ -31,7 +31,7 @@ fn generate_feed(posts) {
 		return ["entry", [], [
 			["title", ["type", "html"], [post_obj.title]],
 			["id", [], [url]],
-			["updated", [], [date + "T15:00:00Z"]],
+			["updated", [], [date + "T00:00:00Z"]],
 			["link", ["href", url, "rel", "alternate", "type", "text/html"]],
 			["content", ["type", "html", "xml:base", url], post_obj.content],
 			["author", [], [
@@ -53,8 +53,6 @@ fn generate_feed(posts) {
 		"\"<=\"": "\"&lt;=\"",
 		"->": "-&gt;",
 		"<-": "-&lt;",
-		"<<": "&lt;&lt;",
-		">>": "&gt;&gt;",
 		" >": " &gt;",
 		"< ": "&lt; ",
 	}
