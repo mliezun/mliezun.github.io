@@ -1,6 +1,7 @@
 let web = import("web.gr")
 
-let w = web.Web()
+let include_feed = true
+let w = web.Web(include_feed)
 
 for url, route in w.routes {
 	let basePath = "./docs"

@@ -4,7 +4,7 @@ let md = import("./parse_md.gr")
 let pages = import("./pages/base.gr")
 let feed = import("./feed.gr")
 
-fn get_routes() {
+fn get_routes(include_feed) {
     # Store routes here
     let routes = {}
 
@@ -95,11 +95,12 @@ fn get_routes() {
         return strings.compare(pa["url"], pb["url"])
     })
 
-    # Build rss feed
-    io.println("feed", feed.generate_feed(posts))
-    routes["/feed.xml"] = {
-        "class": "static",
-        "content": feed.generate_feed(posts),
+    if include_feed {
+        # Build rss feed
+        routes["/feed.xml"] = {
+            "class": "static",
+            "content": feed.generate_feed(posts),
+        }
     }
 
     # Build index using posts dicts

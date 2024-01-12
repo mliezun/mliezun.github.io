@@ -1,3 +1,4 @@
 let web = import("web.gr")
 
-web.Web().start("8802")
+let include_feed = false
+web.Web(include_feed).start("8802")

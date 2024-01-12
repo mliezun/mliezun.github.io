@@ -4,9 +4,9 @@ let router = import("router.gr")
 let u = import("utils.gr")
 
 class Web {
-    init() {
+    init(include_feed) {
         this.renderer = html.Renderer()
-        this.routes = router.get_routes()
+        this.routes = router.get_routes(include_feed)
         this.renderPages()
     }
 
@@ -162,7 +162,6 @@ class Web {
                 page = route["content"]
             }
             this.renderedPages[url] = page
-            # io.println(url, page)
         }
     }
 
