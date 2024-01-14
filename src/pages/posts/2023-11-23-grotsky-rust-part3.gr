@@ -149,7 +149,7 @@ let post = base.Post(
 				code_loop_program_result
 			]]
 		]],
-		["h4", [], "Recusive fibonacci"],
+		["h4", [], "Recursive fibonacci"],
 		["p", [], [
 			["pre", ["class", "triple-quote js language-css"], [
 				code_fib_program
