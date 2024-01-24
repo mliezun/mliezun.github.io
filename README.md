@@ -17,7 +17,9 @@ The [previous image](/assets/images/kandinsky.jpeg) of the page is a painting fr
         generate_site.sh  # -> Generates html files
         start_dev_server.sh  # -> Starts dev server
     src/
-        pages/*  # -> Blog posts are stored here
+        pages/
+            *.gr  # Blog posts are stored here
+            md/   # Posts in markdown format
         generate_site.gr  # Grotsky script to generate html files
         html.gr  # Template engine implementation
         http.gr  # HTTP Server for Development
