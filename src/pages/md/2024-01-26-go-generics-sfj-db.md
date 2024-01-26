@@ -1,11 +1,11 @@
 ---
-title: "Go Generics: Single file JSON DB"
+title: "Go Generics - Single file JSON DB"
 excerpt: "Storing your data in a single json file can be useful when there isn't much state that needs to be tracked. In this post we leverage Go's generics to implement a simple JSON DB."
 author: "Miguel Liezun"
 tags: markdown,parser,blog
 ---
 
-# Go Generics: Single file JSON DB
+# Go Generics - Single file JSON DB
 
 Let's start with an example use case: you have a multitenant web server that serves pages for various customers, you can know how to which page to serve based on `Host` header in the request.
 
