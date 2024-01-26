@@ -24,7 +24,7 @@ Your `sites.json` file could be something like this:
 {
     "www.example.com": {
         "name": "Example",
-        "host": "www.example.com",
+        "host": "www.example.com"
     }
 }
 ```
@@ -75,7 +75,7 @@ func (db *DB[T]) Load() error {
 	if err != nil {
 		return err
 	}
-	return json.Unmarshal(content, &db.data)
+	return json.Unmarshal(content, &amp;db.data)
 }
 ```
 
@@ -129,7 +129,7 @@ Finally we have to implement `Open` to instantiate our DB:
 ```go
 // Open opens a json file as a database.
 func Open[T any](filepath string) (db *DB[T], err error) {
-	db = &DB[T]{filepath: filepath}
+	db = &amp;DB[T]{filepath: filepath}
 	if err := db.Load(); err != nil {
 		return nil, err
 	}
