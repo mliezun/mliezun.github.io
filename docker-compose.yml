@@ -2,7 +2,7 @@ version: "3"
 
 services:
   blog:
-    image: ubuntu:latest
+    build: .
     platform: linux/amd64
     volumes:
       - .:/app
@@ -10,5 +10,5 @@ services:
       - "8802"
     ports:
       - "8802:8802"
-    entrypoint: /app/scripts/docker_entrypoint.sh
+    entrypoint: /app/scripts/start_dev_server.sh
     working_dir: /app
