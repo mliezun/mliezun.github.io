@@ -1,8 +1,15 @@
 body {
+    text-rendering: optimizeLegibility;
     font-family: "Ibarra Real Nova", serif;
-    font-size: 14pt;
-    color: #1d1d1d;
-    background-color: #eeeedd;
+    font-size: 15pt;
+    font-kerning: normal;
+    line-height: 1.6;
+    color: #222;
+    background-color: #fefefe;
+}
+
+.site-header header {
+    font-size: 22pt;
 }
 
 .body-wrapper {
@@ -129,5 +136,5 @@ li {
 }
 
 .btn-rss {
-    background-color: #b9501f;
+    background-color: #222222e3;
 }

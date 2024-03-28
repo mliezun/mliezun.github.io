@@ -106,7 +106,7 @@ class Web {
             ["div", ["class", "body-wrapper"], [
                 ["div", ["class", "body-content"], [
                     ["div", ["class", "site-header"], [
-                        ["h1", [], [
+                        ["header", [], [
                             ["a", ["href", "/"], "Blog"],
                         ]],
                         ["a", ["href", "/feed.xml", "class", "btn btn-rss", "target", "_blank"], [
