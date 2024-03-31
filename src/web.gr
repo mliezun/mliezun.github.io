@@ -107,12 +107,13 @@ class Web {
                 ["div", ["class", "body-content"], [
                     ["div", ["class", "site-header"], [
                         ["header", [], [
-                            ["a", ["href", "/"], "Blog"],
+                            ["a", ["href", "/", "style", "text-decoration: none !important"], "Blog"],
                         ]],
                         ["a", ["href", "/feed.xml", "class", "btn btn-rss", "target", "_blank"], [
                             "RSS Feed",
                         ]],
                     ]],
+                    ["hr", [], []],
                 ] + content + [
                     this.footer(),
                 ]],
