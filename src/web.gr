@@ -86,7 +86,7 @@ class Web {
                 ]],
                 ["div", ["class", "footer-socials"], [
                     ["a", ["target", "_blank", "href", "https://mliezun.github.io/feed.xml"], [
-                        ["img", ["alt", "Github", "src", "/assets/images/socials/rss.png", "width", "20", "height", "20", "style", "border-radius: 3px"], []]
+                        ["img", ["alt", "RSS Feed", "src", "/assets/images/socials/rss.png", "width", "20", "height", "20", "style", "border-radius: 3px"], []]
                     ]],
                     ["a", ["target", "_blank", "href", "https://github.com/mliezun"], [
                         ["img", ["alt", "Github", "src", "/assets/images/socials/github.png", "width", "20", "height", "20"], []]
