@@ -76,9 +76,7 @@ class Web {
             ["div", ["class", "footer-wrapper"], [
                 ["div", [], [
                     ["div", [], [
-                        "This blog was made by",
-                        ["a", ["target", "_blank", "href", "https://github.com/mliezun"], "Miguel Liezun"],
-                        " using",
+                        "This blog was made with ",
                         ["a", ["target", "_blank", "href", "https://github.com/mliezun/grotsky"], "Grotsky"]
                     ]],
                     ["div", [], [
