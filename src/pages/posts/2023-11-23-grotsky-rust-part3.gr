@@ -227,7 +227,7 @@ let post = base.Post(
 			" what everyone else is doing.",
 		]],
 		["p", [], [
-			"Thanks for reading and please leave a comment."
+			"Thanks for reading."
 		]],
 	]
 )

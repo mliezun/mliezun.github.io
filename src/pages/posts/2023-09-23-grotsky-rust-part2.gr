@@ -64,7 +64,7 @@ let post = base.Post(
 			" But I think the roadmap is easy enough so I can do it."
 		]],
 		["p", [], [
-			"Thanks for reading. Please, leave a comment about your experience and struggle with side projects."
+			"Thanks for reading."
 		]],
 	]
 )
