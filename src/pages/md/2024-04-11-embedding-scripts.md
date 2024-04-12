@@ -1,12 +1,11 @@
 ---
-title: "Script to Binary: Creating single executables with Grotsky"
-excerpt: "Recently I added the possibility to embed compiled scripts to Grotsky, this makes it super easy
-to generate single executables that can be easily distributed."
+title: "From Script to Binary, Creating single executables with Grotsky"
+excerpt: "Recently I added the possibility to embed compiled scripts to Grotsky, this makes it super easy to generate single executables that can be easily distributed."
 author: "Miguel Liezun"
 tags: grotsky,binary,script,compile,embed,executable
 ---
 
-# Script to Binary: Creating single executables with Grotsky
+# From Script to Binary, Creating single executables with Grotsky
 
 Recently I added the possibility to embed compiled scripts to Grotsky, this makes it super easy to generate single executables that can be easily distributed.
 
