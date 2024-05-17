@@ -117,7 +117,7 @@ fn get_routes(include_feed) {
         }
     }
 
-    routes["/now"] = {
+    routes["/now/index.html"] = {
         "class": "html",
         "content": import("pages/now.gr").build_now(),
         "metadata": {
