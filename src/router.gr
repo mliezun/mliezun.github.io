@@ -116,6 +116,19 @@ fn get_routes(include_feed) {
             "content_type": nil
         }
     }
+
+    routes["/now"] = {
+        "class": "html",
+        "content": import("pages/now.gr").build_now(),
+        "metadata": {
+            "title": "Now page | mliezun.github.io",
+            "author": "Miguel Liezun",
+            "tags": "software,tech,fun",
+            "date": "2024-07-17",
+            "excerpt": "Now page for my personal blog.",
+            "content_type": nil
+        }
+    }
     
     return routes
 }

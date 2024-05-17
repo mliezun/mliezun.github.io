@@ -1,0 +1,60 @@
+let u = import("../utils.gr")
+
+
+fn aboutme() {
+    return ["div", ["class", "aboutme"], [
+        ["p", [], "Hi folks!"],
+        ["p", [], "I'm Miguel. Here I write mainly about programming and side projects."],
+        ["p", [], [
+            "I've written my own programming language called Grotsky, and it's ",
+            ["a", ["href", "https://mliezun.github.io/2023/11/23/grotsky-rust-part3.html", "target", "_blank"], "implemented in Rust"],
+            ". This blog's engine is written with Grotksy and generates static HTML files."
+        ]]
+    ]]
+}
+
+fn now() {
+	return [
+		["div", [], [
+			"Last updated on 2024-05-17.",
+			["ul", [], [
+				["li", [], [
+					"Working on ",
+					["a", ["href", "https://github.com/mliezun/caddy-snake", "target", "_blank"], [
+						"https://github.com/mliezun/caddy-snake",
+					]],
+					". A plugin for the Caddy proxy that embeds the Python interpreter.",
+				]],
+				["li", [], [
+					"Still sporadically working on Grotsky, a toy programming language made with Rust.",
+				]],
+				["li", [], [
+					"Training to run a 42km marathon.",
+				]],
+				["li", [], [
+					"Preparing to move from Argentina to France in late 2024.",
+				]],
+				["li", [], [
+					"Working as a Software Engineer at Gencove, building the future of Genome Sequencing."
+				]],
+			]],
+			["div", [], [
+				"See more about the /now project here:",
+				["a", ["href", "https://nownownow.com/", "target", "_blank"], [
+					"https://nownownow.com/",
+				]],
+			]],
+		]],
+	]
+}
+
+fn build_now() {
+    return [
+        aboutme(),
+        [
+			"div",
+			[],
+			now()
+        ],
+    ]
+}
