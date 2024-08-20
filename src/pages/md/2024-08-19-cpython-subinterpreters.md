@@ -9,17 +9,21 @@ tags: python,compiler,caddy,go,programming,c,subinterpreters,gil
 
 ### tldr
 
-Filed an [issue](https://github.com/python/cpython/issues/117482) in CPython. Sent a [PR](https://github.com/python/cpython/pull/117660). My code was garbage and was not merged, but helped to get the issue fixed.
+- Filed an [issue](https://github.com/python/cpython/issues/117482) in CPython.
+- Sent a [PR](https://github.com/python/cpython/pull/117660). 
+- My code was garbage and was not merged, but helped to get the issue fixed.
 
 ## Backstory
 
 Lately, I've been working with Python C-API. I wanted to use subinterpreters with their own GIL to unlock the performance gains promised by being able to execute many threads in parallel which was not possible before Python 3.12.
 
-The reason is that I've been building a [Caddy](https://caddyserver.com) web server plugin called: [Caddy Snake](https://github.com/mliezun/caddy-snake). Which let's users embed a Python interpreter and serve requests directly from Caddy.
+The reason is that I've been building a Caddy web server plugin called: [Caddy Snake](https://github.com/mliezun/caddy-snake).
 
-Caddy is written in Go, and to interact with Python I had to use CGO, a compatibility layer that let's you call C functions from Go.
+The plugin let's users embed a Python interpreter and serve requests directly from [Caddy](https://caddyserver.com).
 
-To improve performance I wanted to use the new feature of using a separate GIL per subinterpreter so requests could be served by many threads at the same time without them interfering with each other.
+Caddy is written in Go, and to interact with Python I had to use CGO, a compatibility layer that makes it easy to call C functions from Go.
+
+To improve performance I wanted to use the new feature of having separate GIL per subinterpreter so requests could be served by many threads at the same time.
 
 Today I saw a [great blogpost](https://izzys.casa/2024/08/463-python-interpreters/) about finding a bug in subinterpreters and that inspired me to write about my experience.
 
@@ -28,9 +32,9 @@ Today I saw a [great blogpost](https://izzys.casa/2024/08/463-python-interpreter
 
 I started [coding up](https://github.com/mliezun/caddy-snake/pull/9/files) a basic implementation to see if I could serve simple requests from subinterpreters.
 
-From the get go I found that requests were failing on Python version 3.12 but working for previous versions thanks to CI tests.
+From the get go I found that requests were failing in Python version 3.12 but working for previous versions thanks to CI tests.
 
-The failure was constrained to a part of the code where the status code is converted from string to int: `strtol(statusCode)` in C.
+The failure was constrained to a C function where the HTTP status code was being converted from string to int: `strtol(statusCode)`.
 
 By printing the content of the `statusCode` variable I found the following difference.
 
@@ -42,8 +46,8 @@ In main interpreter:
 
 In a subinterpreter:
 
-```
-<HttpStatusCode.OK: 200>
+```text
+&lt;HttpStatusCode.OK: 200&gt;
 ```
 
 I managed to track down the enum that was causing this. Then I crafted some code to try to reproduce the error in a standard Python interpreter.
@@ -68,7 +72,7 @@ exec(script)
 
 interp_id = interpreters.create(isolated=False)
 interpreters.run_string(interp_id, script)
-# Output: <MyEnum.DATA: 1>, Expected: 1
+# Output: &lt;MyEnum.DATA: 1&gt;, Expected: 1
 ```
 
 That piece of code executes the same python code in both the main interpreter and a freshly created subinterpreter. The output should be the same, but it's not. The problem was independent of running with a separate GIL or with the same GIL.
@@ -80,7 +84,7 @@ In main interpreter:
 ```python
 ...
 print(MyEnum.DATA.__str__)
-# Output: <method-wrapper '__repr__' of MyEnum object at 0x7f9a09a2e910>
+# Output: &lt;method-wrapper '__repr__' of MyEnum object at 0x7f9a09a2e910&gt;
 ```
 
 In subinterpreter:
@@ -88,12 +92,13 @@ In subinterpreter:
 ```python
 ...
 print(MyEnum.DATA.__str__)
-# Output: <method-wrapper '__str__' of MyEnum object at 0x7f9a099a5e90>
+# Output: &lt;method-wrapper '__str__' of MyEnum object at 0x7f9a099a5e90&gt;
 ```
 
-In the main interpreter the method wraps `__repr__`, but in the subinterpreter it wraps `__str__`.
+In the main interpreter the method wraps `__repr__`.
+In the subinterpreter it wraps `__str__`.
 
-At this point I couldn't believe what I was looking at. When your program has a bug the fault is always yours, it's rare to see the case where the problem is in the INTERPRETER.
+At this point I couldn't believe what I was looking at. When your program has a bug you always assume is your fault, it's rare to see the case where the problem is in the INTERPRETER.
 
 But to my own disbelief I had found a problem with the CPython implementation.
 
@@ -125,11 +130,11 @@ script = """print(int.__str__)"""
 
 
 exec(script)
-# Output: <slot wrapper '__str__' of 'object' objects>
+# Output: &lt;slot wrapper '__str__' of 'object' objects&gt;
 
 interp_id = interpreters.create()
 interpreters.run_string(interp_id, script)
-# Output: <slot wrapper '__str__' of 'int' objects>
+# Output: &lt;slot wrapper '__str__' of 'int' objects&gt;
 ```
 
 Having the exact commit where this problem was introduced and a concise way of seeing what the underlying problem is, I decided to give try to fix the issue myself. Diving into the CPython codebase.
@@ -140,25 +145,35 @@ The commit where the problem was introduced [de64e75](https://github.com/python/
 
 If you take a look at it the most suspicious one is `typeobject.c`, you can see that it's changing some behavior in the MRO: Method Resolution Order. Which is the way methods are "inherited" from one class to another in Python.
 
-I thought that was related because in the subinterpreter the `int` class inherits the method `__str__` instead of `__repr__`. That was not the real issue, but I was correct about the file where the problem was.
+I thought that was related because in the subinterpreter the `int` class inherits the method
+ `__str__` instead of 
+ `__repr__`. That was not the real issue, but I was correct about the file where the problem was.
 
 Debugging was done in the good old fashioned way, adding print statements all over the place.
 
-With my printing mechanism I managed to find out that the function that creates those `<slot wrapper ...>` objects is called `type_ready()`.
+With my printing mechanism I managed to find out that the function that creates those `&lt;slot wrapper ...&gt;` objects is called
+ `type_ready()`.
 
-That slot wrapper is a function that calls code from a type-slot. For example the `int` type defines a slot called `tp_str`. That slot is a C function that knows how to convert the object into a string. That C function is wrapped into a Python function which is executed when you do `str(5)`.
+That slot wrapper is a function that calls code from a type-slot. For example the `int` type defines a slot called 
+`tp_str`. That slot is a C function that knows how to convert the object into a string. That C function is wrapped into a Python function which is executed when you do 
+`str(5)`.
 
 I could see that `type_ready()` was called the first time from the main interpreter, and the second time from a subinterpreter, but this time it added more stuff.
 
-One would expect that `type_ready()` gives the same result wether executed from a subinterpreter or from the main interpreter. The builtin types (`int`, `str`, `float`, `bool`, ...) should be the same in all cases.
+One would expect that `type_ready()` gives the same result wether executed from a subinterpreter or from the main interpreter. The builtin types (
+    `int`, 
+    `str`, 
+    `float`, 
+    `bool`, ...) should be the same in all cases.
 
-Another group of changes in the `typeobject.c` file was a lot of functions that obtain attributes from a builtin type, for example `lookup_tp_dict()`:
+Another group of changes in the `typeobject.c` file was a lot of functions that obtain attributes from a builtin type, for example 
+`lookup_tp_dict()`:
 
 ```C
 static inline PyObject *
 lookup_tp_dict(PyTypeObject *self)
 {
-+   if (self->tp_flags & _Py_TPFLAGS_STATIC_BUILTIN) {
++   if (self->tp_flags &amp; _Py_TPFLAGS_STATIC_BUILTIN) {
 +       PyInterpreterState *interp = _PyInterpreterState_GET();
 +       static_builtin_state *state = _PyStaticType_GetState(interp, self);
 +       assert(state != NULL);
@@ -170,28 +185,42 @@ lookup_tp_dict(PyTypeObject *self)
 
 This function is obtaining the `tp_dict` property from a type. Which is a dictionary that stores attributes/methods of the class.
 
-In this case the entire if-statement was added. If you take a closer look you can infer what's happening. Before we just obtained the value by doing `self->tp_dict`. Now, if it's a builtin type, we read the value from the interpreter state `state->tp_dict`.
+In this case the entire if-statement was added. If you take a closer look you can infer what's happening. Before we just obtained the value by doing `self->tp_dict`. 
+Now, if it's a builtin type, we read the value from the interpreter state `state->tp_dict`.
 
 With this information I started to dig deeper to see if I could find the exact place where the extra attributes were being added.
 
 Taking `int.__str__` as an example to see what was going on:
 
-1. The `type_ready()` function gets executed as part of the main interpreter initialization process.
-2. The function starts "readying" the `int` type: `tp_dict` gets filled by `type_ready_fill_dict()`, one of the thing this function does is lookup which slots are *not empty* and add them to the dict, for `int` the `tp_str` slot is empty.
-3. After that, `type_ready_inherit()` gets called, and copies the `tp_str` slot from object to int.
-4. The init process for the main interpreter finishes and we're ready to start with the second interpreter.
-5. In this case, the `tp_str` slot is not empty for `int`, it was filled by step 3. So it gets added to the dict by `type_ready_fill_dict()`.
-6. The program continues and we see different behavior depending on which interpreter we run.
+<ol>
+<li> The `type_ready()` function gets executed as part of the main interpreter initialization process.</li>
+<li> The function starts "readying" the `int` type: 
+`tp_dict` gets filled by 
+`type_ready_fill_dict()`, one of the thing this function does is lookup which slots are *not empty* and add them to the dict, for 
+`int` the 
+`tp_str` slot is empty.</li>
+<li> After that, `type_ready_inherit()` gets called, and copies the 
+`tp_str` slot from object to int.</li>
+<li> The init process for the main interpreter finishes and we're ready to start with the second interpreter.</li>
+<li> In this case, the `tp_str` slot is not empty for 
+`int`, it was filled by step 3. So it gets added to the dict by 
+`type_ready_fill_dict()`.</li>
+<li> The program continues and we see different behavior depending on which interpreter we run.</li>
+</ol>
 
-
-The problem here is that inside `type_ready()` we expect `type_ready_fill_dict()` to be called before `type_ready_inherit()`. Which is true for the main interpreter but not for the subinterpreter. Also, this is caused because all the slots in `int` are shared except for `tp_dict` which is stored in each interpreter.
+The problem here is that inside `type_ready()` we expect 
+`type_ready_fill_dict()` to be called before 
+`type_ready_inherit()`. Which is true for the main interpreter but not for the subinterpreter. Also, this is caused because all the slots in 
+`int` are shared except for 
+`tp_dict` which is stored in each interpreter.
 
 
 ### Summary
 
 To summarize the problem: `type_ready()` didn't receive a "clean" type. It was receiving a type with slots partially filled.
 
-Some slots were filled because they were shared among interpreters, others like `tp_dict` were not shared. That caused inconsistencies between executions of `type_ready()`.
+Some slots were filled because they were shared among interpreters, others like `tp_dict` were not shared. That caused inconsistencies between executions of 
+`type_ready()`.
 
 
 ## The solution?
@@ -206,7 +235,7 @@ It boils down to adding this function:
 static int
 fix_builtin_slot_wrappers(PyTypeObject *self, PyInterpreterState *interp)
 {
-    assert(self->tp_flags & _Py_TPFLAGS_STATIC_BUILTIN);
+    assert(self->tp_flags &amp; _Py_TPFLAGS_STATIC_BUILTIN);
     assert(!_Py_IsMainInterpreter(interp));
 
     // Getting subinterpreter state
@@ -227,9 +256,9 @@ fix_builtin_slot_wrappers(PyTypeObject *self, PyInterpreterState *interp)
     }
     Py_ssize_t i = 0;
     PyObject *key, *value;
-    while (PyDict_Next(state->tp_dict, &i, &key, &value)) {
+    while (PyDict_Next(state->tp_dict, &amp;i, &amp;key, &amp;value)) {
         if (!PyDict_Contains(main_state->tp_dict, key)) {
-            if (PyList_Append(keys_to_remove, key) < 0) {
+            if (PyList_Append(keys_to_remove, key) &lt; 0) {
                 goto finally;
             }
         }
@@ -238,9 +267,9 @@ fix_builtin_slot_wrappers(PyTypeObject *self, PyInterpreterState *interp)
     // Go through keys_to_remove and remove those attributes from
     // the base type in the subinterpreter.
     Py_ssize_t list_size = PyList_Size(keys_to_remove);
-    for (Py_ssize_t i = 0; i < list_size; i++) {
+    for (Py_ssize_t i = 0; i &lt; list_size; i++) {
         PyObject* key = PyList_GetItem(keys_to_remove, i);
-        if (PyDict_DelItem(state->tp_dict, key) < 0) {
+        if (PyDict_DelItem(state->tp_dict, key) &lt; 0) {
             goto finally;
         }
     }
@@ -280,7 +309,7 @@ In the end I decided to close my PR because Eric's pushed the real solution into
 
 I think it would have been cool to ship code to be included in all python interpreters around the world. But I'm happy my analysis helped solve the issue.
 
-In Python 3.12.5 the fix was released: https://docs.python.org/release/3.12.5/whatsnew/changelog.html#core-and-builtins
+In Python 3.12.5 the fix was released: [https://docs.python.org/release/3.12.5/whatsnew/changelog.html#core-and-builtins](https://docs.python.org/release/3.12.5/whatsnew/changelog.html#core-and-builtins)
 
 
 ## Thanks!
