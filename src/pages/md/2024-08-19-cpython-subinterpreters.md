@@ -286,7 +286,7 @@ Then at the end of `type_ready()`, call that function for builtin types and only
 
 
 ```C
-    if (type->tp_flags & _Py_TPFLAGS_STATIC_BUILTIN) {
+    if (type->tp_flags &amp; _Py_TPFLAGS_STATIC_BUILTIN) {
         PyInterpreterState *interp = _PyInterpreterState_GET();
         if (!_Py_IsMainInterpreter(interp)) {
             if (fix_builtin_slot_wrappers(type, interp) < 0) {
