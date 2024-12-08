@@ -1,11 +1,11 @@
 ---
-title: "TODO: Caddy Snake improvements"
+title: "Caddy Snake improvements"
 excerpt: "I've been planning on improving Caddy Snake, making it more stable and easier to use. Right now, I want to add automatic test for Django, and build binaries and Docker images for arm64 and riscv64. I'd also like to turn it into a Python package so you can plug it straight into your code."
 author: "Miguel Liezun"
 tags: programming,python,code,algorithms
 ---
 
-# TODO: Caddy Snake improvements
+# Caddy Snake improvements
 
 ## Fix/add/test support for Django
 
