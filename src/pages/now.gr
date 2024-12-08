@@ -16,7 +16,7 @@ fn aboutme() {
 fn now() {
 	return [
 		["div", [], [
-			"Last updated on 2024-05-17.",
+			"Last updated on 2024-12-08.",
 			["ul", [], [
 				["li", [], [
 					"Working on ",
@@ -29,10 +29,13 @@ fn now() {
 					"Still sporadically working on Grotsky, a toy programming language made with Rust.",
 				]],
 				["li", [], [
-					"Training to run a 42km marathon.",
+					"Learning French.",
 				]],
 				["li", [], [
-					"Preparing to move from Argentina to France in late 2024.",
+					"Still training to run a 42km marathon?",
+				]],
+				["li", [], [
+					"Recently moved to Paris, France.",
 				]],
 				["li", [], [
 					"Working as a Software Engineer at Gencove, building the future of Genome Sequencing."
