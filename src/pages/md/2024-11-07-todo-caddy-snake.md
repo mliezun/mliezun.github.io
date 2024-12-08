@@ -24,8 +24,11 @@ Sometimes I get random segfaults when tests run on CI. I'd like to take time to 
 For now I'm only building caddy-snake for Linux x86_64. It would be cool to distribute more binaries for different OSes and CPU architectures.
 
 For example:
+
 - linux / x86_64 / arm64 / riscv64
+
 - macOS / x86_64 / arm64
+
 - windows / x86_64 / arm64
 
 Also deliver docker images for all of those.
