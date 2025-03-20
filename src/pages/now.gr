@@ -16,7 +16,7 @@ fn aboutme() {
 fn now() {
 	return [
 		["div", [], [
-			"Last updated on 2024-12-08.",
+			"Last updated on 2025-03-20.",
 			["ul", [], [
 				["li", [], [
 					"Working on ",
@@ -26,16 +26,19 @@ fn now() {
 					". A plugin for the Caddy proxy that embeds the Python interpreter.",
 				]],
 				["li", [], [
-					"Still sporadically working on Grotsky, a toy programming language made with Rust.",
+					"Also building an AI-enabled database editor.",
+				]],
+				["li", [], [
+					"I've built Grotsky, a toy programming language made with Rust. Sometimes I still poke around with it.",
+				]],
+				["li", [], [
+					"Still training to run a 42km marathon. I use a Coros watch, it's awesome.",
+				]],
+				["li", [], [
+					"Moved to Paris, France 6 months ago. Recently to a new apartment.",
 				]],
 				["li", [], [
 					"Learning French.",
-				]],
-				["li", [], [
-					"Still training to run a 42km marathon?",
-				]],
-				["li", [], [
-					"Recently moved to Paris, France.",
 				]],
 				["li", [], [
 					"Working as a Software Engineer at Gencove, building the future of Genome Sequencing."
