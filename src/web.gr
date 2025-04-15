@@ -185,7 +185,13 @@ class Web {
     }
 
     handleRq(rq, rw) {
-        let page = this.renderedPages[rq.target]
+        let page = nil
+
+        try {
+            page = this.renderedPages[rq.target]
+        } catch err {
+            io.println("Target not found: ", rq.target)
+        }
         
         if page != nil {
             rw.setStatus("200").setBody(page)
