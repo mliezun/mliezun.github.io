@@ -57,7 +57,11 @@ fn get_routes(include_feed) {
         let date = p["name"][:10]
         let content = io.readFile("src/pages/md/" + name)
         let parsed = md.parseHeader(content)
-        let body = md.parseBody(parsed[0])
+        let replaceSpecials = false
+        if date > "2025-03-20" {
+            replaceSpecials = true
+        }
+        let body = md.parseBody(parsed[0], replaceSpecials)
         let header = parsed[1]
         return {
             "url": url,

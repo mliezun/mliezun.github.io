@@ -154,10 +154,15 @@ fn parseCodeBlock(content) {
 	return ["pre", ["class", "triple-quote " + lang], [code]]
 }
 
-fn parseBody(content) {
+fn parseBody(content, replaceSpecials) {
 	let out = []
 	for let i = 0; i < content.length; i = i + 1 {
 		let line = processLine(content[i])
+		if replaceSpecials {
+			line = u.replace(line, "&", "&amp;")
+			line = u.replace(line, "<", "&lt;")
+			line = u.replace(line, ">", "&gt;")
+		}
 		if u.startswith(line, "#") {
 			out = out + [parseHeading(line)]
 		} elif u.startswith(line, "```") {
