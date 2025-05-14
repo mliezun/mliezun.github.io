@@ -4,3 +4,4 @@ vendor
 _site
 .vscode
 _posts
+.DS_Store
