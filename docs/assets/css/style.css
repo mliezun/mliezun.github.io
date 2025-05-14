@@ -1,0 +1,140 @@
+body {
+    text-rendering: optimizeLegibility;
+    font-family: "Ibarra Real Nova", serif;
+    font-size: 15pt;
+    font-kerning: normal;
+    line-height: 1.6;
+    color: #222;
+    background-color: #fefefe;
+}
+
+.site-header header {
+    font-size: 22pt;
+}
+
+.body-wrapper {
+    display: flex;
+    justify-content: center;
+}
+
+.body-content {
+    padding: 20px;
+    width: 45%;
+}
+
+@media (max-width: 1024px) {
+    .body-content {
+        width: 85%;
+    }
+}
+
+@media (min-width: 1025px) and (max-width: 1440px) {
+    .body-content {
+        width: 65%;
+    }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: #000000;
+}
+
+h4 {
+    font-size: 1.07em;
+}
+
+h5 {
+    font-size: 0.95em;
+}
+
+article a {
+    font-size: 14.25pt;
+}
+
+
+a:link {
+    color: #000000;
+    font-weight: bold;
+}
+
+a:visited {
+    color: #000000;
+    text-decoration: none;
+}
+
+.triple-quote {
+    font-family: "PT Mono", monospace !important;
+    font-size: 13pt;
+    color: #444;
+    background-color: #002f5617;
+    padding: 30px;
+    border-radius: 6px;
+    overflow: auto;
+}
+
+.single-quote {
+    font-family: "PT Mono", monospace !important;
+    font-size: 11pt;
+    overflow-wrap: break-word;
+    color: #444;
+    background-color: #002f5617;
+    /* padding: 2px; */
+    border-radius: 6px;
+    padding-left: 6px;
+    padding-right: 6px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+footer {
+    margin-top: 30px;
+}
+
+.footer-wrapper {
+    display: flex;
+    justify-content: space-between;
+}
+
+.footer-socials a {
+    padding: 5px;
+}
+
+.aboutme {
+    font-size: 16px;
+    line-height: 24px;
+    border: 2px solid rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    padding: 10px 20px;
+    width: 75%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 5vh;
+    margin-bottom: 2.5em;
+}
+
+li {
+    margin-bottom: 10px;
+}
+
+.site-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.btn {
+    color: white !important;
+    display: inline-block;
+    font-size: 0.75rem;
+    padding: 3px 9px 3px 9px;
+    text-align: center;
+    text-decoration: none !important;
+}
+
+.btn-rss {
+    background-color: #222222e3;
+}
