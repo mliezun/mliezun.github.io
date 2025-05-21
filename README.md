@@ -2,7 +2,7 @@
 
 This blog is made with [Grotsky](https://github.com/mliezun/grotsky) a toy programming language I made to learn about interpreters and compilers.
 
-[Visit the blog](https://mliezun.github.io)
+[Visit the blog](https://mliezun.com)
 
 
 ## Project Overview
