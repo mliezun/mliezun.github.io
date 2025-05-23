@@ -18,7 +18,7 @@ let post = base.Post(
 		["p", [], firstParagraph],
 		["p", [], [
 			"In a ",
-			["a", ["href", "https://mliezun.github.io/2023/06/02/rewrite-grotsky-rust.html"], ["previous post"]],
+			["a", ["href", "https://mliezun.com/2023/06/02/rewrite-grotsky-rust.html"], ["previous post"]],
 			" I've outlined a plan to migrate Grotsky to a Rust based platform.",
 		]],
 		["p", [], [

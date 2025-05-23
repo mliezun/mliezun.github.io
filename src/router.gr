@@ -112,7 +112,7 @@ fn get_routes(include_feed) {
         "class": "html",
         "content": import("pages/index.gr").build_index(posts),
         "metadata": {
-            "title": "Blog | mliezun.github.io",
+            "title": "Blog | mliezun.com",
             "author": "Miguel Liezun",
             "tags": "software,tech,fun",
             "date": "",
@@ -125,7 +125,7 @@ fn get_routes(include_feed) {
         "class": "html",
         "content": import("pages/now.gr").build_now(),
         "metadata": {
-            "title": "Now page | mliezun.github.io",
+            "title": "Now page | mliezun.com",
             "author": "Miguel Liezun",
             "tags": "software,tech,fun",
             "date": "2024-07-17",

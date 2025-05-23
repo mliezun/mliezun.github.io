@@ -21,7 +21,7 @@ let post = base.Post(
 		]],
 		["p", [], [
 			"That project ^ was covered in a previous ",
-			["a", ["href", "https://mliezun.github.io/2020/12/17/grotsky-getmyip.html", "target", "_blank"], "blogpost"],
+			["a", ["href", "https://mliezun.com/2020/12/17/grotsky-getmyip.html", "target", "_blank"], "blogpost"],
 			".",
 		]],
 		["h3", [], "Migration instructions"],

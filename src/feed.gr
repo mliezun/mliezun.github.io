@@ -15,18 +15,18 @@ fn generate_feed(posts) {
 	})
 	let content = ["feed", ["xmlns", "http://www.w3.org/2005/Atom"], [
 		["generator", ["uri", "https://github.com/mliezun/mliezun.github.io", "version", "20240110"], [
-			"mliezun.github.io"
+			"mliezun.com"
 		]],
-		["link", ["href", "https://mliezun.github.io/feed.xml", "rel", "self", "type", "application/atom+xml"]],
-		["link", ["href", "https://mliezun.github.io/", "rel", "alternate", "type", "text/html"]],
-		["id", [], ["https://mliezun.github.io/"]],
-		["title", [], ["mliezun.github.io"]],
+		["link", ["href", "https://mliezun.com/feed.xml", "rel", "self", "type", "application/atom+xml"]],
+		["link", ["href", "https://mliezun.com/", "rel", "alternate", "type", "text/html"]],
+		["id", [], ["https://mliezun.com/"]],
+		["title", [], ["mliezun.com"]],
 		["updated", [], [posts[0]["date"] + "T00:00:00Z"]],
 		["subtitle", [], ["I'm Miguel. Here I write mainly about programming and side projects."]],
 	]]
 	let entries = u.map(posts, fn (p) {
 		let post_obj = p["post_obj"]
-		let url = "https://mliezun.github.io" + p["url"]
+		let url = "https://mliezun.com" + p["url"]
 		let date = p["date"]
 		let content = renderer.render(post_obj.content)
 		let replacements = {

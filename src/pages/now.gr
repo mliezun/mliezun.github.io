@@ -7,7 +7,7 @@ fn aboutme() {
         ["p", [], "I'm Miguel. Here I write mainly about programming and side projects."],
         ["p", [], [
             "I've written my own programming language called Grotsky, and it's ",
-            ["a", ["href", "https://mliezun.github.io/2023/11/23/grotsky-rust-part3.html", "target", "_blank"], "implemented in Rust"],
+            ["a", ["href", "https://mliezun.com/2023/11/23/grotsky-rust-part3.html", "target", "_blank"], "implemented in Rust"],
             ". This blog's engine is written with Grotksy and generates static HTML files."
         ]]
     ]]

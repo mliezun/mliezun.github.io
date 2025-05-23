@@ -17,7 +17,7 @@ You can see more about the event here: [https://2025.djangocon.eu/](https://2025
 
 I gave a lightning talk about caddy-snake. A lot of people were confused about the name, so I might change it.
 
-Here's the talk: [caddy-snake-djangocon-2025.pdf](https://mliezun.github.io/caddy-snake-djangocon-2025.pdf).
+Here's the talk: [caddy-snake-djangocon-2025.pdf](https://mliezun.com/caddy-snake-djangocon-2025.pdf).
 
 If anyone is thinking about joining the Django community, please don't hesitate and do it. The people are great.
 

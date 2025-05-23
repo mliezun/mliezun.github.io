@@ -18,19 +18,19 @@ let post = base.Post(
 			"Read more about grotsky in previous blogposts:",
 			["ul", [], [
 				["li", [], [
-					["a", ["target", "_blank", "href", "https://mliezun.github.io/2020/02/21/grotsky-part1.html"], "Grotsky Part 1: Syntax"]
+					["a", ["target", "_blank", "href", "https://mliezun.com/2020/02/21/grotsky-part1.html"], "Grotsky Part 1: Syntax"]
 				]],
 				["li", [], [
-					["a", ["target", "_blank", "href", "https://mliezun.github.io/2020/03/15/grotsky-part2.html"], "Grotsky Part 2: Parsing expressions"]
+					["a", ["target", "_blank", "href", "https://mliezun.com/2020/03/15/grotsky-part2.html"], "Grotsky Part 2: Parsing expressions"]
 				]],
 				["li", [], [
-					["a", ["target", "_blank", "href", "https://mliezun.github.io/2020/04/01/grotsky-part3.html"], "Grotsky Part 3: Interpreting"]
+					["a", ["target", "_blank", "href", "https://mliezun.com/2020/04/01/grotsky-part3.html"], "Grotsky Part 3: Interpreting"]
 				]],
 				["li", [], [
-					["a", ["target", "_blank", "href", "https://mliezun.github.io/2020/12/17/grotsky-getmyip.html"], "Grotsky Part 4: Writing a service to get your public IP"]
+					["a", ["target", "_blank", "href", "https://mliezun.com/2020/12/17/grotsky-getmyip.html"], "Grotsky Part 4: Writing a service to get your public IP"]
 				]],
 				["li", [], [
-					["a", ["target", "_blank", "href", "https://mliezun.github.io/2021/10/04/new-blog-engine.html"], "I created a programming language and this blog is powered by it"]
+					["a", ["target", "_blank", "href", "https://mliezun.com/2021/10/04/new-blog-engine.html"], "I created a programming language and this blog is powered by it"]
 				]],
 			]]
 		]],

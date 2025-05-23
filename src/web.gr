@@ -33,10 +33,10 @@ class Web {
             ["meta", ["property", "og:description", "content", metadata["excerpt"]], []],
             ["meta", ["name", "keywords", "content", metadata["tags"]], []],
 
-            ["link", ["rel", "canonical", "href", "https://mliezun.github.io" + url], []],
-            ["meta", ["property", "og:url", "content", "https://mliezun.github.io" + url], []],
-            ["meta", ["property", "og:site_name", "content", "mliezun.github.io"], []],
-            ["meta", ["property", "og:image", "content", "https://mliezun.github.io/assets/images/nyc.jpg"], []],
+            ["link", ["rel", "canonical", "href", "https://mliezun.com" + url], []],
+            ["meta", ["property", "og:url", "content", "https://mliezun.com" + url], []],
+            ["meta", ["property", "og:site_name", "content", "mliezun.com"], []],
+            ["meta", ["property", "og:image", "content", "https://mliezun.com/assets/images/nyc.jpg"], []],
             ["link", ["rel", "icon", "type", "image/x-icon", "href", "/assets/images/favicon.ico"], []],
 
             this.addIf(
@@ -46,19 +46,19 @@ class Web {
             ["meta", ["name", "twitter:card", "content", "summary"], []],
             ["meta", ["property", "twitter:title", "content", metadata["title"]], []],
             ["meta", ["name", "twitter:creator", "content", "@migueliezun"]],
-            ["meta", ["name", "twitter:image", "content", "https://mliezun.github.io/assets/images/nyc.jpg"]],
+            ["meta", ["name", "twitter:image", "content", "https://mliezun.com/assets/images/nyc.jpg"]],
 
             this.addIf(
                 metadata["content_type"] != "article",
                 ["script", ["type", "application/ld+json"], [
-                    "{\"name\":\"mliezun.github.io\",\"description\":\"" + metadata["excerpt"] + "\",\"@type\":\"WebSite\",\"url\":\"https://mliezun.github.io/\",\"headline\":\"" + metadata["title"] + "\",\"@context\":\"https://schema.org\"}",
+                    "{\"name\":\"mliezun.com\",\"description\":\"" + metadata["excerpt"] + "\",\"@type\":\"WebSite\",\"url\":\"https://mliezun.com/\",\"headline\":\"" + metadata["title"] + "\",\"@context\":\"https://schema.org\"}",
                 ]],
             ),
 
             this.addIf(
                 metadata["content_type"] == "article",
                 ["script", ["type", "application/ld+json"], [
-                    "{\"description\":\"" + metadata["excerpt"] + "\",\"author\":{\"@type\":\"Person\",\"name\":\"Miguel Liezun\"},\"@type\":\"BlogPosting\",\"url\":\"https://mliezun.github.io" + url + "\",\"headline\":\"" + metadata["title"] + "\",\"dateModified\":\"" + metadata["date"] + "T00:00:00-03:00\",\"datePublished\":\"" + metadata["date"] + "T00:00:00-03:00\",\"mainEntityOfPage\":{\"@type\":\"WebPage\",\"@id\":\"https://mliezun.github.io" + url + "\"},\"@context\":\"https://schema.org\"}"
+                    "{\"description\":\"" + metadata["excerpt"] + "\",\"author\":{\"@type\":\"Person\",\"name\":\"Miguel Liezun\"},\"@type\":\"BlogPosting\",\"url\":\"https://mliezun.com" + url + "\",\"headline\":\"" + metadata["title"] + "\",\"dateModified\":\"" + metadata["date"] + "T00:00:00-03:00\",\"datePublished\":\"" + metadata["date"] + "T00:00:00-03:00\",\"mainEntityOfPage\":{\"@type\":\"WebPage\",\"@id\":\"https://mliezun.com" + url + "\"},\"@context\":\"https://schema.org\"}"
                 ]],
             ),
 
@@ -81,11 +81,11 @@ class Web {
                     ]],
                     ["div", [], [
                         "Blog",
-                        ["a", ["target", "_blank", "href", "https://github.com/mliezun/mliezun.github.io"], "source code"]
+                        ["a", ["target", "_blank", "href", "https://github.com/mliezun/mliezun.com"], "source code"]
                     ]]
                 ]],
                 ["div", ["class", "footer-socials"], [
-                    ["a", ["target", "_blank", "href", "https://mliezun.github.io/feed.xml"], [
+                    ["a", ["target", "_blank", "href", "https://mliezun.com/feed.xml"], [
                         ["img", ["alt", "RSS Feed", "src", "/assets/images/socials/rss.png", "width", "20", "height", "20", "style", "border-radius: 3px"], []]
                     ]],
                     ["a", ["target", "_blank", "href", "https://github.com/mliezun"], [
