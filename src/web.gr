@@ -20,6 +20,12 @@ class Web {
 
     head(url, metadata) {
         return ["head", [], [
+            # Redirect to mliezun.com if on GitHub Pages
+            ["script", ["type", "text/javascript"], [
+                "if (window.location.host === 'mliezun.github.io') {
+                    window.location.host = 'mliezun.com';
+                }",
+            ]],
             ["meta", ["charset", "UTF-8"], []],
             ["meta", ["http-equiv", "X-UA-Compatible", "content", "IE=edge"], []],
             ["meta", ["name", "viewport", "content", "width=device-width, initial-scale=1"], []],
