@@ -165,12 +165,10 @@ footer {
     gap: 8px;
     padding: 6px 12px;
     font-size: 14px;
-    color: var(--text-secondary);
     background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
+    border: 0px;
     border-radius: 6px;
     cursor: pointer;
-    transition: all 0.2s ease;
 }
 
 .theme-toggle:hover {
