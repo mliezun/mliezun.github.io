@@ -31,7 +31,7 @@ fn group_by_year(posts) {
 fn build_index(posts) {
     let years = group_by_year(posts)
     let years_list = u.keys(years)
-    years_list = u.sortBy(years_list, fn (a, b) strings.compare(b, a))
+    years_list = u.sortBy(years_list, fn (a, b) strings.compare(a, b))
     
     return [
         aboutme(),
@@ -40,17 +40,17 @@ fn build_index(posts) {
             u.foldr(u.map(years_list, fn (year) {
                 return [
                     # Year heading
-                    ["h2", ["style", "font-size: 20pt; font-weight: bold; margin-top: 40px; margin-bottom: 20px; color: #444;"], year],
+                    ["h2", ["style", "font-size: 20pt; font-weight: bold; margin-top: 40px; margin-bottom: 20px; color: #2d3748;"], year],
                     # Posts for this year
                     ["div", [],
                         u.foldr(u.map(years[year], fn (postDict) {
                             let p = postDict["post_obj"]
                             let url = postDict["url"]
                             return [[
-                                "div", ["style", "margin-bottom: 12px;"], [
-                                    ["a", ["href", url, "style", "font-size: 14pt; text-decoration: none;"], p.title],
-                                    ["span", ["style", "color: rgba(0, 0, 0, 0.45); margin-left: 5px; font-size: 12pt;"], [
-                                        ["span", ["style", "margin: 0 5px;"], "-"],
+                                "div", ["style", "margin-bottom: 16px;"], [
+                                    ["a", ["href", url, "style", "font-size: 13pt; text-decoration: none; color: #2b6cb0; transition: color 0.2s ease; letter-spacing: -0.015em; line-height: 1.4;"], p.title],
+                                    ["span", ["style", "color: #718096; margin-left: 8px; font-size: 10pt; letter-spacing: 0;"], [
+                                        ["span", ["style", "margin: 0 5px;"], " "],
                                         postDict["date"]
                                     ]]
                                 ]

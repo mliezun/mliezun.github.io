@@ -1,11 +1,15 @@
 body {
     text-rendering: optimizeLegibility;
-    font-family: "IBM Plex Mono", monospace;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     font-size: 14pt;
     font-kerning: normal;
-    line-height: 1.6;
-    color: #222;
-    background-color: #fefefe;
+    line-height: 1.7;
+    letter-spacing: -0.011em;
+    color: #2d3748;
+    background-color: #f7fafc;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    max-width: 100%;
 }
 
 .site-header header {
@@ -20,6 +24,7 @@ body {
 .body-content {
     padding: 20px;
     width: 45%;
+    max-width: 680px;
 }
 
 @media (max-width: 1024px) {
@@ -40,7 +45,7 @@ h3,
 h4,
 h5,
 h6 {
-    color: #000000;
+    color: #1a365d;
 }
 
 h4 {
@@ -57,7 +62,7 @@ article a {
 
 
 a:link {
-    color: #000000;
+    color: #2b6cb0;
     font-weight: bold;
 }
 
@@ -67,21 +72,22 @@ a:visited {
 }
 
 .triple-quote {
-    font-family: "PT Mono", monospace !important;
+    font-family: "JetBrains Mono", "PT Mono", monospace !important;
     font-size: 13pt;
-    color: #444;
-    background-color: #002f5617;
+    color: #2d3748;
+    background-color: #edf2f7;
     padding: 30px;
     border-radius: 6px;
     overflow: auto;
+    border: 1px solid #e2e8f0;
 }
 
 .single-quote {
     font-family: "PT Mono", monospace !important;
     font-size: 11pt;
     overflow-wrap: break-word;
-    color: #444;
-    background-color: #002f5617;
+    color: #2d3748;
+    background-color: #edf2f7;
     /* padding: 2px; */
     border-radius: 6px;
     padding-left: 6px;
@@ -106,14 +112,16 @@ footer {
 .aboutme {
     font-size: 16px;
     line-height: 24px;
-    border: 2px solid rgba(0, 0, 0, 0.2);
-    border-radius: 4px;
-    padding: 10px 20px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 20px 30px;
     width: 75%;
     margin-left: auto;
     margin-right: auto;
     margin-top: 5vh;
     margin-bottom: 2.5em;
+    background-color: white;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 
 li {
