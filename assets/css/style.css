@@ -1,7 +1,7 @@
 body {
     text-rendering: optimizeLegibility;
-    font-family: "Ibarra Real Nova", serif;
-    font-size: 15pt;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 14pt;
     font-kerning: normal;
     line-height: 1.6;
     color: #222;

@@ -163,3 +163,11 @@ fn replace(str, findStr, replaceStr) {
     }
     return str[:ix] + replaceStr + replace(str[ix+findStr.length:], findStr, replaceStr)
 }
+
+fn keys(dict) {
+    let keys = []
+    for key in dict {
+        keys = keys + [key]
+    }
+    return keys
+}

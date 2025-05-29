@@ -13,26 +13,51 @@ fn aboutme() {
     ]]
 }
 
+fn group_by_year(posts) {
+    let years = {}
+    # Fill years with empty lists
+    for post in posts {
+        let year = strings.split(post["date"], "-")[0]
+        years[year] = []
+    }
+    # Group by years now
+    for post in posts {
+        let year = strings.split(post["date"], "-")[0]
+        years[year] = years[year] + [post]
+    }
+    return years
+}
+
 fn build_index(posts) {
+    let years = group_by_year(posts)
+    let years_list = u.keys(years)
+    years_list = u.sortBy(years_list, fn (a, b) strings.compare(b, a))
+    
     return [
         aboutme(),
         [
             "div", [],
-            u.foldr(u.map(posts, fn (postDict) {
-                let p = postDict["post_obj"]
-                let url = postDict["url"]
-                return [[
-                    "article", [], [
-                        # Title and link
-                        ["h3", [], [
-                            ["a", ["href", url], p.title]
-                        ]],
-                        # Date
-                        ["div", [], postDict["date"]],
-                        # Brief description
-                        ["div", [], p.excerpt],
+            u.foldr(u.map(years_list, fn (year) {
+                return [
+                    # Year heading
+                    ["h2", ["style", "font-size: 20pt; font-weight: bold; margin-top: 40px; margin-bottom: 20px; color: #444;"], year],
+                    # Posts for this year
+                    ["div", [],
+                        u.foldr(u.map(years[year], fn (postDict) {
+                            let p = postDict["post_obj"]
+                            let url = postDict["url"]
+                            return [[
+                                "div", ["style", "margin-bottom: 12px;"], [
+                                    ["a", ["href", url, "style", "font-size: 14pt; text-decoration: none;"], p.title],
+                                    ["span", ["style", "color: rgba(0, 0, 0, 0.45); margin-left: 5px; font-size: 12pt;"], [
+                                        ["span", ["style", "margin: 0 5px;"], "-"],
+                                        postDict["date"]
+                                    ]]
+                                ]
+                            ]]
+                        }), [], u.sum)
                     ]
-                ]]
+                ]
             }), [], u.sum)
         ]
     ]
