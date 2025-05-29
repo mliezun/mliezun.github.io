@@ -116,21 +116,17 @@ class Web {
                         ["header", [], [
                             ["a", ["href", "/", "style", "text-decoration: none !important"], "Blog"],
                         ]],
+                        ["button", ["class", "theme-toggle", "id", "theme-toggle", "title", "Toggle theme"], [
+                            ["img", ["src", "/assets/images/circle-half.svg"], []],
+                        ]],
                     ]],
                     ["hr", [], []],
                 ] + content + [
                     this.footer(),
                 ]],
             ]],
-            # Global site tag (gtag.js) - Google Analytics
-            ["script", ["async", "", "src", "https://www.googletagmanager.com/gtag/js?id=G-B0X6717RHT"], []],
-            ["script", [], [
-                "window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-                
-                gtag('config', 'G-B0X6717RHT');"
-            ]],
+            # Theme switcher
+            ["script", ["src", "/assets/js/theme-switcher.js"], []],
             # Highlight.js, syntax highlighter
             ["link", ["rel", "stylesheet", "href", "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/default.min.css"], []],
             ["script", ["src", "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js"], []],

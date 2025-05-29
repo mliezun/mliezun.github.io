@@ -1,3 +1,38 @@
+:root {
+    --bg-primary: #f7fafc;
+    --bg-secondary: #ffffff;
+    --bg-code: #edf2f7;
+    --text-primary: #2d3748;
+    --text-secondary: #718096;
+    --text-heading: #1a365d;
+    --text-link: #2b6cb0;
+    --border-color: #e2e8f0;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root[data-theme="auto"] {
+        --bg-primary: #1a202c;
+        --bg-secondary: #232b38;
+        --bg-code: #2d3748;
+        --text-primary: #e2e8f0;
+        --text-secondary: #a0aec0;
+        --text-heading: #90cdf4;
+        --text-link: #63b3ed;
+        --border-color: #4a5568;
+    }
+}
+
+:root[data-theme="dark"] {
+    --bg-primary: #1a202c;
+    --bg-secondary: #232b38;
+    --bg-code: #2d3748;
+    --text-primary: #e2e8f0;
+    --text-secondary: #a0aec0;
+    --text-heading: #90cdf4;
+    --text-link: #63b3ed;
+    --border-color: #4a5568;
+}
+
 body {
     text-rendering: optimizeLegibility;
     font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -5,8 +40,8 @@ body {
     font-kerning: normal;
     line-height: 1.7;
     letter-spacing: -0.011em;
-    color: #2d3748;
-    background-color: #f7fafc;
+    color: var(--text-primary);
+    background-color: var(--bg-primary);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     max-width: 100%;
@@ -45,7 +80,7 @@ h3,
 h4,
 h5,
 h6 {
-    color: #1a365d;
+    color: var(--text-heading);
 }
 
 h4 {
@@ -62,32 +97,32 @@ article a {
 
 
 a:link {
-    color: #2b6cb0;
+    color: var(--text-link);
     font-weight: bold;
 }
 
 a:visited {
-    color: #000000;
+    color: var(--text-link);
     text-decoration: none;
 }
 
 .triple-quote {
     font-family: "JetBrains Mono", "PT Mono", monospace !important;
     font-size: 13pt;
-    color: #2d3748;
-    background-color: #edf2f7;
+    color: var(--text-primary);
+    background-color: var(--bg-code);
     padding: 30px;
     border-radius: 6px;
     overflow: auto;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border-color);
 }
 
 .single-quote {
     font-family: "PT Mono", monospace !important;
     font-size: 11pt;
     overflow-wrap: break-word;
-    color: #2d3748;
-    background-color: #edf2f7;
+    color: var(--text-primary);
+    background-color: var(--bg-code);
     /* padding: 2px; */
     border-radius: 6px;
     padding-left: 6px;
@@ -112,7 +147,7 @@ footer {
 .aboutme {
     font-size: 16px;
     line-height: 24px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 20px 30px;
     width: 75%;
@@ -120,8 +155,26 @@ footer {
     margin-right: auto;
     margin-top: 5vh;
     margin-bottom: 2.5em;
-    background-color: white;
+    background-color: var(--bg-secondary);
     box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.theme-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    font-size: 14px;
+    color: var(--text-secondary);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.theme-toggle:hover {
+    border-color: var(--text-secondary);
 }
 
 li {
