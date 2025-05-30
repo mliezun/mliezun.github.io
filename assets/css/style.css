@@ -7,7 +7,7 @@
     --text-heading: #1a365d;
     --text-link: #2b6cb0;
     --border-color: #e2e8f0;
-    --invert-logo: 0;
+    --invert-colors: 0;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -20,7 +20,7 @@
         --text-heading: #90cdf4;
         --text-link: #63b3ed;
         --border-color: #4a5568;
-        --invert-logo: 1;
+        --invert-colors: 1;
     }
 }
 
@@ -33,7 +33,7 @@
     --text-heading: #90cdf4;
     --text-link: #63b3ed;
     --border-color: #4a5568;
-    --invert-logo: 1;
+    --invert-colors: 1;
 }
 
 body {
@@ -147,6 +147,10 @@ footer {
     padding: 5px;
 }
 
+.footer-socials img {
+    filter: invert(var(--invert-colors));
+}
+
 .aboutme {
     font-size: 16px;
     line-height: 24px;
@@ -175,7 +179,7 @@ footer {
 }
 
 .theme-toggle img {
-    filter: invert(var(--invert-logo));
+    filter: invert(var(--invert-colors));
 }
 
 .theme-toggle:hover {
