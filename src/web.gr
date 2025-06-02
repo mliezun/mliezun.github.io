@@ -128,8 +128,8 @@ class Web {
             # Theme switcher
             ["script", ["src", "/assets/js/theme-switcher.js"], []],
             # Highlight.js, syntax highlighter
-            ["link", ["rel", "stylesheet", "href", "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/default.min.css"], []],
-            ["script", ["src", "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js"], []],
+            ["link", ["rel", "stylesheet", "href", "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css"], []],
+            ["script", ["src", "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"], []],
             ["script", [], [
                 "document.querySelectorAll('.triple-quote').forEach(function (el) {
                     if (el.classList.length > 1) hljs.highlightElement(el, {language: el.classList[1]});

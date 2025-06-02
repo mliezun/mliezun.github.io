@@ -1,39 +1,54 @@
 :root {
-    --bg-primary: #f7fafc;
-    --bg-secondary: #ffffff;
-    --bg-code: #edf2f7;
-    --text-primary: #2d3748;
-    --text-secondary: #718096;
-    --text-heading: #1a365d;
-    --text-link: #2b6cb0;
-    --border-color: #e2e8f0;
+    --bg-primary: #FCFCFC;
+    --bg-secondary: #FFFFFF;
+    --bg-code: #F5F5F5;
+    --text-primary: #363636;
+    --text-secondary: #5E5E5E;
+    --text-heading: #922B21;
+    --text-link: #B03A2E;
+    --border-color: #EAEAEA;
     --invert-colors: 0;
+
+    /* New code snippet variables */
+    --code-bg: #FFFBF6;
+    --code-text: #263238;
+    --code-border: #CFD8DC;
 }
 
 @media (prefers-color-scheme: dark) {
     :root[data-theme="auto"] {
-        --bg-primary: #1a202c;
-        --bg-secondary: #232b38;
-        --bg-code: #2d3748;
-        --text-primary: #e2e8f0;
-        --text-secondary: #a0aec0;
-        --text-heading: #90cdf4;
-        --text-link: #63b3ed;
-        --border-color: #4a5568;
+        --bg-primary: #222222;
+        --bg-secondary: #2E2E2E;
+        --bg-code: #3B3B3B;
+        --text-primary: #E0E0E0;
+        --text-secondary: #B0B0B0;
+        --text-heading: #C36D62;
+        --text-link: #E67E73;
+        --border-color: #444444;
         --invert-colors: 1;
+
+        /* New code snippet variables */
+        --code-bg: #2A3B47;
+        --code-text: #CFD8DC;
+        --code-border: #37474F;
     }
 }
 
 :root[data-theme="dark"] {
-    --bg-primary: #1a202c;
-    --bg-secondary: #232b38;
-    --bg-code: #2d3748;
-    --text-primary: #e2e8f0;
-    --text-secondary: #a0aec0;
-    --text-heading: #90cdf4;
-    --text-link: #63b3ed;
-    --border-color: #4a5568;
+    --bg-primary: #222222;
+    --bg-secondary: #2E2E2E;
+    --bg-code: #3B3B3B;
+    --text-primary: #E0E0E0;
+    --text-secondary: #B0B0B0;
+    --text-heading: #C36D62;
+    --text-link: #E67E73;
+    --border-color: #444444;
     --invert-colors: 1;
+
+    /* New code snippet variables */
+    --code-bg: #2A3B47;
+        --code-text: #CFD8DC;
+    --code-border: #37474F;
 }
 
 body {
@@ -112,20 +127,21 @@ a:visited {
 .triple-quote {
     font-family: "JetBrains Mono", "PT Mono", monospace !important;
     font-size: 13pt;
-    color: var(--text-primary);
-    background-color: var(--bg-code);
+    color: var(--code-text);
+    background-color: var(--code-bg);
     padding: 30px;
     border-radius: 6px;
     overflow: auto;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--code-border);
 }
 
 .single-quote {
     font-family: "PT Mono", monospace !important;
     font-size: 11pt;
     overflow-wrap: break-word;
-    color: var(--text-primary);
-    background-color: var(--bg-code);
+    color: var(--code-text);
+    background-color: var(--code-bg);
+    border: 1px solid var(--code-border); /* Adding this for consistency */
     /* padding: 2px; */
     border-radius: 6px;
     padding-left: 6px;
