@@ -8,6 +8,11 @@
     --text-link: #B03A2E;
     --border-color: #EAEAEA;
     --invert-colors: 0;
+
+    /* New code snippet variables */
+    --code-bg: #ECEFF1;
+    --code-text: #263238;
+    --code-border: #CFD8DC;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -21,6 +26,11 @@
         --text-link: #E67E73;
         --border-color: #444444;
         --invert-colors: 1;
+
+        /* New code snippet variables */
+        --code-bg: #2A3B47;
+        --code-text: #B0BEC5;
+        --code-border: #37474F;
     }
 }
 
@@ -34,6 +44,11 @@
     --text-link: #E67E73;
     --border-color: #444444;
     --invert-colors: 1;
+
+    /* New code snippet variables */
+    --code-bg: #2A3B47;
+    --code-text: #B0BEC5;
+    --code-border: #37474F;
 }
 
 body {
@@ -112,20 +127,21 @@ a:visited {
 .triple-quote {
     font-family: "JetBrains Mono", "PT Mono", monospace !important;
     font-size: 13pt;
-    color: var(--text-primary);
-    background-color: var(--bg-code);
+    color: var(--code-text);
+    background-color: var(--code-bg);
     padding: 30px;
     border-radius: 6px;
     overflow: auto;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--code-border);
 }
 
 .single-quote {
     font-family: "PT Mono", monospace !important;
     font-size: 11pt;
     overflow-wrap: break-word;
-    color: var(--text-primary);
-    background-color: var(--bg-code);
+    color: var(--code-text);
+    background-color: var(--code-bg);
+    border: 1px solid var(--code-border); /* Adding this for consistency */
     /* padding: 2px; */
     border-radius: 6px;
     padding-left: 6px;
