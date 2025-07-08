@@ -45,23 +45,37 @@ fn parseHeading(line) {
 }
 
 fn processLink(line) {
-	let start = u.find(line, "[")
-	if start == -1 {
+	let parts = u.split(line, "[")
+	if parts.length <= 1 {
 		return line
 	}
-	let end = u.find(line[start+1:], "]")
-	if end == -1 or start+1+end == line.length-1 or line[start+end+2] != "(" {
-		return line
+	
+	let result = parts[0]  # First part before any [
+	
+	for let i = 1; i < parts.length; i = i + 1 {
+		let part = parts[i]
+		let end = u.find(part, "]")
+		if end == -1 or end == part.length-1 or part[end+1] != "(" {
+			# Not a valid link, keep original
+			result = result + "[" + part
+			continue
+		}
+		
+		let final = u.find(part[end+1:], ")")
+		if final == -1 {
+			# Not a valid link, keep original
+			result = result + "[" + part
+			continue
+		}
+		
+		let text = part[:end]
+		let target = part[end+2:end+1+final]
+		let remaining = part[end+2+final:]
+		
+		result = result + "<a target='_blank' href='" + target + "'>" + text + "</a>" + remaining
 	}
-	end = start+1+end
-	let final = u.find(line[end+1:], ")")
-	if final == -1 {
-		return line
-	}
-	final = end+1+final
-	let text = line[start+1:end]
-	let target = line[end+2:final]
-	return line[:start] + "<a target='_blank' href='" + target + "'>" + text + "</a>" + line[final+1:]
+	
+	return result
 }
 
 fn processImage(line) {
