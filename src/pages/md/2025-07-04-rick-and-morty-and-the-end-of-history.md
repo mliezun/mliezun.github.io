@@ -49,6 +49,6 @@ There's an [article published by Francis Fukuyama](https://pages.ucsd.edu/~bslan
 
 It basically says that we have reached the end of history in terms of political ideology because we cannot escape liberalism. Is a system that within itself allows for contradiction and even then remains stable. Where individuals feel free and in control and have no reason to rebel.
 
-What is more surprising is that he cites Hegel and Kojeve as people that had already realized this was in motion in 1806 and 1930 respectively.
+What is more surprising is that he cites Hegel and Kojève as people that had already realized this was in motion in 1806 and 1930 respectively.
 
 For me this was eye-opening, I had never been exposed to this ideas, at least in such clear and distilled form. Something inside me tells me this is true, we're at the end of history. I don't think this is good or bad, but a powerful realization that allows me to see the world through a different lens.
