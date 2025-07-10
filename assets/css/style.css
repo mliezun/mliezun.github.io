@@ -202,6 +202,22 @@ footer {
     border-color: var(--text-secondary);
 }
 
+/* Responsive images for post articles */
+article img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 20px auto;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Ensure images don't overflow their containers */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
 li {
     margin-bottom: 10px;
 }
