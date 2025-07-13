@@ -52,3 +52,11 @@ It basically says that we have reached the end of history in terms of political 
 What is more surprising is that he cites Hegel and Kojève as people that had already realized this was in motion in 1806 and 1930 respectively.
 
 For me this was eye-opening, I had never been exposed to this ideas, at least in such clear and distilled form. Something inside me tells me this is true, we're at the end of history. I don't think this is good or bad, but a powerful realization that allows me to see the world through a different lens.
+
+### EDIT
+
+After posting this originally I found another video from Noam Chomsky which reinforces the idea of liberal capitalism as a form of slavery.
+
+[Watch video](https://www.youtube.com/watch?v=iR1jzExZ9T0)
+
+He basically says that having a job is like surrendering yourself to a master that has control over you life even bigger than the state. As a "free" person in a liberal society you're free to have a job or starve to death. That job is basically a tyranny.
