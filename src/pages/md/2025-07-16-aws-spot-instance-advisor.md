@@ -7,7 +7,7 @@ tags: ai,agents,cursor,programming,code,claude
 
 # AWS Spot instance advisor
 
-Spot instances are very useful for background jobs where you can afford them to be interrupted and retried, in return you usually pay a fraction of the cost ~10% of the on-demand price. AWS provides a tool called Instance Advisor where you can see which instances are more requested and try to avoid them.
+Spot instances are very useful for background jobs where you can afford them to be interrupted and retried, in return you usually pay a fraction of the cost, up to a 90% discount on the on-demand price. AWS provides a tool called Instance Advisor where you can see which instances are more requested and try to avoid them.
 
 Let's see a comparison between Graviton 3 and Graviton 4 ARM instances.
 
