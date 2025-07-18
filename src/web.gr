@@ -114,7 +114,7 @@ class Web {
                 ["div", ["class", "body-content"], [
                     ["div", ["class", "site-header"], [
                         ["header", [], [
-                            ["a", ["href", "/", "style", "text-decoration: none !important"], "Blog"],
+                            ["a", ["href", "/", "style", "text-decoration: none !important"], "Miguel's dev blog"],
                         ]],
                         ["button", ["class", "theme-toggle", "id", "theme-toggle", "title", "Toggle theme"], [
                             ["img", ["src", "/assets/images/circle-half.svg"], []],

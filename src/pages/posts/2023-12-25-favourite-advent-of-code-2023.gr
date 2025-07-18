@@ -17,7 +17,7 @@ let post = base.Post(
         "h2",
         [],
         [
-            "Day 20"
+            "Day 20. My favourite problem from Advent of Code 2023"
         ]
     ],
     [

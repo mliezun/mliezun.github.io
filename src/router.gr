@@ -112,7 +112,7 @@ fn get_routes(include_feed) {
         "class": "html",
         "content": import("pages/index.gr").build_index(posts),
         "metadata": {
-            "title": "Blog | mliezun.com",
+            "title": "Miguel's dev blog",
             "author": "Miguel Liezun",
             "tags": "software,tech,fun",
             "date": "",
