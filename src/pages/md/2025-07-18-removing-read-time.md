@@ -2,7 +2,7 @@
 title: "Removing read time"
 excerpt: "For a long time I've had 'Read time: x minutes' at the top of the articles in my blog. I cannot recall why I choose to do this, I suppose I saw it in another place and decided to copy it without thinking the reason. Maybe there was a reason and I just forgot."
 author: "Miguel Liezun"
-tags: ai,agents,cursor,programming,code,claude
+tags: blog,read,time,improvements
 ---
 
 # Removing read time
