@@ -19,6 +19,14 @@ class Web {
     }
 
     head(url, metadata) {
+        let og_image = metadata["image"]
+        if og_image != "" and not u.startswith(og_image, "http") {
+            og_image = "https://mliezun.com" + og_image
+        }
+        if og_image == "" {
+            og_image = "https://mliezun.com/assets/images/nyc.jpg"
+        }
+
         return ["head", [], [
             # Redirect to mliezun.com if on GitHub Pages
             ["script", ["type", "text/javascript"], [
@@ -42,7 +50,7 @@ class Web {
             ["link", ["rel", "canonical", "href", "https://mliezun.com" + url], []],
             ["meta", ["property", "og:url", "content", "https://mliezun.com" + url], []],
             ["meta", ["property", "og:site_name", "content", "mliezun.com"], []],
-            ["meta", ["property", "og:image", "content", "https://mliezun.com/assets/images/nyc.jpg"], []],
+            ["meta", ["property", "og:image", "content", og_image], []],
             ["link", ["rel", "icon", "type", "image/x-icon", "href", "/assets/images/favicon.ico"], []],
 
             this.addIf(

@@ -1,3 +1,13 @@
+fn get(dict, key, default) {
+    let value
+    try {
+        value = dict[key]
+    } catch err {
+        return default
+    }
+    return value
+}
+
 fn find(list, obj) {
     for let i = 0; i < list.length; i = i + 1 {
         if type(list[i]) == type(obj) and list[i] == obj {
@@ -29,7 +39,7 @@ fn filter(list, predicate) {
     let out = []
     for el in list {
         if predicate(el) {
-            out = out + [el]
+            out.push(el)
         }
     }
     return out
@@ -38,7 +48,7 @@ fn filter(list, predicate) {
 fn map(list, mapFn) {
     let out = []
     for el in list {
-        out = out + [mapFn(el)]
+        lists.push(out, mapFn(el))
     }
     return out
 }
@@ -82,13 +92,19 @@ fn endsWith(str, substr) {
     if str.length < substr.length {
         return false
     }
-    return str[str.length-1] == substr[substr.length-1] and endsWith(str[:str.length-1], substr[:substr.length-1])
+    let offset = str.length - substr.length
+    for let i = 0; i < substr.length; i = i + 1 {
+        if str[offset + i] != substr[i] {
+            return false
+        }
+    }
+    return true
 }
 
 fn copy(list) {
     let out = []
     for el in list {
-        out = out + [el]
+        lists.push(out, el)
     }
     return out
 }
@@ -167,7 +183,7 @@ fn replace(str, findStr, replaceStr) {
 fn keys(dict) {
     let keys = []
     for key in dict {
-        keys = keys + [key]
+        lists.push(keys, key)
     }
     return keys
 }

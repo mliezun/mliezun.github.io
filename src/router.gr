@@ -24,6 +24,8 @@ fn get_routes(include_feed) {
     # List of directories for posts
     let postList = io.listDir("src/pages/posts")
 
+    let defaultImage = "https://mliezun.com/assets/images/nyc.jpg"
+
     # Compute urls and get objects for posts
     u.each(u.map(postList, fn (p) {
         let name = p["name"]
@@ -43,6 +45,7 @@ fn get_routes(include_feed) {
                 "title": p.title,
                 "author": p.author,
                 "tags": p.tags,
+                "image": defaultImage,
                 "content_type": "article",
             }
         }
@@ -63,6 +66,7 @@ fn get_routes(include_feed) {
         }
         let body = md.parseBody(parsed[0], replaceSpecials)
         let header = parsed[1]
+        let image = u.get(header, "image", defaultImage)
         return {
             "url": url,
             "post": {
@@ -74,6 +78,7 @@ fn get_routes(include_feed) {
                     "title": header["title"],
                     "author": header["author"],
                     "tags": header["tags"],
+                    "image": image,
                     "content_type": "article",
                 }
             }
@@ -88,7 +93,7 @@ fn get_routes(include_feed) {
                 r["post"]["metadata"]["author"],
                 r["post"]["metadata"]["tags"],
                 r["post"]["content"],
-            ),
+            ).setImage(r["post"]["metadata"]["image"]),
         }
         r["post"]["content"] = p["post_obj"].content
         routes[r["url"]] = r["post"]
@@ -117,6 +122,7 @@ fn get_routes(include_feed) {
             "tags": "software,tech,fun",
             "date": "",
             "excerpt": "I'm Miguel. Here I write mainly about programming and side projects.",
+            "image": defaultImage,
             "content_type": nil
         }
     }
@@ -130,6 +136,7 @@ fn get_routes(include_feed) {
             "tags": "software,tech,fun",
             "date": "2024-07-17",
             "excerpt": "Now page for my personal blog.",
+            "image": defaultImage,
             "content_type": nil
         }
     }

@@ -3,6 +3,7 @@ title: "Rick and Morty and the end of history"
 excerpt: "AI agents are like dishwashers. Yes, you can probably be more precise and clean the dishes better by hand, some of them might be even not dishwasher-friendly and require that you clean them by hand. But for most cases you just load the dishwasher and turn it on and come back in a few hours."
 author: "Miguel Liezun"
 tags: ai,agents,cursor,programming,code,claude
+image: /assets/images/rick-and-morty-end-of-history/S2e6_Microverse_Battery.webp
 ---
 
 # Rick and Morty and the end of history

@@ -4,8 +4,14 @@ class Post {
         this.excerpt = excerpt
         this.author = author
         this.tags = tags
+        this.image = ""
         this.content = [
             ["article", [], content],
         ]
+    }
+
+    setImage(image) {
+        this.image = image
+        return this
     }
 }
