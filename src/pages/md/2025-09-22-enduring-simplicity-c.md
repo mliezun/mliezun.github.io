@@ -8,8 +8,8 @@ The gist of his argument is that while C has well-known memory safety issues, th
 
 His points really resonated with me:
 
-- **Safety has a complexity cost.** Rust’s main selling point is memory safety, but this safety net makes certain things, like a doubly linked list, much more complex to implement. Sanfilippo argues that he'd rather have the directness and simplicity of C and manage the risks with good practices and tools like Valgrind.
-- **The curse of hyper-dependencies.** He makes a fascinating point that C’s lack of a built-in package manager is a feature, not a bug. In ecosystems like Rust or Node.js, it's incredibly easy to accumulate massive dependency trees for simple projects. C forces you to be more deliberate.
+- **Safety has a complexity cost.** Rust's main selling point is memory safety, but this safety net makes certain things, like a doubly linked list, much more complex to implement. Sanfilippo argues that he'd rather have the directness and simplicity of C and manage the risks with good practices and tools like Valgrind.
+- **The curse of hyper-dependencies.** He makes a fascinating point that C's lack of a built-in package manager is a feature, not a bug. In ecosystems like Rust or Node.js, it's incredibly easy to accumulate massive dependency trees for simple projects. C forces you to be more deliberate.
 - **The need for speed.** The feedback loop in programming is critical. Sanfilippo notes that C compiles in seconds (or fractions of a second), while Rust is known for "biblical" compilation times. He argues that waiting for the compiler kills productivity and flow.
 - **AI understands C better.** This was the most surprising insight. Because of C's simple semantics and the sheer volume of C code in the world, LLMs are currently much better at reasoning about and generating C code than Rust. In an age where AI is becoming a co-pilot, this is a huge practical advantage.
 
