@@ -13,6 +13,7 @@ Caddy is an enterprise grade web server and reverse proxy. I recently release a 
 ![Stock image of a server](/assets/images/OIP-3356949409.jpg)
 
 In this latest release there are some new features to explore:
+
 - Distribution of a single caddy binary with bundled python.
 - Added `python-server` subcommand.
 - Multiple worker process.
@@ -29,7 +30,7 @@ After downloading and unzipping you get a single binary named `caddy`. This pack
 This would be useful for docker images since now you don't have to install the correct python version, just include the caddy binary and that carries along all of its dependencies.
 
 
-## `python-server` subcommand
+## Python server subcommand
 
 With the new release you get a shorthand `caddy python-server`.
 
