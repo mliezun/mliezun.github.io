@@ -1,6 +1,6 @@
 ---
 title: "Serving Python apps using the Caddy web server"
-excerpt: "Caddy is an enterprise grade web server and reverse proxy. I recently release a new version of `caddysnake` a plugin to serve python apps more easily using Caddy without the need of installing another server like gunicorn, uvicorn, hypercorn or others."
+excerpt: "Caddy is an enterprise grade web server and reverse proxy. I recently released a new version of `caddysnake` a plugin to serve python apps more easily using Caddy without the need of installing another server like gunicorn, uvicorn, hypercorn or others."
 author: "Miguel Liezun"
 tags: go,python,web,server,wsgi,asgi
 image: /assets/images/OIP-3356949409.jpg
@@ -9,7 +9,7 @@ image: /assets/images/OIP-3356949409.jpg
 
 # Serving Python apps using Caddy web server
 
-Caddy is an enterprise grade web server and reverse proxy. I recently release a new version of `caddysnake` a plugin to serve python apps more easily using Caddy without the need of installing another server like gunicorn, uvicorn, hypercorn or others.
+Caddy is an enterprise grade web server and reverse proxy. I recently released a new version of `caddysnake` a plugin to serve python apps more easily using Caddy without the need of installing another server like gunicorn, uvicorn, hypercorn or others.
 
 ![Stock image of a server](/assets/images/OIP-3356949409.jpg)
 
