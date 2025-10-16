@@ -3,7 +3,7 @@ title: "Benchmarking Wagtail CMS Across Python Versions"
 excerpt: "I spent some time benchmarking Wagtail CMS across different Python versions to see how performance varies. The results are pretty interesting - Python 3.11 comes out on top with some solid improvements over 3.10."
 author: "Miguel Liezun"
 tags: python,benchmarking,performance,wagtail,cms
-image: /assets/images/wagtail-benchmark/python_versions.png
+image: /assets/images/wagtail-benchmark/rps_comparison.png
 ---
 
 # Benchmarking Wagtail CMS Across Python Versions
