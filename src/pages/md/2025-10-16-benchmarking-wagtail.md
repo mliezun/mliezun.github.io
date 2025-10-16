@@ -3,7 +3,7 @@ title: "Benchmarking Wagtail CMS Across Python Versions"
 excerpt: "I spent some time benchmarking Wagtail CMS across different Python versions to see how performance varies. The results are pretty interesting - Python 3.11 comes out on top with some solid improvements over 3.10."
 author: "Miguel Liezun"
 tags: python,benchmarking,performance,wagtail,cms
-image: /assets/images/wagtail-benchmark/rps_comparison.png
+image: /assets/images/wagtail-benchmark/python_versions.png
 ---
 
 # Benchmarking Wagtail CMS Across Python Versions
@@ -12,6 +12,8 @@ image: /assets/images/wagtail-benchmark/rps_comparison.png
 
 *Published: October 16, 2025*
 
+![Snakes fighting](/assets/images/wagtail-benchmark/python_versions.png)
+
 ## Introduction
 
 I've been curious about how different Python versions perform in real-world web applications. Python keeps getting faster with each release, but I wanted to see how much of a difference it actually makes when running a real application under load.
@@ -19,6 +21,7 @@ I've been curious about how different Python versions perform in real-world web 
 So I decided to benchmark **Wagtail CMS**—a Django-based content management system, tested across 8 different Python versions. This is the first in what I hope will be a series of benchmarks testing different Python web applications.
 
 Here's what I tested:
+
 - **Python 3.10** (our baseline)
 - **Python 3.11** 
 - **Python 3.12**
@@ -33,7 +36,9 @@ The results were pretty interesting! You can check out the full benchmark setup 
 ## How I Set Up the Tests
 
 ### The Setup
+
 I wanted to keep things realistic, so I used:
+
 - **Wagtail CMS 6.3** with Django 5.1.4 (a real production setup)
 - **Gunicorn 21.2.0** as the WSGI server
 - **SQLite** with actual content (15+ blog posts, multiple pages)
@@ -41,9 +46,10 @@ I wanted to keep things realistic, so I used:
 - **Docker** to keep everything isolated and reproducible
 
 For the experimental Python versions, I used custom Docker images:
-- `ghcr.io/mliezun/python-web-benchmarks/python-freethreaded:3.14t-slim-20251015`
-- `ghcr.io/mliezun/python-web-benchmarks/python-freethreaded:3.13t-slim-20251015`  
-- `ghcr.io/mliezun/python-web-benchmarks/python-freethreaded:3.14-tailcall-slim-20251015`
+
+- `ghcr.io/mliezun/python-web-benchmarks/python-freethreaded:3.14t-slim`
+- `ghcr.io/mliezun/python-web-benchmarks/python-freethreaded:3.13t-slim`  
+- `ghcr.io/mliezun/python-web-benchmarks/python-freethreaded:3.14-tailcall-slim`
 
 ### Test Scenarios
 I ran three scenarios that you'd actually encounter in real usage:
