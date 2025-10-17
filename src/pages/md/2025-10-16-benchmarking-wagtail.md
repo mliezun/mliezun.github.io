@@ -18,7 +18,7 @@ image: /assets/images/wagtail-benchmark/rps_comparison.png
 
 I've been curious about how different Python versions perform in real-world web applications. Python keeps getting faster with each release, but I wanted to see how much of a difference it actually makes when running a real application under load.
 
-So I decided to benchmark **Wagtail CMS**—a Django-based content management system, tested across 8 different Python versions. This is the first in what I hope will be a series of benchmarks testing different Python web applications.
+So I decided to benchmark **Wagtail CMS** a Django-based content management system, tested across 8 different Python versions. This is the first in what I hope will be a series of benchmarks testing different Python web applications.
 
 Here's what I tested:
 
@@ -55,7 +55,9 @@ For the experimental Python versions, I used custom Docker images:
 I ran three scenarios that you'd actually encounter in real usage:
 
 1. **Homepage Load**: Full page with navigation, sections, and dynamic content
-2. **Admin Login**: Authentication and admin interface access  
+
+2. **Admin Login**: Authentication and admin interface access
+
 3. **Blog Browsing**: Listing and viewing blog posts
 
 Each scenario was tested with **1, 5, 10, and 20 concurrent users** to see how things scale.
@@ -125,8 +127,11 @@ If you're currently on Python 3.10 or earlier, here's what I'd suggest:
 **Important note**: Python 3.10 reaches end-of-life on **October 31, 2026** according to the [Python Developer's Guide](https://devguide.python.org/versions/). After that date, it will only receive security fixes, so you'll want to plan your upgrade well before then.
 
 1. **Test everything**: Run your full test suite on the target version first
-2. **Check your dependencies**: Make sure all your packages support the new version  
+
+2. **Check your dependencies**: Make sure all your packages support the new version
+
 3. **Benchmark your specific app**: My results are for Wagtail - your mileage may vary
+
 4. **Deploy carefully**: Use canary deployments or blue-green strategies
 
 The good news is that memory usage is pretty consistent across versions, so you won't need to resize your servers.
