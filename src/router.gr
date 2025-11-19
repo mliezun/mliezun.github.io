@@ -67,6 +67,9 @@ fn get_routes(include_feed) {
         let body = md.parseBody(parsed[0], replaceSpecials)
         let header = parsed[1]
         let image = u.get(header, "image", defaultImage)
+        let aiAssisted = u.get(header, "ai-assisted", "false")
+        # Convert string to boolean
+        let aiAssistedBool = (aiAssisted == "true")
         return {
             "url": url,
             "post": {
@@ -74,11 +77,12 @@ fn get_routes(include_feed) {
                 "content": body,
                 "metadata": {
                     "date": date,
-                    "excerpt": header["excerpt"],
-                    "title": header["title"],
-                    "author": header["author"],
-                    "tags": header["tags"],
+                    "excerpt": u.get(header, "excerpt", ""),
+                    "title": u.get(header, "title", ""),
+                    "author": u.get(header, "author", ""),
+                    "tags": u.get(header, "tags", ""),
                     "image": image,
+                    "ai-assisted": aiAssistedBool,
                     "content_type": "article",
                 }
             }
@@ -87,6 +91,7 @@ fn get_routes(include_feed) {
         let p = {
             "url": r["url"],
             "date": r["post"]["metadata"]["date"],
+            "ai-assisted": r["post"]["metadata"]["ai-assisted"],
             "post_obj": pages.Post(
                 r["post"]["metadata"]["title"],
                 r["post"]["metadata"]["excerpt"],

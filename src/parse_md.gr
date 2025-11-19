@@ -8,6 +8,9 @@ fn parseHeader(content) {
 	let headers = {}
 	for l in content[start+1:end+1] {
 		let config = u.split(l, ":")
+		if config.length < 2 {
+			continue
+		}
 		let attr = u.trimchar(
 			u.trimspaces(config[0]),
 			"\"",

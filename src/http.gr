@@ -216,6 +216,11 @@ class ResponseWriter {
         this.status = status
         return this
     }
+
+    setContentType(contentType) {
+        this.headers["content-type"] = contentType
+        return this
+    }
 }
 
 # Server object, handles connections, parses requests and writes responses
@@ -251,6 +256,7 @@ class Server {
     }
 
     buildResponse(rq, rw) {
+        rw.setContentType("text/html; charset=utf-8")
         let firstLine = rq.protocol + " " + rw.status + " " + StatusMessage[rw.status] + "\r\n"
         return firstLine + this.buildHeaders(rw.headers) + "\r\n" + rw.body
     }

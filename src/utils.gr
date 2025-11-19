@@ -135,13 +135,13 @@ fn trimchar(str, char) {
     if str.length == 0 {
         return str
     }
-    while char == str[0] {
+    while str.length > 0 and char == str[0] {
         str = str[1:]
     }
     if str.length == 0 {
         return str
     }
-    while char == str[str.length-1] {
+    while str.length > 0 and char == str[str.length-1] {
         str = str[:str.length-1]
     }
     return str
@@ -186,4 +186,33 @@ fn keys(dict) {
         lists.push(keys, key)
     }
     return keys
+}
+
+fn buildAITag(aiAssisted) {
+    let tagText = ""
+    let popoverText = ""
+    let tagClass = ""
+    
+    if aiAssisted {
+        tagText = "AI-assisted"
+        popoverText = "An AI tool was used to generate a part or all content of this post"
+        tagClass = "ai-tag"
+    } else {
+        tagText = "Human written"
+        popoverText = "This post was fully written by a human"
+        tagClass = "ai-tag human-tag"
+    }
+    
+    return [
+        ["div", ["class", "ai-tag-container"], [
+            ["span", ["class", tagClass], [
+                tagText,
+                ["span", ["class", "ai-tag-popover"], [
+                    popoverText,
+                    " ",
+                    ["a", ["href", "/2025/11/19/ai-blog.html", "class", "ai-tag-read-more"], "Read more"],
+                ]],
+            ]],
+        ]],
+    ]
 }

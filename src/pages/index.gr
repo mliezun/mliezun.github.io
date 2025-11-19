@@ -46,13 +46,16 @@ fn build_index(posts) {
                         u.foldr(u.map(years[year], fn (postDict) {
                             let p = postDict["post_obj"]
                             let url = postDict["url"]
+                            let aiAssisted = u.get(postDict, "ai-assisted", false)
+                            let aiTag = u.buildAITag(aiAssisted)
                             return [[
                                 "div", ["style", "margin-bottom: 16px;"], [
                                     ["a", ["href", url, "style", "font-size: 13pt; text-decoration: none; color: var(--text-link); transition: color 0.2s ease; letter-spacing: -0.015em; line-height: 1.4;"], p.title],
                                     ["span", ["style", "color: var(--text-secondary); margin-left: 8px; font-size: 10pt; letter-spacing: 0;"], [
                                         ["span", ["style", "margin: 0 5px;"], " "],
                                         postDict["date"]
-                                    ]]
+                                    ]],
+                                    aiTag[0]
                                 ]
                             ]]
                         }), [], u.sum)

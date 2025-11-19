@@ -4,6 +4,7 @@ excerpt: "Caddy is an enterprise grade web server and reverse proxy. I recently 
 author: "Miguel Liezun"
 tags: go,python,web,server,wsgi,asgi
 image: /assets/images/OIP-3356949409.jpg
+ai-assisted: true
 ---
 
 

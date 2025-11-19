@@ -170,7 +170,16 @@ class Web {
         for url, route in this.routes {
             let page = ""
             if route["class"] == "html" {
-                let payload = this.wrapBody(url, route["content"], route["metadata"])
+                let content = route["content"]
+                let metadata = route["metadata"]
+                # Add AI-assisted tag display for article posts
+                if u.get(metadata, "content_type", nil) == "article" {
+                    let aiAssisted = u.get(metadata, "ai-assisted", false)
+                    let aiTagDisplay = u.buildAITag(aiAssisted)
+                    # Prepend AI tag to content (content is always a list)
+                    content = aiTagDisplay + content
+                }
+                let payload = this.wrapBody(url, content, metadata)
                 page = this.renderer.render(payload)
             } elif route["class"] == "static" {
                 page = route["content"]
@@ -179,19 +188,8 @@ class Web {
         }
     }
 
-    setContentType(rw, target) {
-        let matches = {
-            "html": "text/html",
-            "css": "text/css",
-            "wasm": "application/wasm",
-            "js": "application/javascript",
-        }
-        for t, contentType in matches {
-            if u.endsWith(target, t) {
-                rw.setHeader("content-type", contentType)
-                break
-            }
-        }
+    buildAITagDisplay(aiAssisted) {
+        return u.buildAITag(aiAssisted)
     }
 
     handleRq(rq, rw) {

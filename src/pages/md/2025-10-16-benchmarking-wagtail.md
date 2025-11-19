@@ -4,6 +4,7 @@ excerpt: "I spent some time benchmarking Wagtail CMS across different Python ver
 author: "Miguel Liezun"
 tags: python,benchmarking,performance,wagtail,cms
 image: /assets/images/wagtail-benchmark/rps_comparison.png
+ai-assisted: true
 ---
 
 # Benchmarking Wagtail CMS Across Python Versions

@@ -2,7 +2,7 @@
 title: "AWS Spot instance advisor"
 excerpt: "Spot instances are very useful for background jobs where you can afford them to be interrupted and retried. There's a useful tool that AWS provides called Instance Advisor where you can see which instances are more requested and try to avoid them."
 author: "Miguel Liezun"
-tags: ai,agents,cursor,programming,code,claude
+tags: ec2,aws,spot,instances,cloud
 ---
 
 # AWS Spot instance advisor

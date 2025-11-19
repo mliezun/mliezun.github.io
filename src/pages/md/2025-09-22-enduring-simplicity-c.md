@@ -3,6 +3,7 @@ title: "The Enduring Simplicity of C"
 excerpt: "I recently came across a video by Salvatore Sanfilippo, the creator of Redis, titled "Why I use C and not Rust". It made me stop and think about the constant push for newer, "safer" programming languages."
 author: "Miguel Liezun"
 tags: C,Rust,programming,toolchain
+ai-assisted: true
 ---
 
 
