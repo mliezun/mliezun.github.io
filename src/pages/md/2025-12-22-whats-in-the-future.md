@@ -1,6 +1,6 @@
 ---
 title: "What's in the future?"
-excerpt: ""
+excerpt: "Capabilities of AI tools are still advancing rapidly, doubling the length of tasks AI can do every 7 months. But what's more striking is that for Software Engineering this is accelerating at a higher pace."
 author: "Miguel Liezun"
 tags: future,plans,predictions,python,web
 image: /assets/images/length-of-tasks-log.png
