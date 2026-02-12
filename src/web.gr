@@ -145,12 +145,10 @@ class Web {
                     el.classList.remove('hljs');
                 })"
             ]],
+            # Mermaid.js for diagrams in markdown (e.g. ```mermaid)
+            ["script", ["src", "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"], []],
             ["script", [], [
-                "document.querySelectorAll('.single-quote').forEach(function (el) {
-                    if (el.classList.length > 1) hljs.highlightElement(el, {language: el.classList[1]});
-                    else hljs.highlightElement(el);
-                    el.classList.remove('hljs');
-                })"
+                "mermaid.initialize({ startOnLoad: true });"
             ]],
         ]]
     }
