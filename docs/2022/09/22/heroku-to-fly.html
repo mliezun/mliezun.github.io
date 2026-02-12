@@ -1,0 +1,86 @@
+<!DOCTYPE HTML/><html lang="en-US"><head><script type="text/javascript">if (window.location.host === 'mliezun.github.io') {
+                    window.location.host = 'mliezun.com';
+                }
+</script><meta charset="UTF-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Migrate from Heroku to Fly.io</title><meta name="generator" content="Custom"/><meta property="og:title" content="Migrate from Heroku to Fly.io"/><meta property="og:locale" content="en_US"/><meta name="description" content="A couple weeks ago Heroku announced the removal. I have plenty of projects running on free dynos.
+ I have taken some time to move my code to Fly.io. And also I've written a little tutorial of how to perform the migration."/><meta property="og:description" content="A couple weeks ago Heroku announced the removal. I have plenty of projects running on free dynos.
+ I have taken some time to move my code to Fly.io. And also I've written a little tutorial of how to perform the migration."/><meta name="keywords" content="heroku,fly,migration,tutorial,howto"/><link rel="canonical" href="https://mliezun.com/2022/09/22/heroku-to-fly.html"/><meta property="og:url" content="https://mliezun.com/2022/09/22/heroku-to-fly.html"/><meta property="og:site_name" content="mliezun.com"/><meta property="og:image" content="https://mliezun.com/assets/images/nyc.jpg"/><link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico"/><meta property="og:type" content="article"/><meta name="twitter:card" content="summary"/><meta property="twitter:title" content="Migrate from Heroku to Fly.io"/><meta name="twitter:creator" content="@migueliezun"/><meta name="twitter:image" content="https://mliezun.com/assets/images/nyc.jpg"/>
+<script type="application/ld+json">{"description":"A couple weeks ago Heroku announced the removal. I have plenty of projects running on free dynos.
+ I have taken some time to move my code to Fly.io. And also I've written a little tutorial of how to perform the migration.","author":{"@type":"Person","name":"Miguel Liezun"},"@type":"BlogPosting","url":"https://mliezun.com/2022/09/22/heroku-to-fly.html","headline":"Migrate from Heroku to Fly.io","dateModified":"2022-09-22T00:00:00-03:00","datePublished":"2022-09-22T00:00:00-03:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://mliezun.com/2022/09/22/heroku-to-fly.html"},"@context":"https://schema.org"}
+</script><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"/><link rel="stylesheet" href="/assets/css/style.css"/></head><body><div class="body-wrapper"><div class="body-content"><div class="site-header"><header><a href="/" style="text-decoration: none !important">Miguel's dev blog</a></header><button class="theme-toggle" id="theme-toggle" title="Toggle theme"><img src="/assets/images/circle-half.svg"/></button></div><hr/><div class="ai-tag-container"><span class="ai-tag human-tag">Human written
+<span class="ai-tag-popover">This post was fully written by a human
+ 
+<a href="/2025/11/19/ai-blog.html" class="ai-tag-read-more">Read more</a></span></span></div><article><h2>How to migrate from Heroku to Fly.io</h2><p>A couple weeks ago Heroku announced the removal. I have plenty of projects running on free dynos.
+ I have taken some time to move my code to Fly.io. And also I've written a little tutorial of how to perform the migration.</p><p>I'll use one of my public repos as an example 
+<a href="https://github.com/mliezun/getmyip" target="_blank">https://github.com/mliezun/getmyip</a>. It's a simple service that returns the IP from which you're making the request. It's useful when you want to know
+ your public IP.
+</p><p>That project ^ was covered in a previous 
+<a href="https://mliezun.com/2020/12/17/grotsky-getmyip.html" target="_blank">blogpost</a>.
+</p><h3>Migration instructions</h3><p>The first thing we need to do is to remove heroku from the remotes. 
+Inside your project run:
+</p><pre class="triple-quote bash">git remote remove heroku</pre><p>If you have a heroku.yml file, delete it.
+</p><pre class="triple-quote bash">rm -rf heroku.yml</pre><p>Then, we're ready to start using fly. 
+There are tutorials on the 
+<a href="https://fly.io/docs/languages-and-frameworks/dockerfile/" target="_blank">official fly.io docs</a> for many frameworks and languages. We're going to be following the one for a Docker app,
+ since it's the most general case.
+</p><p>First thing you need to do is create an account in 
+<a href="https://fly.io/" target="_blank">Fly.io</a> if you don't have one yet.
+</p><p>Once you created your account, install the flyctl command line tool.
+ After that, login by running the following command:
+</p><pre class="triple-quote bash">flyctl auth login</pre><p>After you've logged in to your account, you're ready to launch your application.
+ Execute the next command and follow the interactive setup.
+</p><pre class="triple-quote text">$ flyctl launch
+Scanning source code
+Detected a Dockerfile app
+? App Name (leave blank to use an auto-generated name): 
+Automatically selected personal organization: Miguel Liezun
+? Select region: mia (Miami, Florida (US))
+Created app morning-breeze-4255 in organization personal
+Wrote config file fly.toml
+? Would you like to set up a Postgresql database now? No
+? Would you like to deploy now? Yes
+Deploying morning-breeze-4255
+==> Validating app configuration
+--> Validating app configuration done
+Services
+TCP 80/443 -> 8080
+Remote builder fly-builder-green-pond-8004 ready
+==> Creating build context
+--> Creating build context done
+==> Building image with Docker
+--> docker host: 20.10.12 linux x86_64
+...
+</pre><p>Make sure your app listens to port 8080, that's the default for fly apps.
+ You can change the port inside the file fly.toml if you want
+, just search for the internal port and change it. Remember to run launch again if you change the port.
+</p><pre class="triple-quote toml"># fly.toml file generated for morning-breeze-4255 on 2022-09-21T21:50:20-03:00
+
+app = "morning-breeze-4255"
+kill_signal = "SIGINT"
+kill_timeout = 5
+processes = []
+
+[env]
+
+[experimental]
+  allowed_public_ports = []
+  auto_rollback = true
+
+[[services]]
+  http_checks = []
+  internal_port = 8080 # <- Put your desired port here
+# ...
+</pre><p>Finally, you only need to open the app and enjoy!
+You migrated your first app from heroku to fly :-)
+</p><pre class="triple-quote text">$ flyctl open
+opening http://morning-breeze-4255.fly.dev ...
+</pre><p>Access the newly deployed 'getmyip' service using the link 
+<a href="http://morning-breeze-4255.fly.dev" target="_blank">http://morning-breeze-4255.fly.dev</a>.
+</p></article><footer><hr/><div class="footer-wrapper"><div><div>This blog was made with 
+<a target="_blank" href="https://github.com/mliezun/grotsky">Grotsky</a></div><div>Blog
+<a target="_blank" href="https://github.com/mliezun/mliezun.com">source code</a></div></div><div class="footer-socials"><a target="_blank" href="https://mliezun.com/feed.xml"><img alt="RSS Feed" src="/assets/images/socials/rss.png" width="20" height="20" style="border-radius: 3px"/></a><a target="_blank" href="https://github.com/mliezun"><img alt="Github" src="/assets/images/socials/github.png" width="20" height="20"/></a><a target="_blank" href="https://x.com/migueliezun"><img alt="X (Twitter)" src="/assets/images/socials/x.ico" width="20" height="20" style="border-radius: 5px"/></a><a target="_blank" href="https://www.linkedin.com/in/miguel-liezun-8697a9168/"><img alt="LinkedIn" src="/assets/images/socials/linkedin.png" width="20" height="20"/></a></div></div></footer></div></div><script src="/assets/js/theme-switcher.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script><script>document.querySelectorAll('.triple-quote').forEach(function (el) {
+                    if (el.classList.length > 1) hljs.highlightElement(el, {language: el.classList[1]});
+                    else hljs.highlightElement(el);
+                    el.classList.remove('hljs');
+                })
+</script><script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script><script>mermaid.initialize({ startOnLoad: true });
+</script></body></html>

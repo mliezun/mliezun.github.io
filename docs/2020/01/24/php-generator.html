@@ -1,0 +1,220 @@
+<!DOCTYPE HTML/><html lang="en-US"><head><script type="text/javascript">if (window.location.host === 'mliezun.github.io') {
+                    window.location.host = 'mliezun.com';
+                }
+</script><meta charset="UTF-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Reinventing the Wheel: PHP Generators</title><meta name="generator" content="Custom"/><meta property="og:title" content="Reinventing the Wheel: PHP Generators"/><meta property="og:locale" content="en_US"/><meta name="description" content="Attempt of a lunatic to recreate functionalities that a language already has using the same language, and failing."/><meta property="og:description" content="Attempt of a lunatic to recreate functionalities that a language already has using the same language, and failing."/><meta name="keywords" content="php, generators"/><link rel="canonical" href="https://mliezun.com/2020/01/24/php-generator.html"/><meta property="og:url" content="https://mliezun.com/2020/01/24/php-generator.html"/><meta property="og:site_name" content="mliezun.com"/><meta property="og:image" content="https://mliezun.com/assets/images/nyc.jpg"/><link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico"/><meta property="og:type" content="article"/><meta name="twitter:card" content="summary"/><meta property="twitter:title" content="Reinventing the Wheel: PHP Generators"/><meta name="twitter:creator" content="@migueliezun"/><meta name="twitter:image" content="https://mliezun.com/assets/images/nyc.jpg"/>
+<script type="application/ld+json">{"description":"Attempt of a lunatic to recreate functionalities that a language already has using the same language, and failing.","author":{"@type":"Person","name":"Miguel Liezun"},"@type":"BlogPosting","url":"https://mliezun.com/2020/01/24/php-generator.html","headline":"Reinventing the Wheel: PHP Generators","dateModified":"2020-01-24T00:00:00-03:00","datePublished":"2020-01-24T00:00:00-03:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://mliezun.com/2020/01/24/php-generator.html"},"@context":"https://schema.org"}
+</script><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"/><link rel="stylesheet" href="/assets/css/style.css"/></head><body><div class="body-wrapper"><div class="body-content"><div class="site-header"><header><a href="/" style="text-decoration: none !important">Miguel's dev blog</a></header><button class="theme-toggle" id="theme-toggle" title="Toggle theme"><img src="/assets/images/circle-half.svg"/></button></div><hr/><div class="ai-tag-container"><span class="ai-tag human-tag">Human written
+<span class="ai-tag-popover">This post was fully written by a human
+ 
+<a href="/2025/11/19/ai-blog.html" class="ai-tag-read-more">Read more</a></span></span></div><article><div>
+
+</div><h2>Reinventing the Wheel: PHP Generators
+</h2><div>
+
+</div><h3>First thing first. How a generator works?
+</h3><div>
+
+</div><h4>Starting back at C
+</h4><div>
+Let's create a function that each time we call it we get the next number of the fibonacci sequence.
+
+<pre class="triple-quote c">
+int fibonacci()
+{
+    static int a = 0;
+    static int b = 1;
+    int aux = b;
+    b = a + b;
+    a = aux;
+    return a;
+}
+</pre>
+
+If we call fibonacci(), the first time we'll get 1, the second time 1, the third 2, the fourth 3, and so on...
+
+This happens because we declared variables <span class="single-quote">a, b</span> to be static. This means that they mantain the value after the function returns. Normally, what happens (if we don't declare a variable as static) is that the variables inside the function don't mantain the values of the last execution.
+
+
+</div><h4>First generator for PHP
+</h4><div>
+The equivalent function in PHP is pretty similar to C's approach.
+
+<pre class="triple-quote php">
+
+
+function fibonacci()
+{
+    static $a = 0;
+    static $b = 1;
+    $aux = $b;
+    $b = $a + $b;
+    $a = $aux;
+    return $a;
+}
+
+$out = [];
+
+for ($i = 1; $i <= 10; $i++) {
+    $out[] = fibonacci();
+}
+
+echo implode(', ', $out) . "\n";
+
+/*
+Output: 1, 1, 2, 3, 5, 8, 13, 21, 34, 55
+*/
+</pre>
+
+Let's compare this to the <span class="single-quote">real</span> PHP version using <span class="single-quote">yield</span>.
+
+<pre class="triple-quote php">
+
+
+function fibonacci($N)
+{
+    $a = 0;
+    $b = 1;
+    for ($i = 0; $i < $N; $i++) {
+        $aux = $b;
+        $b = $a + $b;
+        $a = $aux;
+        yield $a;
+    }
+}
+
+$out = [];
+
+foreach (fibonacci(10) as $fib) {
+    $out[] = $fib;
+}
+
+echo implode(', ', $out) . "\n";
+
+/*
+Output: 1, 1, 2, 3, 5, 8, 13, 21, 34, 55
+*/
+</pre>
+
+
+</div><h4>Creating a custom version of PHP <span class="single-quote">yield</span>
+</h4><div>
+This is my own version using the library parallel and channels (probably uses yield internally).
+
+<pre class="triple-quote php">
+
+
+class MyGenerator implements Iterator
+{
+    private $chan;
+    private $current;
+    private $iteratorFn;
+    private $runtime;
+    private $key = -1;
+    private $valid = true;
+
+    public function __construct($iteratorFn)
+    {
+        $this->iteratorFn = $iteratorFn;
+        $this->runtime = new \parallel\Runtime();
+        $channel = new \parallel\Channel();
+
+        $this->runtime->run(function() use ($iteratorFn, $channel) {
+            $iteratorFn(function ($val) use ($channel) {
+                $channel->send($val);
+            });
+            $channel->close();
+        });
+
+        $this->chan = $channel;
+        $this->next();
+    }
+
+    public function current()
+    {
+        return $this->current;
+    }
+
+    public function next()
+    {
+        try {
+            ++$this->key;
+            $val = $this->chan->recv();
+            $this->current = $val;
+        } catch (\parallel\Channel\Error\Closed $e) {
+            $this->valid = false;
+        }
+        return $this->current;
+    }
+
+    public function key() {return $this->key;}
+    public function valid() {return $this->valid;}
+    public function rewind() {}
+}
+
+
+function fibonacci($N)
+{
+    return new MyGenerator(function ($yield) use ($N) {
+        $a = 0;
+        $b = 1;
+        for ($i = 0; $i < $N; $i++) {
+            $aux = $b;
+            $b = $a + $b;
+            $a = $aux;
+            $yield($a);
+        }
+    });
+}
+
+$out = [];
+
+foreach (fibonacci(10) as $fib) {
+    $out[] = $fib;
+}
+
+echo implode(', ', $out) . "\n";
+</pre>
+
+
+</div><h4>Performance comparison: PHP vs Custom
+</h4><div>
+
+</div><h5>Tested code
+</h5><div>
+<pre class="triple-quote php">
+for ($i = 0; $i < 1000; ++$i) {
+    foreach (fibonacci(100) as $fib) {
+        $out[] = $fib;
+    }
+}
+</pre>
+
+
+</div><h5><span class="single-quote">yield</span> version
+</h5><div>
+<pre class="triple-quote ">
+real    0m0,083s
+user    0m0,059s
+sys     0m0,023s
+</pre>
+
+
+</div><h5><span class="single-quote">MyGenerator</span> version
+</h5><div>
+<pre class="triple-quote ">
+real    0m2,138s
+user    0m1,426s
+sys     0m1,363s
+</pre>
+
+So, it's aproximately 26 times slower :-)
+
+</div></article><footer><hr/><div class="footer-wrapper"><div><div>This blog was made with 
+<a target="_blank" href="https://github.com/mliezun/grotsky">Grotsky</a></div><div>Blog
+<a target="_blank" href="https://github.com/mliezun/mliezun.com">source code</a></div></div><div class="footer-socials"><a target="_blank" href="https://mliezun.com/feed.xml"><img alt="RSS Feed" src="/assets/images/socials/rss.png" width="20" height="20" style="border-radius: 3px"/></a><a target="_blank" href="https://github.com/mliezun"><img alt="Github" src="/assets/images/socials/github.png" width="20" height="20"/></a><a target="_blank" href="https://x.com/migueliezun"><img alt="X (Twitter)" src="/assets/images/socials/x.ico" width="20" height="20" style="border-radius: 5px"/></a><a target="_blank" href="https://www.linkedin.com/in/miguel-liezun-8697a9168/"><img alt="LinkedIn" src="/assets/images/socials/linkedin.png" width="20" height="20"/></a></div></div></footer></div></div><script src="/assets/js/theme-switcher.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script><script>document.querySelectorAll('.triple-quote').forEach(function (el) {
+                    if (el.classList.length > 1) hljs.highlightElement(el, {language: el.classList[1]});
+                    else hljs.highlightElement(el);
+                    el.classList.remove('hljs');
+                })
+</script><script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script><script>mermaid.initialize({ startOnLoad: true });
+</script></body></html>

@@ -1,0 +1,184 @@
+<!DOCTYPE HTML/><html lang="en-US"><head><script type="text/javascript">if (window.location.host === 'mliezun.github.io') {
+                    window.location.host = 'mliezun.com';
+                }
+</script><meta charset="UTF-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Branchable MySQL: Managing multiple dev environments</title><meta name="generator" content="Custom"/><meta property="og:title" content="Branchable MySQL: Managing multiple dev environments"/><meta property="og:locale" content="en_US"/><meta name="description" content="When teams start to grow, having a single dev environment becomes an issue. People start stepping on each others toes.
+A common problem is that two people want to apply incompatible migrations on the database. That problem is impossible 
+to fix if folks are working on parallel branches.
+If we can have a database for each branch of a project, that will remove much of the pain of having multiple devs applying
+changes to the db."/><meta property="og:description" content="When teams start to grow, having a single dev environment becomes an issue. People start stepping on each others toes.
+A common problem is that two people want to apply incompatible migrations on the database. That problem is impossible 
+to fix if folks are working on parallel branches.
+If we can have a database for each branch of a project, that will remove much of the pain of having multiple devs applying
+changes to the db."/><meta name="keywords" content="python,docker,mysql,dev,team,management"/><link rel="canonical" href="https://mliezun.com/2022/09/20/branchable-mysql.html"/><meta property="og:url" content="https://mliezun.com/2022/09/20/branchable-mysql.html"/><meta property="og:site_name" content="mliezun.com"/><meta property="og:image" content="https://mliezun.com/assets/images/nyc.jpg"/><link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico"/><meta property="og:type" content="article"/><meta name="twitter:card" content="summary"/><meta property="twitter:title" content="Branchable MySQL: Managing multiple dev environments"/><meta name="twitter:creator" content="@migueliezun"/><meta name="twitter:image" content="https://mliezun.com/assets/images/nyc.jpg"/>
+<script type="application/ld+json">{"description":"When teams start to grow, having a single dev environment becomes an issue. People start stepping on each others toes.
+A common problem is that two people want to apply incompatible migrations on the database. That problem is impossible 
+to fix if folks are working on parallel branches.
+If we can have a database for each branch of a project, that will remove much of the pain of having multiple devs applying
+changes to the db.","author":{"@type":"Person","name":"Miguel Liezun"},"@type":"BlogPosting","url":"https://mliezun.com/2022/09/20/branchable-mysql.html","headline":"Branchable MySQL: Managing multiple dev environments","dateModified":"2022-09-20T00:00:00-03:00","datePublished":"2022-09-20T00:00:00-03:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://mliezun.com/2022/09/20/branchable-mysql.html"},"@context":"https://schema.org"}
+</script><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"/><link rel="stylesheet" href="/assets/css/style.css"/></head><body><div class="body-wrapper"><div class="body-content"><div class="site-header"><header><a href="/" style="text-decoration: none !important">Miguel's dev blog</a></header><button class="theme-toggle" id="theme-toggle" title="Toggle theme"><img src="/assets/images/circle-half.svg"/></button></div><hr/><div class="ai-tag-container"><span class="ai-tag human-tag">Human written
+<span class="ai-tag-popover">This post was fully written by a human
+ 
+<a href="/2025/11/19/ai-blog.html" class="ai-tag-read-more">Read more</a></span></span></div><article><h2>Branchable MySQL: Managing multiple dev environments</h2><p>When teams start to grow, having a single dev environment becomes an issue. People start stepping on each others toes.
+A common problem is that two people want to apply incompatible migrations on the database. That problem is impossible 
+to fix if folks are working on parallel branches.
+If we can have a database for each branch of a project, that will remove much of the pain of having multiple devs applying
+changes to the db.</p><p>There are already projects that solve this problem: 
+<a href="https://planetscale.com/docs/concepts/branching" target="_blank">PlanetScale</a> and 
+<a href="https://neon.tech/" target="_blank">Neon</a>.
+</p><p>A common case where this problem arises is when two devs want to add a column to the same table. 
+</p><img alt="Two devs applying changes to the same table in the database." src="/assets/images/branchable-mysql/diagram1.png"/><p>We have a 
+<span class="single-quote sql">people</span> table in the database. One of the devs wants to add the 
+<span class="single-quote sql">last_name</span> column and the other one wants to add the 
+<span class="single-quote sql">address</span>.
+</p><p>Dev1's code thinks the table will have 3 columns after he applies his operation: 
+<span class="single-quote sql">id, name, last_name</span>.
+</p><p>Dev2's code also thinks the table will have 3 columns: 
+<span class="single-quote sql">id, name, address</span>.
+</p><p>In reality the table will have 4 columns.
+So neither of them will be able to run their code unless they talk to each other and figure out how to make this work.
+</p><p>This is far from ideal.
+</p><p>What we want instead, is that each one of them can develop their features independently.
+</p><img alt="Two devs applying changes to the same table in different database branches." src="/assets/images/branchable-mysql/diagram2.png"/><p>They both apply to the same table, but each table lives on an instance that was 'replicated' from the original.
+</p><h2>How can we implement the ideal case?</h2><p>MySQL writes data (by default) to the directory 
+<span class="single-quote bash">/var/lib/mysql/data</span>.
+</p><p>We can use an 
+<a href="https://en.wikipedia.org/wiki/UnionFS" target="_blank">Union filesystem</a>. And configure MySQL to use a different directory to read and write data.
+</p><p>That way we can have a feature/user-last-name 'branch' read and write data from a directory like 
+<span class="single-quote bash">/app/user-last-name/mysql/data</span>.
+</p><p>And a feature/user-address 'branch' read and write data from a directory like 
+<span class="single-quote bash">/app/user-address/mysql/data</span>.
+</p><p>Those branches can be mounted using fuse-overlayfs by executing the following commands: 
+</p><pre class="triple-quote bash">
+# Directory /app/base contains data from the original branch
+
+fuse-overlayfs -o lowerdir=/app/base,upperdir=/app/user-last-name,workdir=/tmp/user-last-name overlayfs /app/user-last-name
+
+fuse-overlayfs -o lowerdir=/app/base,upperdir=/app/user-address,workdir=/tmp/user-address overlayfs /app/user-address
+
+</pre><p>This means both 'branches' of the database are able to coexist and have different schemas during their lifetime.
+</p><h2>Experimenting with a use case</h2><p>I had this idea in my head for months. I finally convinced myself that it was worth a shot.
+</p><p>I decided to do a little implementation using Docker and python FastAPI.
+Exposing a simple interface so that it's easy to create and delete branches.
+</p><p>The project is live on github 
+<a href="https://github.com/mliezun/branchable-mysql" target="_blank">branchable-mysql</a>.
+</p><p>The container image is published on Docker Hub 
+<a href="https://hub.docker.com/repository/docker/mliezun/branchable-mysql" target="_blank">branchable-mysql</a>.
+</p><p>To start using the image let's create a docker-compose.yml file.
+</p><pre class="triple-quote yaml">version: "3"
+
+services:
+  mysql:
+    image: mliezun/branchable-mysql
+    platform: linux/amd64
+    privileged: true
+    restart: always
+    volumes:
+      - appdata:/app/
+
+volumes:
+  appdata:
+
+</pre><p>Then you can execute 
+<span class="single-quote bash">docker-compose up</span> and the MySQL server should start running.
+</p><p>After that, connect easily to the db 
+<span class="single-quote bash">docker compose exec mysql mysql -uroot -h127.0.0.1 --skip-password -P33061</span>. You should enter to an interactive mysql console.
+</p><p>Let's create an initial schema, a table and insert some data so that we can see how branching works.
+On the console that we just opened execute:
+</p><pre class="triple-quote sql">
+mysql> create schema s1;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> use s1;
+Database changed
+mysql> create table people (id int primary key auto_increment, name varchar(255) not null);
+Query OK, 0 rows affected (0.07 sec)
+
+mysql> insert into people select 0, 'Miguel';
+Query OK, 1 row affected (0.02 sec)
+Records: 1  Duplicates: 0  Warnings: 0
+
+mysql> select * from people;
++----+--------+
+| id | name   |
++----+--------+
+|  1 | Miguel |
++----+--------+
+1 row in set (0.00 sec)
+
+</pre><p>That's enough for now, we're ready to start creating branches.
+</p><p>On a separate terminal, without closing the previous mysql interactive console, execute: 
+</p><pre class="triple-quote bash">
+docker compose exec mysql /app/scripts/create_branch.sh base feature/user-last-name
+
+{"branch_name":"feature/user-last-name","base_branch":"base","port":33062}
+
+</pre><p>Now you can login to the new database branch using port 33062 
+<span class="single-quote bash">docker compose exec mysql mysql -uroot -h127.0.0.1 --skip-password -P33062</span></p><pre class="triple-quote sql">
+mysql> use s1;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+mysql> alter table people add column last_name varchar(255) not null;
+Query OK, 0 rows affected (0.03 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> select * from people;
++----+--------+-----------+
+| id | name   | last_name |
++----+--------+-----------+
+|  1 | Miguel |           |
++----+--------+-----------+
+1 row in set (0.00 sec)
+
+</pre><p>In a new terminal we can create a another branch: 
+</p><pre class="triple-quote bash">
+docker compose exec mysql /app/scripts/create_branch.sh base feature/user-address
+
+{"branch_name":"feature/user-address","base_branch":"base","port":33063}
+
+</pre><p>Then connect using port 33063 
+<span class="single-quote bash">docker compose exec mysql mysql -uroot -h127.0.0.1 --skip-password -P33063</span></p><pre class="triple-quote sql">
+mysql> use s1;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+mysql> alter table people add column last_name varchar(255) not null;
+Query OK, 0 rows affected (0.03 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> select * from people;
++----+--------+
+| id | name   |
++----+--------+
+|  1 | Miguel |
++----+--------+
+1 row in set (0.00 sec)
+
+mysql> alter table people add column address varchar(255) not null;
+Query OK, 0 rows affected (0.02 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> select * from people;
++----+--------+---------+
+| id | name   | address |
++----+--------+---------+
+|  1 | Miguel |         |
++----+--------+---------+
+1 row in set (0.00 sec)
+
+</pre><p>As you can see, we have 3 servers running at the same time, each one with different schemas.
+</p><p>This is great for local development and for having branch-aware dev environments.
+</p><h2>Final thoughts</h2><p>I hope you find this blogpost useful.
+If you want to start using branchable-mysql go ahead.
+If you encounter any issues please report them in the github repo or create a pull request.
+</p></article><footer><hr/><div class="footer-wrapper"><div><div>This blog was made with 
+<a target="_blank" href="https://github.com/mliezun/grotsky">Grotsky</a></div><div>Blog
+<a target="_blank" href="https://github.com/mliezun/mliezun.com">source code</a></div></div><div class="footer-socials"><a target="_blank" href="https://mliezun.com/feed.xml"><img alt="RSS Feed" src="/assets/images/socials/rss.png" width="20" height="20" style="border-radius: 3px"/></a><a target="_blank" href="https://github.com/mliezun"><img alt="Github" src="/assets/images/socials/github.png" width="20" height="20"/></a><a target="_blank" href="https://x.com/migueliezun"><img alt="X (Twitter)" src="/assets/images/socials/x.ico" width="20" height="20" style="border-radius: 5px"/></a><a target="_blank" href="https://www.linkedin.com/in/miguel-liezun-8697a9168/"><img alt="LinkedIn" src="/assets/images/socials/linkedin.png" width="20" height="20"/></a></div></div></footer></div></div><script src="/assets/js/theme-switcher.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script><script>document.querySelectorAll('.triple-quote').forEach(function (el) {
+                    if (el.classList.length > 1) hljs.highlightElement(el, {language: el.classList[1]});
+                    else hljs.highlightElement(el);
+                    el.classList.remove('hljs');
+                })
+</script><script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script><script>mermaid.initialize({ startOnLoad: true });
+</script></body></html>

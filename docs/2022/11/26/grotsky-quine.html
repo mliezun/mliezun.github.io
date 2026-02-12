@@ -1,0 +1,73 @@
+<!DOCTYPE HTML/><html lang="en-US"><head><script type="text/javascript">if (window.location.host === 'mliezun.github.io') {
+                    window.location.host = 'mliezun.com';
+                }
+</script><meta charset="UTF-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>How to write a program that can replicate itself</title><meta name="generator" content="Custom"/><meta property="og:title" content="How to write a program that can replicate itself"/><meta property="og:locale" content="en_US"/><meta name="description" content="Grotsky is a toy programming language that I made for fun. Today we're visinting the concept of Quines, 
+a.k.a. self replicating programs. It's said that any turing-complete language should be able to write a program that replicates
+ itself. And grotsky is no exception."/><meta property="og:description" content="Grotsky is a toy programming language that I made for fun. Today we're visinting the concept of Quines, 
+a.k.a. self replicating programs. It's said that any turing-complete language should be able to write a program that replicates
+ itself. And grotsky is no exception."/><meta name="keywords" content="replication,programming,grotsky,duplication,quine,turing-complete"/><link rel="canonical" href="https://mliezun.com/2022/11/26/grotsky-quine.html"/><meta property="og:url" content="https://mliezun.com/2022/11/26/grotsky-quine.html"/><meta property="og:site_name" content="mliezun.com"/><meta property="og:image" content="https://mliezun.com/assets/images/nyc.jpg"/><link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico"/><meta property="og:type" content="article"/><meta name="twitter:card" content="summary"/><meta property="twitter:title" content="How to write a program that can replicate itself"/><meta name="twitter:creator" content="@migueliezun"/><meta name="twitter:image" content="https://mliezun.com/assets/images/nyc.jpg"/>
+<script type="application/ld+json">{"description":"Grotsky is a toy programming language that I made for fun. Today we're visinting the concept of Quines, 
+a.k.a. self replicating programs. It's said that any turing-complete language should be able to write a program that replicates
+ itself. And grotsky is no exception.","author":{"@type":"Person","name":"Miguel Liezun"},"@type":"BlogPosting","url":"https://mliezun.com/2022/11/26/grotsky-quine.html","headline":"How to write a program that can replicate itself","dateModified":"2022-11-26T00:00:00-03:00","datePublished":"2022-11-26T00:00:00-03:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://mliezun.com/2022/11/26/grotsky-quine.html"},"@context":"https://schema.org"}
+</script><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"/><link rel="stylesheet" href="/assets/css/style.css"/></head><body><div class="body-wrapper"><div class="body-content"><div class="site-header"><header><a href="/" style="text-decoration: none !important">Miguel's dev blog</a></header><button class="theme-toggle" id="theme-toggle" title="Toggle theme"><img src="/assets/images/circle-half.svg"/></button></div><hr/><div class="ai-tag-container"><span class="ai-tag human-tag">Human written
+<span class="ai-tag-popover">This post was fully written by a human
+ 
+<a href="/2025/11/19/ai-blog.html" class="ai-tag-read-more">Read more</a></span></span></div><article><h2>How to write a program that can replicate itself</h2><p>Grotsky is a toy programming language that I made for fun. Today we're visinting the concept of Quines, 
+a.k.a. self replicating programs. It's said that any turing-complete language should be able to write a program that replicates
+ itself. And grotsky is no exception.</p><p>Read more about grotsky in previous blogposts:
+<ul><li><a target="_blank" href="https://mliezun.com/2020/02/21/grotsky-part1.html">Grotsky Part 1: Syntax</a></li><li><a target="_blank" href="https://mliezun.com/2020/03/15/grotsky-part2.html">Grotsky Part 2: Parsing expressions</a></li><li><a target="_blank" href="https://mliezun.com/2020/04/01/grotsky-part3.html">Grotsky Part 3: Interpreting</a></li><li><a target="_blank" href="https://mliezun.com/2020/12/17/grotsky-getmyip.html">Grotsky Part 4: Writing a service to get your public IP</a></li><li><a target="_blank" href="https://mliezun.com/2021/10/04/new-blog-engine.html">I created a programming language and this blog is powered by it</a></li></ul></p><p>Quines are very easy to write. The language that you're using needs to be able to do a couple things:
+<ul><li>Write to a file or stdout (print)</li><li>Support for string arrays</li><li>Translate numbers/integers to character ascii representation</li><li>Concatenate strings</li><li>Loop through arrays from arbitrary indexes</li></ul></p><h3>Super simple quine: less than 30 lines of code</h3><p><pre class="triple-quote go">let tabChar = 9
+let quoteChar = 34
+let commaChar = 44
+let code = [
+	"let tabChar = 9",
+	"let quoteChar = 34",
+	"let commaChar = 44",
+	"let code = [",
+	"]",
+	"for let i = 0; i < 4; i = i+1 {",
+	"	io.println(code[i])",
+	"}",
+	"for let i = 0; i < code.length; i = i+1 {",
+	"	io.println(strings.chr(tabChar) + strings.chr(quoteChar) + code[i] + strings.chr(quoteChar) + strings.chr(commaChar))",
+	"}",
+	"for let i = 4; i < code.length; i = i+1 {",
+	"	io.println(code[i])",
+	"}",
+]
+for let i = 0; i < 4; i = i+1 {
+	io.println(code[i])
+}
+for let i = 0; i < code.length; i = i+1 {
+	io.println(strings.chr(tabChar) + strings.chr(quoteChar) + code[i] + strings.chr(quoteChar) + strings.chr(commaChar))
+}
+for let i = 4; i < code.length; i = i+1 {
+	io.println(code[i])
+}
+
+</pre></p><p>Now we can use grotksy cli to run the program and compare the output to the original source.
+</p><p>Save the original source to a file called 
+<span class="single-quote">quine.gr</span> then run the following commands:
+<pre class="triple-quote bash">
+$ grotsky quine.gr > quine_copy.gr
+$ cmp quine.gr quine_copy.gr
+$ echo $?
+0
+
+</pre></p><p>If you see a 0 as the final output that means the files are the same.
+ Otherwise if you saw an error message or a different output, that means something has gone wrong.
+</p><p>How exciting is this?!!
+We've just written a program that gives itself as an output. 
+That sounds impossible when you hear it for the first time. But it was actually pretty easy!
+</p><p>Source code available here: 
+<a target="_blank" href="https://gist.github.com/mliezun/c750ba701608850bd86d646a3ebf700f">https://gist.github.com/mliezun/c750ba701608850bd86d646a3ebf700f</a>.
+</p><p>Grotsky cli binary available here:
+<a target="_blank" href="https://github.com/mliezun/grotsky/releases/tag/v0.0.6">https://github.com/mliezun/grotsky/releases/tag/v0.0.6</a></p></article><footer><hr/><div class="footer-wrapper"><div><div>This blog was made with 
+<a target="_blank" href="https://github.com/mliezun/grotsky">Grotsky</a></div><div>Blog
+<a target="_blank" href="https://github.com/mliezun/mliezun.com">source code</a></div></div><div class="footer-socials"><a target="_blank" href="https://mliezun.com/feed.xml"><img alt="RSS Feed" src="/assets/images/socials/rss.png" width="20" height="20" style="border-radius: 3px"/></a><a target="_blank" href="https://github.com/mliezun"><img alt="Github" src="/assets/images/socials/github.png" width="20" height="20"/></a><a target="_blank" href="https://x.com/migueliezun"><img alt="X (Twitter)" src="/assets/images/socials/x.ico" width="20" height="20" style="border-radius: 5px"/></a><a target="_blank" href="https://www.linkedin.com/in/miguel-liezun-8697a9168/"><img alt="LinkedIn" src="/assets/images/socials/linkedin.png" width="20" height="20"/></a></div></div></footer></div></div><script src="/assets/js/theme-switcher.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script><script>document.querySelectorAll('.triple-quote').forEach(function (el) {
+                    if (el.classList.length > 1) hljs.highlightElement(el, {language: el.classList[1]});
+                    else hljs.highlightElement(el);
+                    el.classList.remove('hljs');
+                })
+</script><script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script><script>mermaid.initialize({ startOnLoad: true });
+</script></body></html>

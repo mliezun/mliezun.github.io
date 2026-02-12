@@ -1,0 +1,45 @@
+<!DOCTYPE HTML/><html lang="en-US"><head><script type="text/javascript">if (window.location.host === 'mliezun.github.io') {
+                    window.location.host = 'mliezun.com';
+                }
+</script><meta charset="UTF-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Rewrite my toy language interpreter in Rust</title><meta name="generator" content="Custom"/><meta property="og:title" content="Rewrite my toy language interpreter in Rust"/><meta property="og:locale" content="en_US"/><meta name="description" content="Im rewriting Grotsky (my toy programming language) in Rust, the previous implementation
+was done in Go. The goal of the rewrite is to improve my Rust skills, and to improve the performance of Grotsky,
+by at least 10x."/><meta property="og:description" content="Im rewriting Grotsky (my toy programming language) in Rust, the previous implementation
+was done in Go. The goal of the rewrite is to improve my Rust skills, and to improve the performance of Grotsky,
+by at least 10x."/><meta name="keywords" content="rust,rewrite,programming,go,golang"/><link rel="canonical" href="https://mliezun.com/2023/06/02/rewrite-grotsky-rust.html"/><meta property="og:url" content="https://mliezun.com/2023/06/02/rewrite-grotsky-rust.html"/><meta property="og:site_name" content="mliezun.com"/><meta property="og:image" content="https://mliezun.com/assets/images/nyc.jpg"/><link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico"/><meta property="og:type" content="article"/><meta name="twitter:card" content="summary"/><meta property="twitter:title" content="Rewrite my toy language interpreter in Rust"/><meta name="twitter:creator" content="@migueliezun"/><meta name="twitter:image" content="https://mliezun.com/assets/images/nyc.jpg"/>
+<script type="application/ld+json">{"description":"Im rewriting Grotsky (my toy programming language) in Rust, the previous implementation
+was done in Go. The goal of the rewrite is to improve my Rust skills, and to improve the performance of Grotsky,
+by at least 10x.","author":{"@type":"Person","name":"Miguel Liezun"},"@type":"BlogPosting","url":"https://mliezun.com/2023/06/02/rewrite-grotsky-rust.html","headline":"Rewrite my toy language interpreter in Rust","dateModified":"2023-06-02T00:00:00-03:00","datePublished":"2023-06-02T00:00:00-03:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://mliezun.com/2023/06/02/rewrite-grotsky-rust.html"},"@context":"https://schema.org"}
+</script><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"/><link rel="stylesheet" href="/assets/css/style.css"/></head><body><div class="body-wrapper"><div class="body-content"><div class="site-header"><header><a href="/" style="text-decoration: none !important">Miguel's dev blog</a></header><button class="theme-toggle" id="theme-toggle" title="Toggle theme"><img src="/assets/images/circle-half.svg"/></button></div><hr/><div class="ai-tag-container"><span class="ai-tag human-tag">Human written
+<span class="ai-tag-popover">This post was fully written by a human
+ 
+<a href="/2025/11/19/ai-blog.html" class="ai-tag-read-more">Read more</a></span></span></div><article><h2>Rewrite my toy language interpreter in Rust</h2><p>Im rewriting Grotsky (my toy programming language) in Rust, the previous implementation
+was done in Go. The goal of the rewrite is to improve my Rust skills, and to improve the performance of Grotsky,
+by at least 10x.</p><p>As of this writting the Rust implementation is 4x faster than the Golang implementation.</p><p>I've rewritten the Lexer, Parser and part of the Runtime. Enough for run this code and measure
+		how long it takes for each implementation to finish:</p><p><pre class="triple-quote js language-css">let a = 1
+while a < 100000000 {
+    a = a + 1
+}
+</pre></p><p>I was inspired by Mitchel Hashimoto's post: 
+<a href="https://mitchellh.com/writing/building-large-technical-projects" target="_blank">My Approach to Building Large Technical Projects</a>. And I want to create a roadmap of little projects to reach my goal of having a full-fledged interpreter in Rust.
+</p><h3>Goal</h3><p>Until now Grotsky has been running on a Tree-based interpreter. My goal is that at the end of the rewrite I
+			will have a Bytecode interpreter.
+</p><p>First I want to rewrite the Tree-based interpreter in Rust and achieve at least 10x performance improvement.
+</p><p>Then figure out if I want to use a Register based or Stack based bytecode interpreter.
+</p><p>Also, I would like to have a stable bytecode representation to be able to compile programs to a binary format
+ that can be shipped as is or packaged into a binary.
+</p><p>Finally, it's time Grotsky gets a REPL.
+</p><h3>Roadmap</h3><p>Believe it or not, Grotsky it's pretty big. It has support for reading and writting files, sockets and more
+ on the stdlib. Which means I have a huge task ahead of me.
+</p><p>First thing I want to do is to have some sort of automated testing setup that can compare Rust vs Go implementation.
+ Right now all test are written as Go unit test, I need to make them agnostic of language backend.
+</p><p><ul><li><strong>Jun 9:</strong> Have a complete setup of automated tests for correctness and performance.</li><li><strong>Jun 16:</strong> Language runtime (without stdlib) rewritten in Rust.</li><li><strong>Jun 23:</strong> Finish migrating stdlib and publish results (new blog post). Use new implementation for blog engine.</li><li><strong>Jun 30:</strong> Decide which kind of bytecode interpreter to use, then make a design and plan for the implementation.</li><li><strong>Jul 7:</strong> Have a working bytecode interpreter that is able to run the program shown in this post ^. Just a simple while loop. Compare performance and share progress.</li><li><strong>Jul 14:</strong> Add support for functions and closures.</li><li><strong>Jul 21:</strong> Finish runtime without stdlib in bytecode interpreter.</li><li><strong>Jul 28:</strong> Implement stdlib in bytecode interpreter. Share results.</li><li><strong>Aug 5:</strong> Add ability to compile to bytecode and run from bytecode.</li><li><strong>Aug 12:</strong> Add REPL and finish up project.</li></ul></p><p>Im gonna have lots of fun with this project and Im sure next time a post here I'll be a changed man.
+ Surely gonna learn a lot, Im excited about what lies ahead.
+</p></article><footer><hr/><div class="footer-wrapper"><div><div>This blog was made with 
+<a target="_blank" href="https://github.com/mliezun/grotsky">Grotsky</a></div><div>Blog
+<a target="_blank" href="https://github.com/mliezun/mliezun.com">source code</a></div></div><div class="footer-socials"><a target="_blank" href="https://mliezun.com/feed.xml"><img alt="RSS Feed" src="/assets/images/socials/rss.png" width="20" height="20" style="border-radius: 3px"/></a><a target="_blank" href="https://github.com/mliezun"><img alt="Github" src="/assets/images/socials/github.png" width="20" height="20"/></a><a target="_blank" href="https://x.com/migueliezun"><img alt="X (Twitter)" src="/assets/images/socials/x.ico" width="20" height="20" style="border-radius: 5px"/></a><a target="_blank" href="https://www.linkedin.com/in/miguel-liezun-8697a9168/"><img alt="LinkedIn" src="/assets/images/socials/linkedin.png" width="20" height="20"/></a></div></div></footer></div></div><script src="/assets/js/theme-switcher.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script><script>document.querySelectorAll('.triple-quote').forEach(function (el) {
+                    if (el.classList.length > 1) hljs.highlightElement(el, {language: el.classList[1]});
+                    else hljs.highlightElement(el);
+                    el.classList.remove('hljs');
+                })
+</script><script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script><script>mermaid.initialize({ startOnLoad: true });
+</script></body></html>

@@ -1,0 +1,67 @@
+<!DOCTYPE HTML/><html lang="en-US"><head><script type="text/javascript">if (window.location.host === 'mliezun.github.io') {
+                    window.location.host = 'mliezun.com';
+                }
+</script><meta charset="UTF-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>The end of a side project</title><meta name="generator" content="Custom"/><meta property="og:title" content="The end of a side project"/><meta property="og:locale" content="en_US"/><meta name="description" content="Cloud Outdated was a personalized digest of updates for cloud services. It's sad to see it go,
+	but it was a fun project to work on, learn some new stuff and collab with a friend.
+	There are some takeaways from this that I'd like to share."/><meta property="og:description" content="Cloud Outdated was a personalized digest of updates for cloud services. It's sad to see it go,
+	but it was a fun project to work on, learn some new stuff and collab with a friend.
+	There are some takeaways from this that I'd like to share."/><meta name="keywords" content="python,webscraping,project,aws"/><link rel="canonical" href="https://mliezun.com/2023/07/15/the-end-of-a-side-project.html"/><meta property="og:url" content="https://mliezun.com/2023/07/15/the-end-of-a-side-project.html"/><meta property="og:site_name" content="mliezun.com"/><meta property="og:image" content="https://mliezun.com/assets/images/nyc.jpg"/><link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico"/><meta property="og:type" content="article"/><meta name="twitter:card" content="summary"/><meta property="twitter:title" content="The end of a side project"/><meta name="twitter:creator" content="@migueliezun"/><meta name="twitter:image" content="https://mliezun.com/assets/images/nyc.jpg"/>
+<script type="application/ld+json">{"description":"Cloud Outdated was a personalized digest of updates for cloud services. It's sad to see it go,
+	but it was a fun project to work on, learn some new stuff and collab with a friend.
+	There are some takeaways from this that I'd like to share.","author":{"@type":"Person","name":"Miguel Liezun"},"@type":"BlogPosting","url":"https://mliezun.com/2023/07/15/the-end-of-a-side-project.html","headline":"The end of a side project","dateModified":"2023-07-15T00:00:00-03:00","datePublished":"2023-07-15T00:00:00-03:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://mliezun.com/2023/07/15/the-end-of-a-side-project.html"},"@context":"https://schema.org"}
+</script><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"/><link rel="stylesheet" href="/assets/css/style.css"/></head><body><div class="body-wrapper"><div class="body-content"><div class="site-header"><header><a href="/" style="text-decoration: none !important">Miguel's dev blog</a></header><button class="theme-toggle" id="theme-toggle" title="Toggle theme"><img src="/assets/images/circle-half.svg"/></button></div><hr/><div class="ai-tag-container"><span class="ai-tag human-tag">Human written
+<span class="ai-tag-popover">This post was fully written by a human
+ 
+<a href="/2025/11/19/ai-blog.html" class="ai-tag-read-more">Read more</a></span></span></div><article><h2>The end of a side project</h2><p>Cloud Outdated was a personalized digest of updates for cloud services. It's sad to see it go,
+			but it was a fun project to work on, learn some new stuff and collab with a friend.
+			There are some takeaways from this that I'd like to share.
+</p><h3>Building something simple is hard</h3><p>From the beginning we were trying to build a simple product to get notified when new versions
+			of Python were supported in AWS Lambda. But we figured we could support other things too, like
+			all Lambda runtimes, then also GCP and Azure, then more services of each one.
+Features started piling up pretty quickly.
+</p><p>When building stuff I try to think of every edge case, even the most improbable ones, and make
+			the software infalible. Of course, it's impossible to succeed at that, software will always be fallible.
+And this premature optimization ends up making the project more complex than it should be.
+</p><p>We planned to work on this for a 1 or 2 months, and it ended up taking 6+ months :-).
+</p><p>My takeaway here is: start building the dumbest thing possible that gets the job done, then adjust as needed.
+</p><h3>Getting users is hard</h3><p>We're killing this project because nobody uses it.
+And nobody except us has used it since it was launched more than a year ago.
+Some people subscribed but never even opened an email.
+</p><p>We tried to advertise in our social media and post it in different builders communities.
+But that will get you so far if you're not an influencer that has the right audience.
+</p><p>We thought that we'll get more traffic from organic search or people telling their friends about this.
+But in the end I think nobody really needed something like this that much.
+</p><p>My takeaway here is: building something that people really want and getting the product to the hands
+			of the people that want it is very complicated. You should think very deeply about what problem your
+			product is solving and how your users will find you.
+</p><h3>The money</h3><p>This has costed like $200 (US dollars) since inception. For two people that's like $100 each.
+It's not a lot, but for something that has no users that's quite expensive.
+</p><p>We used Lambdas to serve this project.
+I feel like we were promised that the cloud and serverless are cheap and easy solution.
+But in my opinion it doesn't seem to be the case.
+It's definitely not easier nor cheaper than having a PHP website in this case.
+Im sure there are other cases in which it makes more sense.
+</p><p>This is also a reason of why we're killing the project.
+Our service started failing because after a deploy dependencies were updated and the code
+			was to big to fit on a Lambda.
+It would have been a lot of work to fix it, so we decided to kill it and save some bucks every month.
+</p><p>For personal projects which you're not sure how they're going to scale,
+			I think serverless is probably not the right choice.
+Serverless make sense if you're going to have huge burst of traffics and don't want
+			to handle a lot of infra.
+</p><p>My takeaway here is: beware of the cloud, if you're just building a small side project
+			or don't have huge infra needs stick with the cheapest providers (Hostinger, PythonAnywhere, Hetzner)
+			and avoid cloud providers (GCP, Azure, AWS).
+</p><h3>Final thougths</h3><p>If I haven't made this clear enough, building a successful product is *hard*.
+There are many things to think about when starting, and the technical stuff hopefully
+			is the easy part.
+I think this are the 3 most important lessons that I've learned working on this:
+<ul><li>Build the dumbest thing that does the job, improve as needed.</li><li>Think deeply about what problem are you solving and how you're going to deliver the solution to the people that need it.</li><li>Beware of the cloud, if possible use a cheaper provider. It will save you money and headaches.</li></ul></p></article><footer><hr/><div class="footer-wrapper"><div><div>This blog was made with 
+<a target="_blank" href="https://github.com/mliezun/grotsky">Grotsky</a></div><div>Blog
+<a target="_blank" href="https://github.com/mliezun/mliezun.com">source code</a></div></div><div class="footer-socials"><a target="_blank" href="https://mliezun.com/feed.xml"><img alt="RSS Feed" src="/assets/images/socials/rss.png" width="20" height="20" style="border-radius: 3px"/></a><a target="_blank" href="https://github.com/mliezun"><img alt="Github" src="/assets/images/socials/github.png" width="20" height="20"/></a><a target="_blank" href="https://x.com/migueliezun"><img alt="X (Twitter)" src="/assets/images/socials/x.ico" width="20" height="20" style="border-radius: 5px"/></a><a target="_blank" href="https://www.linkedin.com/in/miguel-liezun-8697a9168/"><img alt="LinkedIn" src="/assets/images/socials/linkedin.png" width="20" height="20"/></a></div></div></footer></div></div><script src="/assets/js/theme-switcher.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script><script>document.querySelectorAll('.triple-quote').forEach(function (el) {
+                    if (el.classList.length > 1) hljs.highlightElement(el, {language: el.classList[1]});
+                    else hljs.highlightElement(el);
+                    el.classList.remove('hljs');
+                })
+</script><script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script><script>mermaid.initialize({ startOnLoad: true });
+</script></body></html>

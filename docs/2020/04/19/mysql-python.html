@@ -1,0 +1,254 @@
+<!DOCTYPE HTML/><html lang="en-US"><head><script type="text/javascript">if (window.location.host === 'mliezun.github.io') {
+                    window.location.host = 'mliezun.com';
+                }
+</script><meta charset="UTF-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Executing python code from MySQL Server</title><meta name="generator" content="Custom"/><meta property="og:title" content="Executing python code from MySQL Server"/><meta property="og:locale" content="en_US"/><meta name="description" content="Evaluate python expressions inside MySQL using a UDF that binds to python interpreter."/><meta property="og:description" content="Evaluate python expressions inside MySQL using a UDF that binds to python interpreter."/><meta name="keywords" content="python,c++,mysql,udf"/><link rel="canonical" href="https://mliezun.com/2020/04/19/mysql-python.html"/><meta property="og:url" content="https://mliezun.com/2020/04/19/mysql-python.html"/><meta property="og:site_name" content="mliezun.com"/><meta property="og:image" content="https://mliezun.com/assets/images/nyc.jpg"/><link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico"/><meta property="og:type" content="article"/><meta name="twitter:card" content="summary"/><meta property="twitter:title" content="Executing python code from MySQL Server"/><meta name="twitter:creator" content="@migueliezun"/><meta name="twitter:image" content="https://mliezun.com/assets/images/nyc.jpg"/>
+<script type="application/ld+json">{"description":"Evaluate python expressions inside MySQL using a UDF that binds to python interpreter.","author":{"@type":"Person","name":"Miguel Liezun"},"@type":"BlogPosting","url":"https://mliezun.com/2020/04/19/mysql-python.html","headline":"Executing python code from MySQL Server","dateModified":"2020-04-19T00:00:00-03:00","datePublished":"2020-04-19T00:00:00-03:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://mliezun.com/2020/04/19/mysql-python.html"},"@context":"https://schema.org"}
+</script><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"/><link rel="stylesheet" href="/assets/css/style.css"/></head><body><div class="body-wrapper"><div class="body-content"><div class="site-header"><header><a href="/" style="text-decoration: none !important">Miguel's dev blog</a></header><button class="theme-toggle" id="theme-toggle" title="Toggle theme"><img src="/assets/images/circle-half.svg"/></button></div><hr/><div class="ai-tag-container"><span class="ai-tag human-tag">Human written
+<span class="ai-tag-popover">This post was fully written by a human
+ 
+<a href="/2025/11/19/ai-blog.html" class="ai-tag-read-more">Read more</a></span></span></div><article><div>
+
+</div><h2>Executing python code from MySQL Server
+</h2><div>
+
+</div><h3>Trying <span class="single-quote">py_eval</span>
+</h3><div>
+
+</div><h5>Generate a list of integers from 0 to 10
+</h5><div>
+<pre class="triple-quote sql">
+> select py_eval('[i for i in range(10)]') list;
++--------------------------------+
+| list                           |
++--------------------------------+
+| [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] |
++--------------------------------+
+</pre>
+
+
+</div><h5>Generate a dictionary (json object) from a list of dicts
+</h5><div>
+<pre class="triple-quote sql">
+> select replace(py_eval('{ str(user["id"]) : user for user in [{"id": 33, "name": "John"}, {"id": 44, "name": "George"}] }'), "'", '"') dict;
++------------------------------------------------------------------------+
+| dict                                                                   |
++------------------------------------------------------------------------+
+| {"33": {"id": 33, "name": "John"}, "44": {"id": 44, "name": "George"}} |
++------------------------------------------------------------------------+
+</pre>
+
+Replace is needed here, because python uses single quotes for dictionaries.
+
+
+</div><h5>Make a function that receives a json array and a key and sorts the array by key
+</h5><div>
+<pre class="triple-quote sql">
+DROP function IF EXISTS <span class="single-quote">sort_by_key</span>;
+DELIMITER $$
+CREATE FUNCTION <span class="single-quote">sort_by_key</span> (arr json, k text)
+RETURNS json
+BEGIN
+    RETURN replace(py_eval(CONCAT("sorted(", arr, ", key=lambda e: e['", k, "'])")), "'", '"');
+END$$
+DELIMITER ;
+</pre>
+
+Test
+
+<pre class="triple-quote sql">
+> select sort_by_key('[{"a":2}, {"a":1}, {"a": 722}, {"a": 0}]', 'a') sorted;
++--------------------------------------------+
+| sorted                                     |
++--------------------------------------------+
+| [{"a": 0}, {"a": 1}, {"a": 2}, {"a": 722}] |
++--------------------------------------------+
+</pre>
+
+
+</div><h3>How to write a MySQL UDF
+</h3><div>
+There is a pretty good guide at the <a href="https://dev.mysql.com/doc/refman/8.0/en/adding-udf.html">MySQL 8.0 Reference Manual</a>. I'll give you a brief explanation so you can start quickly, but reading the full guide is highly recomended.
+
+MySQL's UDFs are written in C++ and need to follow certain conventions so they can be recognized as such.
+
+In our case, we want our MySQL function to be called <span class="single-quote">py_eval</span>, so we have to define the following C++ functions:
+
+<li>py_eval_init or py_eval_deinit</li>
+<li>py_eval</li>
+
+**py_eval_init**: (Optional) Initializes memory and data structures for the function execution.
+
+**py_eval**: Executes the actual function, in our case evaluates a python expression.
+
+**py_eval_deinit**: (Optional) If any memory was allocated in the init function, this is the place where we free it.
+
+For <span class="single-quote">py_eval</span> we only need **py_eval_init** and **py_eval**.
+
+
+</div><h4>Functions signatures
+</h4><div>
+<pre class="triple-quote c">
+bool py_eval_init(UDF_INIT *initid, UDF_ARGS *args,
+                             char *message);
+
+char *py_eval(UDF_INIT *, UDF_ARGS *args, char *result,
+                         unsigned long *res_length, unsigned char *null_value,
+                         unsigned char *);
+</pre>
+
+These are the standard definitions for MySQL functions that return string, as is the case of <span class="single-quote">py_eval</span>. To be able to declare this functions, you need to have the definition of <span class="single-quote">UDF_INIT</span> and <span class="single-quote">UDF_ARGS</span>, you can find that at the source code of mysql server -> <a href="https://github.com/mysql/mysql-server/blob/8.0/include/mysql/udf_registration_types.h">right here</a>.
+
+
+</div><h3>Evaluating python expression
+</h3><div>
+For evaluating python expression, we'll be using <a href="https://github.com/pybind/pybind11">pybind11</a>. That gives us the ability to directly access the python interpreter and execute code.
+
+
+</div><h5>Example
+</h5><div>
+Make sure you have <span class="single-quote">g++</span> installed. Try executing: <span class="single-quote">g++ --help</span>. And some version of python running of your system, for this tutorial I'll be using version _3.8_.
+
+<pre class="triple-quote bash">
+$ mkdir py_eval &amp;&amp; cd py_eval
+$ git clone https://github.com/pybind/pybind11
+</pre>
+
+Create a new file called <span class="single-quote">main.cpp</span> with the following content:
+
+<pre class="triple-quote c">
+#include "pybind11/include/pybind11/embed.h"
+#include "pybind11/include/pybind11/eval.h"
+#include &lt;iostream&gt;
+
+namespace py = pybind11;
+
+py::scoped_interpreter guard{}; // We need this to keep the interpreter alive
+
+int main(void) {
+    auto obj = py::eval("[i for i in range(10)]");
+    std::cout &lt;&lt; std::string(py::str(obj)) &lt;&lt; std::endl;
+}
+</pre>
+
+To run the example we have to compile the file.
+
+First, we need the compilation flags.
+
+<pre class="triple-quote bash">
+$ pkg-config python-3.8 --libs --cflags
+-I/usr/include/python3.8
+</pre>
+
+Then, we can compile and run our code with the following.
+
+<pre class="triple-quote bash">
+$ g++ main.cpp -I/usr/include/python3.8 -lpython3.8
+$ ./a.out
+[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+</pre>
+
+
+</div><h3>Putting all together
+</h3><div>
+Download udf types to the project folder.
+
+<pre class="triple-quote bash">
+$ wget https://raw.githubusercontent.com/mysql/mysql-server/8.0/include/mysql/udf_registration_types.h
+</pre>
+
+Create a new file called <span class="single-quote">py_eval.cpp</span>, with the following content:
+
+<pre class="triple-quote ">c++
+#include "pybind11/include/pybind11/embed.h"
+#include "pybind11/include/pybind11/eval.h"
+#include "udf_registration_types.h"
+#include &lt;string.h&gt;
+
+namespace py = pybind11;
+
+py::scoped_interpreter guard{}; // We need this to keep the interpreter alive
+
+extern "C" bool py_eval_init(UDF_INIT *initid, UDF_ARGS *args,
+                             char *message)
+{
+    // Here we can check if we received one argument
+    if (args->arg_count != 1)
+    {
+        // The function returns true if there is an error,
+        // the error message is copied to the message arg.
+        strcpy(message, "py_eval must have one argument");
+        return true;
+    }
+    // Cast the passed argument to string
+    args->arg_type[0] = STRING_RESULT;
+    initid->maybe_null = true; /* The result may be null */
+    return false;
+}
+
+extern "C" char *py_eval(UDF_INIT *, UDF_ARGS *args, char *result,
+                         unsigned long *res_length, unsigned char *null_value,
+                         unsigned char *)
+{
+    // Evaluate the argument as a python expression
+    auto obj = py::eval(args->args[0]);
+    // Cast the result to std::string
+    std::string res_str = std::string(py::str(obj));
+
+    // Copy the output string from py::eval to the result argument
+    strcpy(result, res_str.c_str());
+
+    // Set the length of the result string
+    *res_length = res_str.length();
+
+    return result;
+}
+</pre>
+
+Then, we have to compile the project as a shared library, and move it to the plugin folder of mysql (in your case, it could be located in some other directory).
+
+<pre class="triple-quote ">
+$ g++ -I/usr/include/python3.8 -lpython3.8 -shared -fPIC -o py_eval.so py_eval.cpp
+$ sudo cp py_eval.so /usr/lib/mysql/plugin/
+</pre>
+
+Now, it's time to try it from mysql.
+
+First, connect to your server as root.
+
+<pre class="triple-quote ">
+$ sudo mysql -uroot
+</pre>
+
+Create and test the function.
+
+<pre class="triple-quote ">
+> create function py_eval returns string soname 'py_eval.so';
+Query OK, 0 rows affected (0.029 sec)
+
+> select py_eval('[i for i in range(10)]') list;
++--------------------------------+
+| list                           |
++--------------------------------+
+| [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] |
++--------------------------------+
+1 row in set (0.001 sec)
+</pre>
+
+
+</div><h3>Future
+</h3><div>
+There is a lot to do, for example there is no error control on the function execution. The python expression that we are trying to evaluate could fail causing a server reboot. Also, there is some extra work to do to be able to use <span class="single-quote">import</span>. And there are many concerns regarding concurrency issues.
+
+If you want to contribute to improve execution of python code on mysql server, please go to my <a href="https://github.com/mliezun/mysql-python">github project</a> and make a PR.
+
+I hope you enjoyed this tutorial and come back soon for more.
+
+</div></article><footer><hr/><div class="footer-wrapper"><div><div>This blog was made with 
+<a target="_blank" href="https://github.com/mliezun/grotsky">Grotsky</a></div><div>Blog
+<a target="_blank" href="https://github.com/mliezun/mliezun.com">source code</a></div></div><div class="footer-socials"><a target="_blank" href="https://mliezun.com/feed.xml"><img alt="RSS Feed" src="/assets/images/socials/rss.png" width="20" height="20" style="border-radius: 3px"/></a><a target="_blank" href="https://github.com/mliezun"><img alt="Github" src="/assets/images/socials/github.png" width="20" height="20"/></a><a target="_blank" href="https://x.com/migueliezun"><img alt="X (Twitter)" src="/assets/images/socials/x.ico" width="20" height="20" style="border-radius: 5px"/></a><a target="_blank" href="https://www.linkedin.com/in/miguel-liezun-8697a9168/"><img alt="LinkedIn" src="/assets/images/socials/linkedin.png" width="20" height="20"/></a></div></div></footer></div></div><script src="/assets/js/theme-switcher.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script><script>document.querySelectorAll('.triple-quote').forEach(function (el) {
+                    if (el.classList.length > 1) hljs.highlightElement(el, {language: el.classList[1]});
+                    else hljs.highlightElement(el);
+                    el.classList.remove('hljs');
+                })
+</script><script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script><script>mermaid.initialize({ startOnLoad: true });
+</script></body></html>

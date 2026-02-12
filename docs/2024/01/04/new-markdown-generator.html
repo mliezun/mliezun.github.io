@@ -1,0 +1,67 @@
+<!DOCTYPE HTML/><html lang="en-US"><head><script type="text/javascript">if (window.location.host === 'mliezun.github.io') {
+                    window.location.host = 'mliezun.com';
+                }
+</script><meta charset="UTF-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Generating posts using markdown</title><meta name="generator" content="Custom"/><meta property="og:title" content="Generating posts using markdown"/><meta property="og:locale" content="en_US"/><meta name="description" content="Custom Markdown parser and HTML generator using Grotsky, my toy programming language that powers this blog. Up until now I've used a hacky HTML generator that relies on lists. Now Im integrating a simple MD parser that makes easier to write new articles."/><meta property="og:description" content="Custom Markdown parser and HTML generator using Grotsky, my toy programming language that powers this blog. Up until now I've used a hacky HTML generator that relies on lists. Now Im integrating a simple MD parser that makes easier to write new articles."/><meta name="keywords" content="markdown,parser,blog"/><link rel="canonical" href="https://mliezun.com/2024/01/04/new-markdown-generator.html"/><meta property="og:url" content="https://mliezun.com/2024/01/04/new-markdown-generator.html"/><meta property="og:site_name" content="mliezun.com"/><meta property="og:image" content="https://mliezun.com/assets/images/nyc.jpg"/><link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico"/><meta property="og:type" content="article"/><meta name="twitter:card" content="summary"/><meta property="twitter:title" content="Generating posts using markdown"/><meta name="twitter:creator" content="@migueliezun"/><meta name="twitter:image" content="https://mliezun.com/assets/images/nyc.jpg"/>
+<script type="application/ld+json">{"description":"Custom Markdown parser and HTML generator using Grotsky, my toy programming language that powers this blog. Up until now I've used a hacky HTML generator that relies on lists. Now Im integrating a simple MD parser that makes easier to write new articles.","author":{"@type":"Person","name":"Miguel Liezun"},"@type":"BlogPosting","url":"https://mliezun.com/2024/01/04/new-markdown-generator.html","headline":"Generating posts using markdown","dateModified":"2024-01-04T00:00:00-03:00","datePublished":"2024-01-04T00:00:00-03:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://mliezun.com/2024/01/04/new-markdown-generator.html"},"@context":"https://schema.org"}
+</script><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"/><link rel="stylesheet" href="/assets/css/style.css"/></head><body><div class="body-wrapper"><div class="body-content"><div class="site-header"><header><a href="/" style="text-decoration: none !important">Miguel's dev blog</a></header><button class="theme-toggle" id="theme-toggle" title="Toggle theme"><img src="/assets/images/circle-half.svg"/></button></div><hr/><div class="ai-tag-container"><span class="ai-tag human-tag">Human written
+<span class="ai-tag-popover">This post was fully written by a human
+ 
+<a href="/2025/11/19/ai-blog.html" class="ai-tag-read-more">Read more</a></span></span></div><article><p>
+</p><p>
+</p><h1>Generating posts using markdown
+</h1><p>
+</p><p>This is pretty standard for Github pages. But in this case, the parser has been written by me. It takes some subset of markdown and compiles it to HTML.
+</p><p>Only what you see in this post is what's supported.
+</p><h2>Code blocks
+</h2><p>
+</p><p>Standard code block:
+</p><pre class="triple-quote ">Hello, this is a code block!
+</pre><p>
+</p><p>Syntax highlighting:
+</p><pre class="triple-quote python">from functools import reduce, partial
+import operator
+
+mul = partial(reduce, operator.mul)
+print("Factorial of 5:", mul(range(1, 6)))
+</pre><p>
+</p><h2>Unordered list
+</h2><p>
+</p><ul><li>This
+</li><li>is an
+</li><li>unordered list
+</li></ul><h2>Bolds, Italics and Inline code
+</h2><p>
+</p><p>Some text can be <strong>bolded</strong>, while some other can be in <em>Italics</em>.
+</p><p>But the best is to have <span class='single-quote'>print("inline code")</span>.
+</p><h2>Links and images
+</h2><p>
+</p><p><a target='_blank' href='https://github.com/mliezun/mliezun.github.io/blob/master/src/parse_md.gr'>Link to the blog source code where you can see how the parser works (tldr: is awful).</a>
+</p><p>Picture of NYC:
+</p><p><img alt='"Picture of NYC"' src='/assets/images/nyc.jpg'/>
+</p><h1>HEADINGS
+</h1><p>
+</p><p>There's a thing you haven't noticed so far. There's support for different kinds of headings. You can see them in increasing order here:
+</p><h6>Microscopic
+</h6><p>
+</p><h5>Small
+</h5><p>
+</p><h4>Good
+</h4><p>
+</p><h3>Pretty good
+</h3><p>
+</p><h2>Big
+</h2><p>
+</p><h1>Good bye!
+</h1><p>
+</p><p>Thanks for checking out the blog. I've done this to reduce the complexity of creating new blogposts. It was a headache before.
+</p><p>Hopefully now I'll write more. Stay tuned.
+</p><p>
+</p></article><footer><hr/><div class="footer-wrapper"><div><div>This blog was made with 
+<a target="_blank" href="https://github.com/mliezun/grotsky">Grotsky</a></div><div>Blog
+<a target="_blank" href="https://github.com/mliezun/mliezun.com">source code</a></div></div><div class="footer-socials"><a target="_blank" href="https://mliezun.com/feed.xml"><img alt="RSS Feed" src="/assets/images/socials/rss.png" width="20" height="20" style="border-radius: 3px"/></a><a target="_blank" href="https://github.com/mliezun"><img alt="Github" src="/assets/images/socials/github.png" width="20" height="20"/></a><a target="_blank" href="https://x.com/migueliezun"><img alt="X (Twitter)" src="/assets/images/socials/x.ico" width="20" height="20" style="border-radius: 5px"/></a><a target="_blank" href="https://www.linkedin.com/in/miguel-liezun-8697a9168/"><img alt="LinkedIn" src="/assets/images/socials/linkedin.png" width="20" height="20"/></a></div></div></footer></div></div><script src="/assets/js/theme-switcher.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script><script>document.querySelectorAll('.triple-quote').forEach(function (el) {
+                    if (el.classList.length > 1) hljs.highlightElement(el, {language: el.classList[1]});
+                    else hljs.highlightElement(el);
+                    el.classList.remove('hljs');
+                })
+</script><script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script><script>mermaid.initialize({ startOnLoad: true });
+</script></body></html>

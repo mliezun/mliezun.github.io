@@ -1,0 +1,58 @@
+<!DOCTYPE HTML/><html lang="en-US"><head><script type="text/javascript">if (window.location.host === 'mliezun.github.io') {
+                    window.location.host = 'mliezun.com';
+                }
+</script><meta charset="UTF-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Caddy Snake improvements</title><meta name="generator" content="Custom"/><meta property="og:title" content="Caddy Snake improvements"/><meta property="og:locale" content="en_US"/><meta name="description" content="I've been planning on improving Caddy Snake, making it more stable and easier to use. Right now, I want to add automatic test for Django, and build binaries and Docker images for arm64 and riscv64. I'd also like to turn it into a Python package so you can plug it straight into your code."/><meta property="og:description" content="I've been planning on improving Caddy Snake, making it more stable and easier to use. Right now, I want to add automatic test for Django, and build binaries and Docker images for arm64 and riscv64. I'd also like to turn it into a Python package so you can plug it straight into your code."/><meta name="keywords" content="programming,python,code,algorithms"/><link rel="canonical" href="https://mliezun.com/2024/11/07/todo-caddy-snake.html"/><meta property="og:url" content="https://mliezun.com/2024/11/07/todo-caddy-snake.html"/><meta property="og:site_name" content="mliezun.com"/><meta property="og:image" content="https://mliezun.com/assets/images/nyc.jpg"/><link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico"/><meta property="og:type" content="article"/><meta name="twitter:card" content="summary"/><meta property="twitter:title" content="Caddy Snake improvements"/><meta name="twitter:creator" content="@migueliezun"/><meta name="twitter:image" content="https://mliezun.com/assets/images/nyc.jpg"/>
+<script type="application/ld+json">{"description":"I've been planning on improving Caddy Snake, making it more stable and easier to use. Right now, I want to add automatic test for Django, and build binaries and Docker images for arm64 and riscv64. I'd also like to turn it into a Python package so you can plug it straight into your code.","author":{"@type":"Person","name":"Miguel Liezun"},"@type":"BlogPosting","url":"https://mliezun.com/2024/11/07/todo-caddy-snake.html","headline":"Caddy Snake improvements","dateModified":"2024-11-07T00:00:00-03:00","datePublished":"2024-11-07T00:00:00-03:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://mliezun.com/2024/11/07/todo-caddy-snake.html"},"@context":"https://schema.org"}
+</script><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"/><link rel="stylesheet" href="/assets/css/style.css"/></head><body><div class="body-wrapper"><div class="body-content"><div class="site-header"><header><a href="/" style="text-decoration: none !important">Miguel's dev blog</a></header><button class="theme-toggle" id="theme-toggle" title="Toggle theme"><img src="/assets/images/circle-half.svg"/></button></div><hr/><div class="ai-tag-container"><span class="ai-tag human-tag">Human written
+<span class="ai-tag-popover">This post was fully written by a human
+ 
+<a href="/2025/11/19/ai-blog.html" class="ai-tag-read-more">Read more</a></span></span></div><article><p>
+</p><h1>Caddy Snake improvements
+</h1><p>
+</p><p>I've been planning on improving Caddy Snake, making it more stable and easier to use. Right now, I want to add automatic test for Django, and build binaries and Docker images for arm64 and riscv64. I'd also like to turn it into a Python package so you can plug it straight into your code.
+</p><h2>Fix/add/test support for Django
+</h2><p>
+</p><p>I've tried to use it a couple times just to test that it works and seems to have been broken. I'd like to test it a little bit more to make sure it works and solve all the bugs.
+</p><p>Also add an automatic test so that I'm sure it doesn't break after I make some changes.
+</p><h2>Make sure we don't get segfaults on tests anymore
+</h2><p>
+</p><p>Sometimes I get random segfaults when tests run on CI. I'd like to take time to investigate this and fix the issues.
+</p><h2>Add support for arm64 and riscv64
+</h2><p>
+</p><p>For now I'm only building caddy-snake for Linux x86_64. It would be cool to distribute more binaries for different OSes and CPU architectures.
+</p><p>For example:
+</p><ul><li>linux / x86_64 / arm64 / riscv64
+</li></ul><ul><li>macOS / x86_64 / arm64
+</li></ul><ul><li>windows / x86_64 / arm64
+</li></ul><p>Also deliver docker images for all of those.
+</p><p>
+</p><h2>Expose as python package that can be used directly
+</h2><p>
+</p><pre class="triple-quote python">import caddysnake
+
+from flask import Flask
+
+app = Flask(__name__)
+
+@app.route("/hello")
+def hello():
+ return "Hello world"
+ 
+if __name__ == "__main__":
+    caddysnake.run(app=app, host="localhost:8082")
+</pre><p>
+</p><h2>Better performance and isolation
+</h2><p>
+</p><p>Complete the work of integrating subinterpreters in caddy-snake.
+</p><p><a target='_blank' href='https://github.com/mliezun/caddy-snake/pull/9'>https://github.com/mliezun/caddy-snake/pull/9</a>
+</p><p>Track performance compared to other web servers and improve it.
+</p><p>
+</p></article><footer><hr/><div class="footer-wrapper"><div><div>This blog was made with 
+<a target="_blank" href="https://github.com/mliezun/grotsky">Grotsky</a></div><div>Blog
+<a target="_blank" href="https://github.com/mliezun/mliezun.com">source code</a></div></div><div class="footer-socials"><a target="_blank" href="https://mliezun.com/feed.xml"><img alt="RSS Feed" src="/assets/images/socials/rss.png" width="20" height="20" style="border-radius: 3px"/></a><a target="_blank" href="https://github.com/mliezun"><img alt="Github" src="/assets/images/socials/github.png" width="20" height="20"/></a><a target="_blank" href="https://x.com/migueliezun"><img alt="X (Twitter)" src="/assets/images/socials/x.ico" width="20" height="20" style="border-radius: 5px"/></a><a target="_blank" href="https://www.linkedin.com/in/miguel-liezun-8697a9168/"><img alt="LinkedIn" src="/assets/images/socials/linkedin.png" width="20" height="20"/></a></div></div></footer></div></div><script src="/assets/js/theme-switcher.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script><script>document.querySelectorAll('.triple-quote').forEach(function (el) {
+                    if (el.classList.length > 1) hljs.highlightElement(el, {language: el.classList[1]});
+                    else hljs.highlightElement(el);
+                    el.classList.remove('hljs');
+                })
+</script><script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script><script>mermaid.initialize({ startOnLoad: true });
+</script></body></html>

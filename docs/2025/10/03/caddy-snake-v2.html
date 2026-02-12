@@ -1,0 +1,58 @@
+<!DOCTYPE HTML/><html lang="en-US"><head><script type="text/javascript">if (window.location.host === 'mliezun.github.io') {
+                    window.location.host = 'mliezun.com';
+                }
+</script><meta charset="UTF-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Serving Python apps using the Caddy web server</title><meta name="generator" content="Custom"/><meta property="og:title" content="Serving Python apps using the Caddy web server"/><meta property="og:locale" content="en_US"/><meta name="description" content="Caddy is an enterprise grade web server and reverse proxy. I recently released a new version of `caddysnake` a plugin to serve python apps more easily using Caddy without the need of installing another server like gunicorn, uvicorn, hypercorn or others."/><meta property="og:description" content="Caddy is an enterprise grade web server and reverse proxy. I recently released a new version of `caddysnake` a plugin to serve python apps more easily using Caddy without the need of installing another server like gunicorn, uvicorn, hypercorn or others."/><meta name="keywords" content="go,python,web,server,wsgi,asgi"/><link rel="canonical" href="https://mliezun.com/2025/10/03/caddy-snake-v2.html"/><meta property="og:url" content="https://mliezun.com/2025/10/03/caddy-snake-v2.html"/><meta property="og:site_name" content="mliezun.com"/><meta property="og:image" content="https://mliezun.com/assets/images/OIP-3356949409.jpg"/><link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico"/><meta property="og:type" content="article"/><meta name="twitter:card" content="summary"/><meta property="twitter:title" content="Serving Python apps using the Caddy web server"/><meta name="twitter:creator" content="@migueliezun"/><meta name="twitter:image" content="https://mliezun.com/assets/images/nyc.jpg"/>
+<script type="application/ld+json">{"description":"Caddy is an enterprise grade web server and reverse proxy. I recently released a new version of `caddysnake` a plugin to serve python apps more easily using Caddy without the need of installing another server like gunicorn, uvicorn, hypercorn or others.","author":{"@type":"Person","name":"Miguel Liezun"},"@type":"BlogPosting","url":"https://mliezun.com/2025/10/03/caddy-snake-v2.html","headline":"Serving Python apps using the Caddy web server","dateModified":"2025-10-03T00:00:00-03:00","datePublished":"2025-10-03T00:00:00-03:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://mliezun.com/2025/10/03/caddy-snake-v2.html"},"@context":"https://schema.org"}
+</script><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"/><link rel="stylesheet" href="/assets/css/style.css"/></head><body><div class="body-wrapper"><div class="body-content"><div class="site-header"><header><a href="/" style="text-decoration: none !important">Miguel's dev blog</a></header><button class="theme-toggle" id="theme-toggle" title="Toggle theme"><img src="/assets/images/circle-half.svg"/></button></div><hr/><div class="ai-tag-container"><span class="ai-tag">AI-assisted
+<span class="ai-tag-popover">An AI tool was used to generate a part or all content of this post
+ 
+<a href="/2025/11/19/ai-blog.html" class="ai-tag-read-more">Read more</a></span></span></div><article><p>
+</p><p>
+</p><h1>Serving Python apps using Caddy web server
+</h1><p>
+</p><p>Caddy is an enterprise grade web server and reverse proxy. I recently released a new version of <span class='single-quote'>caddysnake</span> a plugin to serve python apps more easily using Caddy without the need of installing another server like gunicorn, uvicorn, hypercorn or others.
+</p><p><img alt='' src='/assets/images/OIP-3356949409.jpg'/>
+</p><p>In this latest release there are some new features to explore:
+</p><ul><li>Distribution of a single caddy binary with bundled python.
+</li><li>Added <span class='single-quote'>python-server</span> subcommand.
+</li><li>Multiple worker process.
+</li><li>Package in PyPI available for a quick way to install: <span class='single-quote'>caddysnake</span>.
+</li></ul><h2>Distribution of single binary
+</h2><p>
+</p><p>The latest release is <a target='_blank' href='https://github.com/mliezun/caddy-snake/releases'>available on github</a>.
+</p><p>Now you can see for example <span class='single-quote'>caddy-standalone-3.10-x86_64_v2-unknown-linux-gnu.zip</span> as an available asset to download.
+</p><p>After downloading and unzipping you get a single binary named <span class='single-quote'>caddy</span>. This packages an entire Python distribution inside so you now don't have the need to install it on the target system.
+</p><p>This would be useful for docker images since now you don't have to install the correct python version, just include the caddy binary and that carries along all of its dependencies.
+</p><p>
+</p><h2>Python server subcommand
+</h2><p>
+</p><p>With the new release you get a shorthand <span class='single-quote'>caddy python-server</span>.
+</p><p>This will configure a virtual <span class='single-quote'>Caddyfile</span> and run the server for you.
+</p><p>For example if you have <span class='single-quote'>main.py</span> file with a Flask app inside you'll simply run:
+</p><pre class="triple-quote ">caddy python-server -t wsgi -a main:app
+</pre><p>
+</p><p>This will start serving request on http://localhost:9080/ by default.
+</p><p>See more settings with <span class='single-quote'>caddy python-server --help</span>.
+</p><h2>Multiple worker processes
+</h2><p>
+</p><p>Up until now caddysnake has been serving request from a single python processes, given that the GIL hasn't been removed yet that means we were not fully utilizing all the cores available.
+</p><p>Now by default caddysnake starts as many processes as cores you have in your cpu, configurable with <span class='single-quote'>--workers <n></span>.
+</p><p>This increases throughput but also overhead of communication between the Go and Python processes.
+</p><h2>Package available in PyPI
+</h2><p>
+</p><p>
+</p><p>Now it's possible to install <span class='single-quote'>caddysnake</span> as a package using pip:
+</p><pre class="triple-quote ">pip install caddysnake
+caddysnake python-server --help
+</pre><p>
+</p><p>This is a quick way to get started without the need to compile caddy yourself.
+</p><p>
+</p></article><footer><hr/><div class="footer-wrapper"><div><div>This blog was made with 
+<a target="_blank" href="https://github.com/mliezun/grotsky">Grotsky</a></div><div>Blog
+<a target="_blank" href="https://github.com/mliezun/mliezun.com">source code</a></div></div><div class="footer-socials"><a target="_blank" href="https://mliezun.com/feed.xml"><img alt="RSS Feed" src="/assets/images/socials/rss.png" width="20" height="20" style="border-radius: 3px"/></a><a target="_blank" href="https://github.com/mliezun"><img alt="Github" src="/assets/images/socials/github.png" width="20" height="20"/></a><a target="_blank" href="https://x.com/migueliezun"><img alt="X (Twitter)" src="/assets/images/socials/x.ico" width="20" height="20" style="border-radius: 5px"/></a><a target="_blank" href="https://www.linkedin.com/in/miguel-liezun-8697a9168/"><img alt="LinkedIn" src="/assets/images/socials/linkedin.png" width="20" height="20"/></a></div></div></footer></div></div><script src="/assets/js/theme-switcher.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script><script>document.querySelectorAll('.triple-quote').forEach(function (el) {
+                    if (el.classList.length > 1) hljs.highlightElement(el, {language: el.classList[1]});
+                    else hljs.highlightElement(el);
+                    el.classList.remove('hljs');
+                })
+</script><script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script><script>mermaid.initialize({ startOnLoad: true });
+</script></body></html>

@@ -1,0 +1,124 @@
+<!DOCTYPE HTML/><html lang="en-US"><head><script type="text/javascript">if (window.location.host === 'mliezun.github.io') {
+                    window.location.host = 'mliezun.com';
+                }
+</script><meta charset="UTF-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Using Go Generics to create a Single file JSON DB</title><meta name="generator" content="Custom"/><meta property="og:title" content="Using Go Generics to create a Single file JSON DB"/><meta property="og:locale" content="en_US"/><meta name="description" content="Storing your data in a single json file can be useful when there isn't much state that needs to be tracked. In this post we leverage Go's generics to implement a simple JSON DB."/><meta property="og:description" content="Storing your data in a single json file can be useful when there isn't much state that needs to be tracked. In this post we leverage Go's generics to implement a simple JSON DB."/><meta name="keywords" content="go,json,db,generics"/><link rel="canonical" href="https://mliezun.com/2024/01/26/go-generics-sfj-db.html"/><meta property="og:url" content="https://mliezun.com/2024/01/26/go-generics-sfj-db.html"/><meta property="og:site_name" content="mliezun.com"/><meta property="og:image" content="https://mliezun.com/assets/images/nyc.jpg"/><link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico"/><meta property="og:type" content="article"/><meta name="twitter:card" content="summary"/><meta property="twitter:title" content="Using Go Generics to create a Single file JSON DB"/><meta name="twitter:creator" content="@migueliezun"/><meta name="twitter:image" content="https://mliezun.com/assets/images/nyc.jpg"/>
+<script type="application/ld+json">{"description":"Storing your data in a single json file can be useful when there isn't much state that needs to be tracked. In this post we leverage Go's generics to implement a simple JSON DB.","author":{"@type":"Person","name":"Miguel Liezun"},"@type":"BlogPosting","url":"https://mliezun.com/2024/01/26/go-generics-sfj-db.html","headline":"Using Go Generics to create a Single file JSON DB","dateModified":"2024-01-26T00:00:00-03:00","datePublished":"2024-01-26T00:00:00-03:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://mliezun.com/2024/01/26/go-generics-sfj-db.html"},"@context":"https://schema.org"}
+</script><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"/><link rel="stylesheet" href="/assets/css/style.css"/></head><body><div class="body-wrapper"><div class="body-content"><div class="site-header"><header><a href="/" style="text-decoration: none !important">Miguel's dev blog</a></header><button class="theme-toggle" id="theme-toggle" title="Toggle theme"><img src="/assets/images/circle-half.svg"/></button></div><hr/><div class="ai-tag-container"><span class="ai-tag human-tag">Human written
+<span class="ai-tag-popover">This post was fully written by a human
+ 
+<a href="/2025/11/19/ai-blog.html" class="ai-tag-read-more">Read more</a></span></span></div><article><p>
+</p><h1>Using Go Generics to create a Single file JSON DB
+</h1><p>
+</p><p>Let's start with an example use case: you have a multitenant web server that serves pages for various customers, you can know how to which page to serve based on <span class='single-quote'>Host</span> header in the request.
+</p><p>You can track each site in a struct like this:
+</p><pre class="triple-quote go">type Site struct {
+    Name    string  `json:"name"`
+    Host    string  `json:"host"`
+}
+</pre><p>
+</p><p>Your <span class='single-quote'>sites.json</span> file could be something like this:
+</p><pre class="triple-quote json">{
+    "www.example.com": {
+        "name": "Example",
+        "host": "www.example.com"
+    }
+}
+</pre><p>
+</p><p>Which can be opened as a db:
+</p><pre class="triple-quote go">sitesdb, err := sfjdb.Open[map[string]Site]("./sites.json")
+</pre><p>
+</p><p>Then you can simply get the content of the json file and validate requests:
+</p><pre class="triple-quote go">func handle(w http.ResponseWriter, req *http.Request) {
+    sites := sitesdb.View()
+    host := req.Header["Host"][0]
+    if site, ok := sites[host]; ok {
+        // Render sites that are stored in DB
+        renderSite(w, req, site)
+    } else {
+        w.WriteHeader(404)
+    }
+}
+</pre><p>
+</p><h2>Implementation
+</h2><p>
+</p><p>Thanks to Go generics and built-in json Marshaling/Unmarshaling this is quite easy to build:
+</p><pre class="triple-quote go">type DB[T any] struct {
+	rw       sync.RWMutex
+	data     T
+	filepath string
+}
+</pre><p>
+</p><p>We have a <span class='single-quote'>DB</span> struct to keep track of the file, data and a <span class='single-quote'>RW</span> mutex.
+</p><p>Then we can easily read data from a local file:
+</p><pre class="triple-quote go">// Load loads data from file.
+func (db *DB[T]) Load() error {
+	db.rw.Lock()
+	defer db.rw.Unlock()
+	content, err := os.ReadFile(db.filepath)
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(content, &amp;db.data)
+}
+</pre><p>
+</p><p>Each time we use the data in the DB we make a copy, to avoid modifying some attributes via pointers by mistake.
+</p><pre class="triple-quote go">func objcopy[T any](obj T) *T {
+	data, err := json.Marshal(obj)
+	if err != nil {
+		panic(err)
+	}
+	newobj := new(T)
+	if err := json.Unmarshal(data, newobj); err != nil {
+		panic(err)
+	}
+	return newobj
+}
+
+
+// View returns a copy of the data.
+func (db *DB[T]) View() T {
+	db.rw.RLock()
+	defer db.rw.RUnlock()
+	return *objcopy(db.data)
+}
+</pre><p>
+</p><p>We can also save a new state in case we modified something (e.g. added a new site to our list).
+</p><pre class="triple-quote go">// Save saves a copy of the data as plain json in the file.
+func (db *DB[T]) Save(data T) error {
+	db.rw.Lock()
+	defer db.rw.Unlock()
+	db.data = *objcopy[T](data)
+	content, err := json.Marshal(db.data)
+	if err != nil {
+		return err
+	}
+	return WriteFile(db.filepath, content, 0644)
+}
+</pre><p>
+</p><p>You can get the <span class='single-quote'>WriteFile</span> function <a target='_blank' href='https://github.com/tailscale/tailscale/blob/main/atomicfile/atomicfile.go'>here</a>.
+</p><p>This function writes the file atomically, which means is sucessfully written or not written at all.
+</p><p>
+</p><p>Finally we have to implement <span class='single-quote'>Open</span> to instantiate our DB:
+</p><pre class="triple-quote go">// Open opens a json file as a database.
+func Open[T any](filepath string) (db *DB[T], err error) {
+	db = &amp;DB[T]{filepath: filepath}
+	if err := db.Load(); err != nil {
+		return nil, err
+	}
+	return db, nil
+}
+</pre><p>
+</p><h2>In praise of Go generics
+</h2><p>
+</p><p>At the beginning I was a little sad about generics, go the simple language was at end becoming a huge complex beast. But overall if you don't over-abuse generics it feels natural and easy to use/understand.
+</p><p>This still feels like the good old Go, but just a bit more power in the right way.
+</p><p>If you wish to use this in your project you can just import it from <a target='_blank' href='https://github.com/mliezun/sfj-db'>https://github.com/mliezun/sfj-db</a>.
+</p></article><footer><hr/><div class="footer-wrapper"><div><div>This blog was made with 
+<a target="_blank" href="https://github.com/mliezun/grotsky">Grotsky</a></div><div>Blog
+<a target="_blank" href="https://github.com/mliezun/mliezun.com">source code</a></div></div><div class="footer-socials"><a target="_blank" href="https://mliezun.com/feed.xml"><img alt="RSS Feed" src="/assets/images/socials/rss.png" width="20" height="20" style="border-radius: 3px"/></a><a target="_blank" href="https://github.com/mliezun"><img alt="Github" src="/assets/images/socials/github.png" width="20" height="20"/></a><a target="_blank" href="https://x.com/migueliezun"><img alt="X (Twitter)" src="/assets/images/socials/x.ico" width="20" height="20" style="border-radius: 5px"/></a><a target="_blank" href="https://www.linkedin.com/in/miguel-liezun-8697a9168/"><img alt="LinkedIn" src="/assets/images/socials/linkedin.png" width="20" height="20"/></a></div></div></footer></div></div><script src="/assets/js/theme-switcher.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script><script>document.querySelectorAll('.triple-quote').forEach(function (el) {
+                    if (el.classList.length > 1) hljs.highlightElement(el, {language: el.classList[1]});
+                    else hljs.highlightElement(el);
+                    el.classList.remove('hljs');
+                })
+</script><script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script><script>mermaid.initialize({ startOnLoad: true });
+</script></body></html>
