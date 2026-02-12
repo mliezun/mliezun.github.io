@@ -130,7 +130,7 @@ yourdomain.com {
     root * /workspace/branches/main/staticfiles
     file_server
   }
-  handle {
+  route {
     python {
       module_wsgi app:wsgi.application
       working_dir /workspace/branches/main/
@@ -144,7 +144,7 @@ yourdomain.com {
     root * /workspace/branches/{http.request.host.labels.3}/staticfiles
     file_server
   }
-  handle {
+  route {
     python {
       module_wsgi app:wsgi.application
       working_dir /workspace/branches/{http.request.host.labels.3}/
