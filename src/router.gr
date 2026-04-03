@@ -47,6 +47,8 @@ fn get_routes(include_feed) {
                 "tags": p.tags,
                 "image": defaultImage,
                 "content_type": "article",
+                "needs_highlight": true,
+                "needs_mermaid": false,
             }
         }
         posts = posts + [r]
@@ -59,6 +61,8 @@ fn get_routes(include_feed) {
         let url = "/" + name[0:4] + "/" + name[5:7] + "/" + name[8:10] + "/" + name[11:name.length-3] + ".html"
         let date = p["name"][:10]
         let content = io.readFile("src/pages/md/" + name)
+        let needs_highlight = u.findSubstr(content, "```") >= 0
+        let needs_mermaid = u.findSubstr(content, "```mermaid") >= 0
         let parsed = md.parseHeader(content)
         let replaceSpecials = false
         if date > "2025-03-20" {
@@ -84,6 +88,8 @@ fn get_routes(include_feed) {
                     "image": image,
                     "ai-assisted": aiAssistedBool,
                     "content_type": "article",
+                    "needs_highlight": needs_highlight,
+                    "needs_mermaid": needs_mermaid,
                 }
             }
         }
@@ -128,7 +134,9 @@ fn get_routes(include_feed) {
             "date": "",
             "excerpt": "I'm Miguel. Here I write mainly about programming and side projects.",
             "image": defaultImage,
-            "content_type": nil
+            "content_type": nil,
+            "needs_highlight": false,
+            "needs_mermaid": false,
         }
     }
 
@@ -142,7 +150,9 @@ fn get_routes(include_feed) {
             "date": "2024-07-17",
             "excerpt": "Now page for my personal blog.",
             "image": defaultImage,
-            "content_type": nil
+            "content_type": nil,
+            "needs_highlight": false,
+            "needs_mermaid": false,
         }
     }
     
