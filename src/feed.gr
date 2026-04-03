@@ -1,6 +1,26 @@
 let u = import("./utils.gr")
 let html = import("./html.gr")
 
+fn escape_feed_html_for_xml(htmlStr) {
+	let s = u.replace(htmlStr, "&amp;", "<<<FEED_XML_AMP>>>")
+	s = u.replace(s, "&lt;", "<<<FEED_XML_LT>>>")
+	s = u.replace(s, "&gt;", "<<<FEED_XML_GT>>>")
+	s = u.replace(s, "&quot;", "<<<FEED_XML_QUOT>>>")
+	s = u.replace(s, "&", "&amp;")
+	s = u.replace(s, "<<<FEED_XML_QUOT>>>", "&quot;")
+	s = u.replace(s, "<<<FEED_XML_GT>>>", "&gt;")
+	s = u.replace(s, "<<<FEED_XML_LT>>>", "&lt;")
+	s = u.replace(s, "<<<FEED_XML_AMP>>>", "&amp;")
+	return s
+}
+
+fn escape_feed_plain_for_xml(text) {
+	let s = u.replace(text, "&", "&amp;")
+	s = u.replace(s, "<", "&lt;")
+	s = u.replace(s, ">", "&gt;")
+	return s
+}
+
 fn generate_feed(posts) {
 	let renderer = html.Renderer()
 	renderer.renderXML = true
@@ -37,8 +57,9 @@ fn generate_feed(posts) {
 		for r, n in replacements {
 			content = u.replace(content, r, n)
 		}
+		content = escape_feed_html_for_xml(content)
 		return ["entry", [], [
-			["title", ["type", "html"], [post_obj.title]],
+			["title", ["type", "html"], [escape_feed_plain_for_xml(post_obj.title)]],
 			["id", [], [url]],
 			["updated", [], [date + "T00:00:00Z"]],
 			["link", ["href", url, "rel", "alternate", "type", "text/html"]],
@@ -47,7 +68,7 @@ fn generate_feed(posts) {
 				["name", [], "Miguel Liezun"]
 			]],
 			["category", ["term", "posts"]],
-			["summary", ["type", "html"], [post_obj.excerpt]]
+			["summary", ["type", "html"], [escape_feed_plain_for_xml(post_obj.excerpt)]]
 		]]
 	})
 	content[2] = content[2] + entries
