@@ -1,5 +1,5 @@
 ---
-title: "What happened in december 2025?"
+title: "What happened in december 2025 or how I got a 40x speedup?"
 excerpt: "Im quite late to the discussion, but everyone has been saying that they have not written code since december. What happened? The release of Gemini 3 Pro, GPT-5.1 and Claude Opus 4.5 was a game changer. It was the first time that models were 'smart enough' to accomplish complex tasks."
 author: "Miguel Liezun"
 tags: rust,ai,speedup

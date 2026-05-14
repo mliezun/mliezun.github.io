@@ -56,9 +56,9 @@ class Web {
                 ["meta", ["property", "og:type", "content", metadata["content_type"]], []],
             ),
             ["meta", ["name", "twitter:card", "content", "summary"], []],
-            ["meta", ["property", "twitter:title", "content", metadata["title"]], []],
+            ["meta", ["name", "twitter:title", "content", metadata["title"]], []],
             ["meta", ["name", "twitter:creator", "content", "@migueliezun"]],
-            ["meta", ["name", "twitter:image", "content", "https://mliezun.com/assets/images/nyc.jpg"]],
+            ["meta", ["name", "twitter:image", "content", og_image], []],
 
             this.addIf(
                 metadata["content_type"] != "article",
