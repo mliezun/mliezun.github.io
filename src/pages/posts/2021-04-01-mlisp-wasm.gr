@@ -30,7 +30,7 @@ let post = base.Post(
             "",
             "<a href=\"https://github.com/mliezun/mlisp\">Mlisp</a> a tiny lispy language based on the book <a href=\"http://www.buildyourownlisp.com/\">Build Your Own Lisp</a>.",
             "",
-            "The interpreter is written in C and compiled directly to WASM. You can try it in this page by openning the developer console of your browser and typing <span class=\"single-quote\">Mlisp.interpret(\"+ 2 2\")</span> or using the repl shown below.",
+            "The interpreter is written in C and compiled directly to WASM. You can try it in this page by opening the developer console of your browser and typing <span class=\"single-quote\">Mlisp.interpret(\"+ 2 2\")</span> or using the repl shown below.",
             "",
             ""
         ]
@@ -56,7 +56,7 @@ let post = base.Post(
             "int mlisp_init();",
             "</pre>",
             "",
-            "When compilen with <span class=\"single-quote\">emcc</span> the emscripten compiler to wasm, you have to add <span class=\"single-quote\">EMSCRIPTEN_KEEPALIVE</span> macro before your function so it doesn't get optimized away.",
+            "When compiled with <span class=\"single-quote\">emcc</span> the emscripten compiler to wasm, you have to add <span class=\"single-quote\">EMSCRIPTEN_KEEPALIVE</span> macro before your function so it doesn't get optimized away.",
             "",
             "The exported functions in this project are:",
             "",
@@ -72,7 +72,7 @@ let post = base.Post(
             "emcc -std=c99  -Wall -O3 -s WASM=1 -s EXTRA_EXPORTED_RUNTIME_METHODS='[\"cwrap\"]'",
             "</pre>",
             "",
-            "That means that you would be able to access the exported functions using a <span class=\"single-quote\">cwrap</span> that let's you wrap a C function call from a Javascript function call.",
+            "That means that you would be able to access the exported functions using a <span class=\"single-quote\">cwrap</span> that lets you wrap a C function call from a Javascript function call.",
             "",
             "This compilation generates two files <span class=\"single-quote\">mlisp.js</span> and <span class=\"single-quote\">mlisp.wasm</span>.",
             "",

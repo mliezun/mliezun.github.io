@@ -38,7 +38,7 @@ const fn new_marker() -> Marker {
 static EMBEDDED_MARKER: Marker = new_marker();
 ```
 
-Then we can use a very hacky trick to take a compiled script and generate an single executable with the embedded bytecode.
+Then we can use a very hacky trick to take a compiled script and generate a single executable with the embedded bytecode.
 
 ```rust
 pub fn embed_file(compiled_script: String, output_binary: String) {
@@ -142,7 +142,7 @@ pub fn execute_embedded() {
 }
 ```
 
-With all those function only thing I need to do is add an if-statement to the `main` function in the Rust project
+With all those functions, the only thing I need to do is add an if-statement to the `main` function in the Rust project
 to check if we're on embedded mode and proceed accordingly.
 
 ```rust
@@ -213,7 +213,7 @@ We can also package it as a single binary by doing the following commands.
 
 ```
 $ ./grotsky compile grep.gr
-$ ./grotksy embed grep.grc
+$ ./grotsky embed grep.grc
 ```
 
 Now we should have a `grep.exe` in our directory. And we can use it:

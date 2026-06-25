@@ -1,7 +1,7 @@
 let base = import("../base.gr")
 
 
-let firstParagraph = "Grotsky is a toy programming language that I made for fun. Today we're visinting the concept of Quines, 
+let firstParagraph = "Grotsky is a toy programming language that I made for fun. Today we're visiting the concept of Quines, 
 a.k.a. self replicating programs. It's said that any turing-complete language should be able to write a program that replicates
  itself. And grotsky is no exception."
 
@@ -79,7 +79,7 @@ for let i = 4; i < code.length; i = i+1 {
 			]],
 		]],
 		["p", [], [
-			"Now we can use grotksy cli to run the program and compare the output to the original source.",
+			"Now we can use grotsky cli to run the program and compare the output to the original source.",
 		]],
 		["p", [], [
 			"Save the original source to a file called ",

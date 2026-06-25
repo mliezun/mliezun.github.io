@@ -35,7 +35,7 @@ let post = base.Post(
         "h3",
         [],
         [
-            "First thing first. How a generator works?"
+            "First things first. How does a generator work?"
         ]
     ],
     [
@@ -74,7 +74,7 @@ let post = base.Post(
             "",
             "If we call fibonacci(), the first time we'll get 1, the second time 1, the third 2, the fourth 3, and so on...",
             "",
-            "This happens because we declared variables <span class=\"single-quote\">a, b</span> to be static. This means that they mantain the value after the function returns. Normally, what happens (if we don't declare a variable as static) is that the variables inside the function don't mantain the values of the last execution.",
+            "This happens because we declared variables <span class=\"single-quote\">a, b</span> to be static. This means that they maintain the value after the function returns. Normally, what happens (if we don't declare a variable as static) is that the variables inside the function don't maintain the values of the last execution.",
             "",
             ""
         ]

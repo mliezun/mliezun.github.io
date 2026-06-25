@@ -19,7 +19,7 @@ ai-assisted: true
 
 I've been curious about how different Python versions perform in real-world web applications. Python keeps getting faster with each release, but I wanted to see how much of a difference it actually makes when running a real application under load.
 
-So I decided to benchmark **Wagtail CMS** a Django-based content management system, tested across 8 different Python versions. This is the first in what I hope will be a series of benchmarks testing different Python web applications.
+So I decided to benchmark **Wagtail CMS**, a Django-based content management system, tested across 8 different Python versions. This is the first in what I hope will be a series of benchmarks testing different Python web applications.
 
 Here's what I tested:
 

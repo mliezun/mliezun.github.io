@@ -1,19 +1,19 @@
 ---
 title: "Caddy Snake improvements"
-excerpt: "I've been planning on improving Caddy Snake, making it more stable and easier to use. Right now, I want to add automatic test for Django, and build binaries and Docker images for arm64 and riscv64. I'd also like to turn it into a Python package so you can plug it straight into your code."
+excerpt: "I've been planning on improving Caddy Snake, making it more stable and easier to use. Right now, I want to add automatic tests for Django, and build binaries and Docker images for arm64 and riscv64. I'd also like to turn it into a Python package so you can plug it straight into your code."
 author: "Miguel Liezun"
 tags: programming,python,code,algorithms
 ---
 
 # Caddy Snake improvements
 
-I've been planning on improving Caddy Snake, making it more stable and easier to use. Right now, I want to add automatic test for Django, and build binaries and Docker images for arm64 and riscv64. I'd also like to turn it into a Python package so you can plug it straight into your code.
+I've been planning on improving Caddy Snake, making it more stable and easier to use. Right now, I want to add automatic tests for Django, and build binaries and Docker images for arm64 and riscv64. I'd also like to turn it into a Python package so you can plug it straight into your code.
 
 ## Fix/add/test support for Django
 
 I've tried to use it a couple times just to test that it works and seems to have been broken. I'd like to test it a little bit more to make sure it works and solve all the bugs.
 
-Also add an automatic test so that I'm sure it doesn't break after I make some changes.
+Also add automatic tests so that I'm sure it doesn't break after I make some changes.
 
 ## Make sure we don't get segfaults on tests anymore
 

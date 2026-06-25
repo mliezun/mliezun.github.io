@@ -25,7 +25,7 @@ let post = base.Post(
 		]],
 		["p", [], [
 			"When building stuff I try to think of every edge case, even the most improbable ones, and make
-			the software infalible. Of course, it's impossible to succeed at that, software will always be fallible.",
+			the software infallible. Of course, it's impossible to succeed at that, software will always be fallible.",
 			"And this premature optimization ends up making the project more complex than it should be."
 		]],
 		["p", [], [
@@ -55,7 +55,7 @@ let post = base.Post(
 		]],
 		["h3", [], "The money"],
 		["p", [], [
-			"This has costed like $200 (US dollars) since inception. For two people that's like $100 each.",
+			"This has cost like $200 (US dollars) since inception. For two people that's like $100 each.",
 			"It's not a lot, but for something that has no users that's quite expensive."
 		]],
 		["p", [], [
@@ -63,18 +63,18 @@ let post = base.Post(
 			"I feel like we were promised that the cloud and serverless are cheap and easy solution.",
 			"But in my opinion it doesn't seem to be the case.",
 			"It's definitely not easier nor cheaper than having a PHP website in this case.",
-			"Im sure there are other cases in which it makes more sense."
+			"I'm sure there are other cases in which it makes more sense."
 		]],
 		["p", [], [
 			"This is also a reason of why we're killing the project.",
 			"Our service started failing because after a deploy dependencies were updated and the code
-			was to big to fit on a Lambda.",
+			was too big to fit on a Lambda.",
 			"It would have been a lot of work to fix it, so we decided to kill it and save some bucks every month."
 		]],
 		["p", [], [
 			"For personal projects which you're not sure how they're going to scale,
 			I think serverless is probably not the right choice.",
-			"Serverless make sense if you're going to have huge burst of traffics and don't want
+			"Serverless makes sense if you're going to have huge bursts of traffic and don't want
 			to handle a lot of infra."
 		]],
 		["p", [], [
@@ -82,12 +82,12 @@ let post = base.Post(
 			or don't have huge infra needs stick with the cheapest providers (Hostinger, PythonAnywhere, Hetzner)
 			and avoid cloud providers (GCP, Azure, AWS).",
 		]],
-		["h3", [], "Final thougths"],
+		["h3", [], "Final thoughts"],
 		["p", [], [
 			"If I haven't made this clear enough, building a successful product is *hard*.",
 			"There are many things to think about when starting, and the technical stuff hopefully
 			is the easy part.",
-			"I think this are the 3 most important lessons that I've learned working on this:",
+			"I think these are the 3 most important lessons that I've learned working on this:",
 			["ul", [], [
 				["li", [], "Build the dumbest thing that does the job, improve as needed."],
 				["li", [], "Think deeply about what problem are you solving and how you're going to deliver the solution to the people that need it."],

@@ -19,7 +19,7 @@ Lately, I've been working with Python C-API. I wanted to use subinterpreters wit
 
 The reason is that I've been building a Caddy web server plugin called: [Caddy Snake](https://github.com/mliezun/caddy-snake).
 
-The plugin let's users embed a Python interpreter and serve requests directly from [Caddy](https://caddyserver.com).
+The plugin lets users embed a Python interpreter and serve requests directly from [Caddy](https://caddyserver.com).
 
 Caddy is written in Go, and to interact with Python I had to use CGO, a compatibility layer that makes it easy to call C functions from Go.
 
@@ -112,7 +112,7 @@ This is what you should always do when contributing to a project because you mig
 
 I made sure to test with all supported Python versions `3.8, 3.9, 3.10, 3.11, 3.12, 3.13` and in both Linux and macOS.
 
-The problem was only present in 3.12 and 3.13, after subinterpreters with separate GIL was introduced.
+The problem was only present in 3.12 and 3.13, after subinterpreters with separate GIL were introduced.
 
 
 ## The community is awesome
@@ -137,7 +137,7 @@ interpreters.run_string(interp_id, script)
 # Output: &lt;slot wrapper '__str__' of 'int' objects&gt;
 ```
 
-Having the exact commit where this problem was introduced and a concise way of seeing what the underlying problem is, I decided to give try to fix the issue myself. Diving into the CPython codebase.
+Having the exact commit where this problem was introduced and a concise way of seeing what the underlying problem is, I decided to give it a try to fix the issue myself. Diving into the CPython codebase.
 
 ## Diving into CPython
 
@@ -160,7 +160,7 @@ That slot wrapper is a function that calls code from a type-slot. For example th
 
 I could see that `type_ready()` was called the first time from the main interpreter, and the second time from a subinterpreter, but this time it added more stuff.
 
-One would expect that `type_ready()` gives the same result wether executed from a subinterpreter or from the main interpreter. The builtin types (
+One would expect that `type_ready()` gives the same result whether executed from a subinterpreter or from the main interpreter. The builtin types (
     `int`, 
     `str`, 
     `float`, 

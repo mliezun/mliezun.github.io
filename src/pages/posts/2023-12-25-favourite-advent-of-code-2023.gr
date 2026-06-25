@@ -25,7 +25,7 @@ let post = base.Post(
         [],
         [
             ["p", [], [
-                "Im gonna briefly describe the problem here, but if you want to see the real thing go check it out <a target=\"_blank\" href=\"https://adventofcode.com/2023/day/20\">https://adventofcode.com/2023/day/20</a>."
+                "I'm gonna briefly describe the problem here, but if you want to see the real thing go check it out <a target=\"_blank\" href=\"https://adventofcode.com/2023/day/20\">https://adventofcode.com/2023/day/20</a>."
             ]],
             ["p", [], [
                 "I like it because it involves some simple electronic devices that are wired together and send pulses/signals to each other. In this problem you have to make sure to correctly propagate the signals and simulate the behaviour of the devices."
@@ -184,7 +184,7 @@ let post = base.Post(
             "    def process_pulse(self, mod: \"Module\", pulse: int):",
             "        return []",
             "</pre>",
-            "Give that it's a dummy module, it doesn't do anything when it receives an input.",
+            "Given that it's a dummy module, it doesn't do anything when it receives an input.",
             "<pre class=\"triple-quote python\">",
             "class Broadcaster(Module):",
             "    def process_pulse(self, mod: \"Module\", pulse: int):",
@@ -408,7 +408,7 @@ let post = base.Post(
             "...",
             "</pre>",
             ["p", [], [
-                "Other 4 Conjunctions are connected as inputs of lv. That's interesting. Because <span class=\"single-quote\">lv</span> is a Conjuction it means that to send the <em>low</em> pulse required by <span class=\"single-quote\">rx</span> it should receive all <em>high</em> pulses from its inputs."
+                "Other 4 Conjunctions are connected as inputs of lv. That's interesting. Because <span class=\"single-quote\">lv</span> is a Conjunction it means that to send the <em>low</em> pulse required by <span class=\"single-quote\">rx</span> it should receive all <em>high</em> pulses from its inputs."
             ]],
             ["p", [], [
                 "The solution from here is kind of intuitive at this point. If we figure out how many button pulses does it take for each of the input devices to send a 1 signal we can multiply them together and get the result."

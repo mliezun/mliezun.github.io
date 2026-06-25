@@ -1,7 +1,7 @@
 let base = import("../base.gr")
 
 
-let firstParagraph = "When teams start to grow, having a single dev environment becomes an issue. People start stepping on each others toes.
+let firstParagraph = "When teams start to grow, having a single dev environment becomes an issue. People start stepping on each other's toes.
 A common problem is that two people want to apply incompatible migrations on the database. That problem is impossible 
 to fix if folks are working on parallel branches.
 If we can have a database for each branch of a project, that will remove much of the pain of having multiple devs applying

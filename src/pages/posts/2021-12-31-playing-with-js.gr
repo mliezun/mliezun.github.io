@@ -108,16 +108,16 @@ let post = base.Post(
 			["p", [], "Happy New Year!"],
 			["p", [], [
 				"This is my final post for the 2021. This year I didn't post that much, but a lot of work was put into
-				the blog to rewrite it using ", ["a", ["target", "_blank", "href", "https://github.com/mliezun/grotsky"], "Grotksy"], ".",
+				the blog to rewrite it using ", ["a", ["target", "_blank", "href", "https://github.com/mliezun/grotsky"], "Grotsky"], ".",
 				"I hope everyone has a great 2022 and that next year is much better than the last one."
 			]],
 			["p", [], [
-				"The inspiration for this blog post comes from the idea of building a tiny db that feels more natural to Javscript.",
+				"The inspiration for this blog post comes from the idea of building a tiny db that feels more natural to Javascript.",
 				"All the databases that I've seen make a heavy use of methods like: ",
 				"<span class=\"single-quote\">db.get()</span>, ",
 				"<span class=\"single-quote\">db.put()</span>, ",
 				"<span class=\"single-quote\">db.scan()</span>, ",
-				"<span class=\"single-quote\">db.query()</span>.", " And many others that Im sure you have seen.",
+				"<span class=\"single-quote\">db.query()</span>.", " And many others that I'm sure you have seen.",
 				"I think it would be great to see something like:",
 				["pre", ["class", "triple-quote go"], [
 					"const db = getDb(\"...\")",
@@ -185,7 +185,7 @@ let post = base.Post(
                 "This way we can go through the entire chain of access and be able to reach the stored layers.",
                 "By chain of access I mean the following: <span class=\"single-quote\">objects.users.jdoe.metadata.login.ip</span>.",
                 "As you can see, we need to traverse through many objects to be able to reach the ip field. But the layer that contains",
-                " the information is only stored in the root, so each child needs to mantain a reference to the parent to be able to reach",
+                " the information is only stored in the root, so each child needs to maintain a reference to the parent to be able to reach",
                 " the root node."
 			]],
 			["p", [], [

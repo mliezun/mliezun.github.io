@@ -4,7 +4,7 @@ let base = import("../base.gr")
 # Create new Post Object
 let post = base.Post(
     "Grotsky Part 4: Writing a service to get your public IP",
-    "Part 4 of building my own language series. This time I write and deploy a service to Heroku that let's your retrieve your pulbic IP.",
+    "Part 4 of building my own language series. This time I write and deploy a service to Heroku that lets you retrieve your public IP.",
     "Miguel Liezun",
     "grotsky,service,http,heroku,ip",
     [
@@ -30,7 +30,7 @@ let post = base.Post(
             "",
             "<a href=\"https://github.com/mliezun/grotsky\">Grotsky</a> (my toy programming language) finally can be used to make something useful.",
             "",
-            "In this post I want to show you how I made a service that let's your retrieve your public IP as a response to a HTTP Request.",
+            "In this post I want to show you how I made a service that lets you retrieve your public IP as a response to an HTTP request.",
             "",
             ""
         ]
@@ -81,9 +81,9 @@ let post = base.Post(
             "",
             "Then we print what is the port and start the server with <span class=\"single-quote\">http.listen</span>. That blocks the execution and starts the server.",
             "",
-            "Grotsky interpreter is written in Go, and uses Go's standard http server. Each requests is handled by a goroutine, but because Grotsky is single threaded only one goroutine executes at any given point in time. ",
+            "Grotsky interpreter is written in Go, and uses Go's standard http server. Each request is handled by a goroutine, but because Grotsky is single threaded only one goroutine executes at any given point in time. ",
             "",
-            "When a request is received the goroutine has to hold the GIL (Global Interrupt Lock) to be able to give control to the interpreter.",
+            "When a request is received the goroutine has to hold the GIL (Global Interpreter Lock) to be able to give control to the interpreter.",
             "",
             ""
         ]
@@ -92,7 +92,7 @@ let post = base.Post(
         "h5",
         [],
         [
-            "Now lets add some code to handle requests"
+            "Now let's add some code to handle requests"
         ]
     ],
     [
@@ -128,7 +128,7 @@ let post = base.Post(
             "$ go get github.com/mliezun/grotsky/cmd/grotsky",
             "</pre>",
             "",
-            "Save the Grotsky code under a filed called <span class=\"single-quote\">getip.g</span> and the execute it using the grotsky interpreter:",
+            "Save the Grotsky code under a file called <span class=\"single-quote\">getip.g</span> and then execute it using the grotsky interpreter:",
             "",
             "<pre class=\"triple-quote bash\">",
             "$ go run $(go env GOPATH)/src/github.com/mliezun/grotsky/cmd/grotsky getip.g",

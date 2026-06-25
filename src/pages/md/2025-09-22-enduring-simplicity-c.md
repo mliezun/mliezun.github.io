@@ -26,4 +26,4 @@ It's not about being against progress. It's a realization that the "new and safe
 
 Personally, I like both languages, I'm more fond of C because of its simplicity, but the Rust toolchain and community pushing it forward makes it really easy to start a project and get everything you need to start building.
 
-A systems level programmer like Salvatore might pick C because he has the need to build an object system perfectly tailored for his application. But I mostly spend time writing APIs and glue code in Python, I would pick up Rust when I'm in the need for a little extra speed because is easy to integrate with Python code thanks to PyO3.
+A systems level programmer like Salvatore might pick C because he has the need to build an object system perfectly tailored for his application. But I mostly spend time writing APIs and glue code in Python, I would pick up Rust when I'm in the need for a little extra speed because it is easy to integrate with Python code thanks to PyO3.

@@ -24,7 +24,7 @@ I'm not an AI fanatic, but refusing to use a convenient tool just doesn't make s
 
 I've seen Open Source projects reject AI-generated code: [cURL](https://www.linkedin.com/posts/danielstenberg_hackerone-curl-activity-7324820893862363136-glb1) and [Qemu](https://github.com/qemu/qemu/commit/3d40db0efc22520fa6c399cf73960dced423b048) come to mind.
 
-And to be honest, I think they're pretty good reasons.
+And to be honest, I think there are pretty good reasons.
 
 - cURL is rejecting it because there's too much poor quality reports.
 - Qemu is rejecting it for licensing reasons.
@@ -39,4 +39,4 @@ When you do laundry you need to correctly use the machine and know how to take c
 
 This post is a simplification, there are many more nuances about the topic. Moral, ethic, legal and political implications about current AI models.
 
-You should use your best judgement to when is appropriate to use it.
+You should use your best judgement as to when it is appropriate to use it.

@@ -7,7 +7,7 @@ while a < 100000000 {
 }"
 
 
-let firstParagraph = "Im rewriting Grotsky (my toy programming language) in Rust, the previous implementation
+let firstParagraph = "I'm rewriting Grotsky (my toy programming language) in Rust, the previous implementation
 was done in Go. The goal of the rewrite is to improve my Rust skills, and to improve the performance of Grotsky,
 by at least 10x."
 
@@ -22,8 +22,8 @@ let post = base.Post(
     [
 		["h2", [], tittle],
 		["p", [], firstParagraph],
-		["p", [], "As of this writting the Rust implementation is 4x faster than the Golang implementation."],
-		["p", [], "I've rewritten the Lexer, Parser and part of the Runtime. Enough for run this code and measure
+		["p", [], "As of this writing the Rust implementation is 4x faster than the Golang implementation."],
+		["p", [], "I've rewritten the Lexer, Parser and part of the Runtime. Enough to run this code and measure
 		how long it takes for each implementation to finish:"],
 		["p", [], [
 			["pre", ["class", "triple-quote js language-css"], [
@@ -57,12 +57,12 @@ let post = base.Post(
 
 		["h3", [], "Roadmap"],
 		["p", [], [
-			"Believe it or not, Grotsky it's pretty big. It has support for reading and writting files, sockets and more",
+			"Believe it or not, Grotsky is pretty big. It has support for reading and writing files, sockets and more",
 			" on the stdlib. Which means I have a huge task ahead of me."
 		]],
 		["p", [], [
 			"First thing I want to do is to have some sort of automated testing setup that can compare Rust vs Go implementation.",
-			" Right now all test are written as Go unit test, I need to make them agnostic of language backend.",
+			" Right now all tests are written as Go unit tests, I need to make them agnostic of language backend.",
 		]],
 		["p", [], [
 			["ul", [], [
@@ -79,8 +79,8 @@ let post = base.Post(
 			]]
 		]],
 		["p", [], [
-			"Im gonna have lots of fun with this project and Im sure next time a post here I'll be a changed man.",
-			" Surely gonna learn a lot, Im excited about what lies ahead.",
+			"I'm gonna have lots of fun with this project and I'm sure next time I post here I'll be a changed man.",
+			" Surely gonna learn a lot, I'm excited about what lies ahead.",
 		]],
 	]
 )

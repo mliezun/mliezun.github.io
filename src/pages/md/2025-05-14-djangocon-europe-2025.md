@@ -1,13 +1,13 @@
 ---
 title: "DjangoCon Europe 2025"
-excerpt: "I attended DjangoCon Europe this year, it was my first software conference, I always wanted to go to one, but never took the time until this year. A great experience overall, the most rewarding thing was meeting so much wonderful people."
+excerpt: "I attended DjangoCon Europe this year, it was my first software conference, I always wanted to go to one, but never took the time until this year. A great experience overall, the most rewarding thing was meeting so many wonderful people."
 author: "Miguel Liezun"
 tags: django,python,conference,software,2025
 ---
 
 # DjangoCon Europe 2025
 
-I attended DjangoCon Europe this year, it was my first software conference, I always wanted to go to one, but never took the time until this year. A great experience overall, the most rewarding thing was meeting so much wonderful people.
+I attended DjangoCon Europe this year, it was my first software conference, I always wanted to go to one, but never took the time until this year. A great experience overall, the most rewarding thing was meeting so many wonderful people.
 
 I had sparking conversations with many individuals, and I have taken notes from those before the memories fade.
 

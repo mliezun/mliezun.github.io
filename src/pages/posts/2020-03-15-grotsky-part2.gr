@@ -43,9 +43,9 @@ let post = base.Post(
         [],
         [
             "",
-            "Parsing an expression like <span class=\"single-quote\">1+2*3</span> requires a complex representation on memory. Just looking at it we think that it's pretty simple, but there is some hidden <span class=\"single-quote\">hierarchy</span> that we have to pay attention to, like the fact that first we have to compute <span class=\"single-quote\">2*3</span> and then add <span class=\"single-quote\">1</span> to it.",
+            "Parsing an expression like <span class=\"single-quote\">1+2*3</span> requires a complex representation in memory. Just looking at it we think that it's pretty simple, but there is some hidden <span class=\"single-quote\">hierarchy</span> that we have to pay attention to, like the fact that first we have to compute <span class=\"single-quote\">2*3</span> and then add <span class=\"single-quote\">1</span> to it.",
             "",
-            "To represent that in a data structure the best thing we can come up to is a tree, as seen in the next figure:",
+            "To represent that in a data structure the best thing we can come up with is a tree, as seen in the next figure:",
             "",
             "![image](/assets/images/grotsky-part2/AST.png)",
             "",
@@ -79,7 +79,7 @@ let post = base.Post(
         "h5",
         [],
         [
-            "Let's define all posible operations on literals"
+            "Let's define all possible operations on literals"
         ]
     ],
     [
