@@ -1,26 +1,24 @@
 let u = import("../utils.gr")
 
 
-fn aboutme() {
-    return ["div", ["class", "aboutme"], [
-        ["p", [], "Hi folks!"],
-        ["p", [], "I'm Miguel. Here I write mainly about programming and side projects."],
-        ["p", [], [
+fn home_intro() {
+    return ["div", ["class", "home-intro"], [
+        ["p", ["class", "home-intro-lead"], "Hi folks!"],
+        ["p", ["class", "home-intro-text"], "I'm Miguel. Here I write mainly about programming and side projects."],
+        ["p", ["class", "home-intro-text"], [
             "I've written my own programming language called Grotsky, and it's ",
-            ["a", ["href", "https://mliezun.com/2023/11/23/grotsky-rust-part3.html", "target", "_blank"], "implemented in Rust"],
-            ". This blog's engine is written with Grotksy and generates static HTML files."
+            ["a", ["href", "https://mliezun.com/2023/11/23/grotsky-rust-part3.html"], "implemented in Rust"],
+            ". This blog's engine is written with Grotsky and generates static HTML files."
         ]]
     ]]
 }
 
 fn group_by_year(posts) {
     let years = {}
-    # Fill years with empty lists
     for post in posts {
         let year = strings.split(post["date"], "-")[0]
         years[year] = []
     }
-    # Group by years now
     for post in posts {
         let year = strings.split(post["date"], "-")[0]
         years[year] = years[year] + [post]
@@ -31,35 +29,41 @@ fn group_by_year(posts) {
 fn build_index(posts) {
     let years = group_by_year(posts)
     let years_list = u.keys(years)
-    years_list = u.sortBy(years_list, fn (a, b) strings.compare(a, b))
-    
+    years_list = u.sortBy(years_list, fn (a, b) strings.compare(b, a))
+
     return [
-        aboutme(),
+        home_intro(),
         [
-            "div", [],
+            "div", ["class", "post-archive"],
             u.foldr(u.map(years_list, fn (year) {
                 return [
-                    # Year heading
-                    ["h2", ["style", "font-size: 20pt; font-weight: bold; margin-top: 40px; margin-bottom: 20px; color: var(--text-heading);"], year],
-                    # Posts for this year
-                    ["div", [],
-                        u.foldr(u.map(years[year], fn (postDict) {
-                            let p = postDict["post_obj"]
-                            let url = postDict["url"]
-                            let aiAssisted = u.get(postDict, "ai-assisted", false)
-                            let aiTag = u.buildAITag(aiAssisted)
-                            return [[
-                                "div", ["style", "margin-bottom: 16px;"], [
-                                    ["a", ["href", url, "style", "font-size: 13pt; text-decoration: none; color: var(--text-link); transition: color 0.2s ease; letter-spacing: -0.015em; line-height: 1.4;"], p.title],
-                                    ["span", ["style", "color: var(--text-secondary); margin-left: 8px; font-size: 10pt; letter-spacing: 0;"], [
-                                        ["span", ["style", "margin: 0 5px;"], " "],
-                                        postDict["date"]
-                                    ]],
-                                    aiTag[0]
-                                ]
-                            ]]
-                        }), [], u.sum)
-                    ]
+                    ["section", ["id", "year-" + year, "class", "archive-year-section"], [
+                        ["div", ["class", "archive-year-header"], [
+                            ["span", ["class", "archive-year-label"], year],
+                            ["span", ["class", "archive-year-rule"], ""],
+                        ]],
+                        ["div", ["class", "archive-year-posts"],
+                            u.foldr(u.map(years[year], fn (postDict) {
+                                let p = postDict["post_obj"]
+                                let postUrl = postDict["url"]
+                                let aiAssisted = u.get(postDict, "ai-assisted", false)
+                                let aiTag = u.buildAITag(aiAssisted)
+                                let excerpt = p.excerpt
+                                let dek = []
+                                if excerpt != "" {
+                                    dek = [["p", ["class", "archive-entry-dek"], excerpt]]
+                                }
+                                return [[
+                                    "div", ["class", "archive-entry"], [
+                                        ["a", ["href", postUrl, "class", "archive-entry-title"], p.title],
+                                        ["time", ["class", "archive-entry-date"], postDict["date"]],
+                                    ] + dek + [
+                                        aiTag[0]
+                                    ]
+                                ]]
+                            }), [], u.sum)
+                        ]
+                    ]]
                 ]
             }), [], u.sum)
         ]

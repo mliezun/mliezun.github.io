@@ -18,6 +18,88 @@ class Web {
         return ""
     }
 
+    navLinkClass(active) {
+        if active {
+            return "masthead-nav-link is-active"
+        }
+        return "masthead-nav-link"
+    }
+
+    articleByline(metadata) {
+        let tags = metadata["tags"]
+        return ["div", ["class", "article-byline"], [
+            ["span", ["class", "article-byline-item"], [
+                "Date ",
+                ["strong", [], metadata["date"]],
+            ]],
+            this.addIf(
+                metadata["author"] != "",
+                ["span", ["class", "article-byline-item"], [
+                    "Author ",
+                    ["strong", [], metadata["author"]],
+                ]],
+            ),
+            this.addIf(
+                tags != "",
+                ["span", ["class", "article-byline-item"], [
+                    "Tags ",
+                    ["strong", [], tags],
+                ]],
+            ),
+        ]]
+    }
+
+    findTitleIndex(children) {
+        let i = 0
+        for child in children {
+            if type(child) == "list" and child.length >= 1 and child[0] == "h1" {
+                return i
+            }
+            i = i + 1
+        }
+        i = 0
+        for child in children {
+            if type(child) == "list" and child.length >= 1 and child[0] == "h2" {
+                return i
+            }
+            i = i + 1
+        }
+        return -1
+    }
+
+    injectArticleByline(articleChildren, byline) {
+        let titleIx = this.findTitleIndex(articleChildren)
+        if titleIx == -1 {
+            return [byline] + articleChildren
+        }
+        let out = []
+        let i = 0
+        for child in articleChildren {
+            out = out + [child]
+            if i == titleIx {
+                out = out + [byline]
+            }
+            i = i + 1
+        }
+        return out
+    }
+
+    injectBylineInContent(content, metadata) {
+        let byline = this.articleByline(metadata)
+        let out = []
+        for item in content {
+            if type(item) == "list" and item.length >= 3 and item[0] == "article" {
+                let children = item[2]
+                let injectedChildren = this.injectArticleByline(children, byline)
+                let newArticle = ["article", item[1]] + [injectedChildren]
+                out = out + [newArticle]
+            } else {
+                out = out + [item]
+            }
+        }
+        return out
+    }
+
     head(url, metadata) {
         let og_image = metadata["image"]
         if og_image != "" and not u.startswith(og_image, "http") {
@@ -49,7 +131,7 @@ class Web {
 
             ["link", ["rel", "preconnect", "href", "https://fonts.googleapis.com"], []],
             ["link", ["rel", "preconnect", "href", "https://fonts.gstatic.com", "crossorigin", ""], []],
-            ["link", ["rel", "stylesheet", "href", "https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap"], []],
+            ["link", ["rel", "stylesheet", "href", "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&display=swap"], []],
 
             this.addIf(
                 metadata["content_type"],
@@ -79,29 +161,50 @@ class Web {
         ]]
     }
 
+    masthead(url) {
+        let isHome = url == "/"
+        let isNow = url == "/now/index.html"
+
+        return ["header", ["class", "journal-masthead"], [
+            ["div", ["class", "masthead-inner"], [
+                ["div", ["class", "masthead-top"], [
+                    ["a", ["href", "/", "class", "masthead-title"], "Miguel's dev blog"],
+                    ["button", ["class", "theme-toggle", "id", "theme-toggle", "title", "Toggle theme"], [
+                        ["img", ["src", "/assets/images/circle-half.svg", "alt", "Toggle theme"], []],
+                    ]],
+                ]],
+                ["p", ["class", "masthead-tagline"], "Programming &middot; Side Projects &middot; Software"],
+                ["div", ["class", "masthead-rule"], []],
+                ["nav", ["class", "masthead-nav", "aria-label", "Site"], [
+                    ["a", ["href", "/", "class", this.navLinkClass(isHome)], "Home"],
+                    ["a", ["href", "/now/index.html", "class", this.navLinkClass(isNow)], "Now"],
+                ]],
+            ]],
+        ]]
+    }
+
     footer() {
-        return ["footer", [], [
-            ["hr", [], []],
+        return ["footer", ["class", "site-footer"], [
             ["div", ["class", "footer-wrapper"], [
-                ["div", [], [
+                ["div", ["class", "footer-meta"], [
                     ["div", [], [
                         "This blog was made with ",
                         ["a", ["target", "_blank", "href", "https://github.com/mliezun/grotsky"], "Grotsky"]
                     ]],
                     ["div", [], [
-                        "Blog",
+                        "Blog ",
                         ["a", ["target", "_blank", "href", "https://github.com/mliezun/mliezun.com"], "source code"]
                     ]]
                 ]],
                 ["div", ["class", "footer-socials"], [
                     ["a", ["target", "_blank", "href", "https://mliezun.com/feed.xml"], [
-                        ["img", ["alt", "RSS Feed", "src", "/assets/images/socials/rss.png", "width", "20", "height", "20", "style", "border-radius: 3px"], []]
+                        ["img", ["alt", "RSS Feed", "src", "/assets/images/socials/rss.png", "width", "20", "height", "20"], []]
                     ]],
                     ["a", ["target", "_blank", "href", "https://github.com/mliezun"], [
                         ["img", ["alt", "Github", "src", "/assets/images/socials/github.png", "width", "20", "height", "20"], []]
                     ]],
                     ["a", ["target", "_blank", "href", "https://x.com/migueliezun"], [
-                        ["img", ["alt", "X (Twitter)", "src", "/assets/images/socials/x.ico", "width", "20", "height", "20", "style", "border-radius: 5px"], []]
+                        ["img", ["alt", "X (Twitter)", "src", "/assets/images/socials/x.ico", "width", "20", "height", "20"], []]
                     ]],
                     ["a", ["target", "_blank", "href", "https://www.linkedin.com/in/miguel-liezun-8697a9168/"], [
                         ["img", ["alt", "LinkedIn", "src", "/assets/images/socials/linkedin.png", "width", "20", "height", "20"], []]
@@ -111,7 +214,7 @@ class Web {
         ]]
     }
 
-    body(content, metadata) {
+    body(content, metadata, url) {
         let hl = u.get(metadata, "needs_highlight", false)
         let mm = u.get(metadata, "needs_mermaid", false)
         let footer = [
@@ -119,10 +222,7 @@ class Web {
         ]
         if hl {
             footer = footer + [
-                ["link", ["rel", "stylesheet", "href", "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css", "media", "print", "onload", "this.media='all'"], []],
-                ["noscript", [], [
-                    ["link", ["rel", "stylesheet", "href", "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css"], []],
-                ]],
+                ["link", ["id", "hljs-theme", "rel", "stylesheet", "href", "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github.min.css"], []],
                 ["script", ["defer", "", "src", "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"], []],
                 ["script", ["defer", "", "src", "/assets/js/highlight-init.js"], []],
             ]
@@ -134,18 +234,9 @@ class Web {
             ]
         }
         return ["body", [], [
+            this.masthead(url),
             ["div", ["class", "body-wrapper"], [
-                ["div", ["class", "body-content"], [
-                    ["div", ["class", "site-header"], [
-                        ["header", [], [
-                            ["a", ["href", "/", "style", "text-decoration: none !important"], "Miguel's dev blog"],
-                        ]],
-                        ["button", ["class", "theme-toggle", "id", "theme-toggle", "title", "Toggle theme"], [
-                            ["img", ["src", "/assets/images/circle-half.svg"], []],
-                        ]],
-                    ]],
-                    ["hr", [], []],
-                ] + content + [
+                ["main", ["class", "body-content"], content + [
                     this.footer(),
                 ]],
             ]],
@@ -157,7 +248,7 @@ class Web {
             ["!DOCTYPE HTML"],
             ["html", ["lang", "en-US"], [
                 this.head(url, metadata),
-                this.body(body, metadata),
+                this.body(body, metadata, url),
             ]]
         ]
     }
@@ -169,12 +260,10 @@ class Web {
             if route["class"] == "html" {
                 let content = route["content"]
                 let metadata = route["metadata"]
-                # Add AI-assisted tag display for article posts
                 if u.get(metadata, "content_type", nil) == "article" {
                     let aiAssisted = u.get(metadata, "ai-assisted", false)
                     let aiTagDisplay = u.buildAITag(aiAssisted)
-                    # Prepend AI tag to content (content is always a list)
-                    content = aiTagDisplay + content
+                    content = aiTagDisplay + this.injectBylineInContent(content, metadata)
                 }
                 let payload = this.wrapBody(url, content, metadata)
                 page = this.renderer.render(payload)
