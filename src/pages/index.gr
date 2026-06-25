@@ -18,15 +18,9 @@ fn group_by_year(posts) {
 }
 
 fn build_entry_meta(postDict) {
-    let aiAssisted = u.get(postDict, "ai-assisted", false)
-    let meta = [
+    return [
         ["time", ["class", "archive-entry-date"], postDict["date"]],
     ]
-    if aiAssisted {
-        let aiTag = u.buildJournalMeta(aiAssisted)
-        meta = meta + [aiTag[0]]
-    }
-    return meta
 }
 
 fn build_archive_entry(postDict, featured) {

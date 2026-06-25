@@ -183,14 +183,12 @@ body {
     color: var(--text-secondary);
     text-decoration: none;
     padding: 0.15rem 0;
-    border-bottom: 1px solid transparent;
-    transition: color var(--transition-fast), border-color var(--transition-fast);
+    transition: color var(--transition-fast);
 }
 
 .masthead-nav-link:hover,
 .masthead-nav-link.is-active {
     color: var(--accent);
-    border-bottom-color: var(--accent);
 }
 
 .theme-toggle {
@@ -304,6 +302,21 @@ a:visited {
     color: var(--text-link);
 }
 
+/* Navigation and list titles: no underline — color carries affordance */
+a.masthead-title,
+a.masthead-title:visited,
+a.masthead-nav-link,
+a.masthead-nav-link:visited,
+a.archive-entry,
+a.archive-entry:visited {
+    text-decoration: none;
+}
+
+.footer-line a,
+.footer-line a:visited {
+    text-decoration: none;
+}
+
 a:hover {
     color: var(--accent);
     text-decoration-color: var(--accent);
@@ -369,7 +382,6 @@ article a {
     gap: var(--space-2);
     padding: 0.65rem var(--space-1);
     margin: 0 calc(-1 * var(--space-1));
-    text-decoration: none;
     color: inherit;
     transition: background-color var(--transition-fast);
 }
@@ -404,8 +416,6 @@ article a {
 
 .archive-entry:hover .archive-entry-title {
     color: var(--accent);
-    text-decoration: underline;
-    text-decoration-color: var(--accent);
 }
 
 .archive-entry-meta {
@@ -654,8 +664,6 @@ img {
 
 .footer-line a:hover {
     color: var(--accent);
-    text-decoration: underline;
-    text-decoration-color: var(--accent);
 }
 
 .footer-links a {
