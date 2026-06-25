@@ -9,6 +9,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - uses: dtolnay/rust-toolchain@stable
     - name: Build the site with grotsky
       run: |
         cd ${{ github.workspace }} && \
