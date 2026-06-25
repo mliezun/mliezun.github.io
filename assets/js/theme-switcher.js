@@ -43,7 +43,6 @@ const themes = ['auto', 'light', 'dark'];
 let currentThemeIndex = 0;
 
 const savedTheme = localStorage.getItem('theme') || 'auto';
-document.documentElement.setAttribute('data-theme', savedTheme);
 currentThemeIndex = themes.indexOf(savedTheme);
 
 updateThemeToggle(themes[currentThemeIndex]);

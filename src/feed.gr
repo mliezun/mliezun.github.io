@@ -42,7 +42,7 @@ fn generate_feed(posts) {
 		["id", [], ["https://mliezun.com/"]],
 		["title", [], ["mliezun.com"]],
 		["updated", [], [posts[0]["date"] + "T00:00:00Z"]],
-		["subtitle", [], ["I'm Miguel. Here I write mainly about programming and side projects."]],
+		["subtitle", [], ["Personal blog by Miguel Liezun on programming, side projects, Rust, Python, and Django. Built with Grotsky, a toy language written in Rust."]],
 	]]
 	let entries = u.map(posts, fn (p) {
 		let post_obj = p["post_obj"]

@@ -24,7 +24,7 @@ fn get_routes(include_feed) {
     # List of directories for posts
     let postList = io.listDir("src/pages/posts")
 
-    let defaultImage = "https://mliezun.com/assets/images/nyc.jpg"
+    let defaultImage = "https://mliezun.com/assets/images/logo.png"
 
     # Compute urls and get objects for posts
     u.each(u.map(postList, fn (p) {
@@ -126,13 +126,13 @@ fn get_routes(include_feed) {
         "class": "html",
         "content": import("pages/index.gr").build_index(posts),
         "metadata": {
-            "title": "Miguel Liezun",
+            "title": "Miguel Liezun - Programming, Side Projects & Systems",
             "author": "Miguel Liezun",
             "tags": "software,tech,fun",
             "date": "",
-            "excerpt": "I'm Miguel. Here I write mainly about programming and side projects.",
+            "excerpt": "Personal blog by Miguel Liezun on programming, side projects, Rust, Python, and Django. Built with Grotsky, a toy language written in Rust.",
             "image": defaultImage,
-            "content_type": nil,
+            "content_type": "website",
             "needs_highlight": false,
             "needs_mermaid": false,
         }
