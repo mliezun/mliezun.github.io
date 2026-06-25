@@ -159,10 +159,7 @@ class Web {
         return ["header", ["class", "journal-masthead"], [
             ["div", ["class", "masthead-inner"], [
                 ["div", ["class", "masthead-rule-top"], []],
-                ["a", ["href", "/", "class", "masthead-brand"], [
-                    ["img", ["src", "/assets/images/logo.png", "alt", "", "class", "masthead-logo", "width", "44", "height", "44"], []],
-                    ["span", ["class", "masthead-title"], "Miguel's dev blog"],
-                ]],
+                ["a", ["href", "/", "class", "masthead-title"], "Miguel's dev blog"],
                 ["p", ["class", "masthead-tagline"], "By Miguel Liezun · Programming & Side Projects"],
                 ["div", ["class", "masthead-rule"], []],
                 ["nav", ["class", "masthead-nav", "aria-label", "Site"], [
