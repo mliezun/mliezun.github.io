@@ -89,7 +89,7 @@ let post = base.Post(
             "#define META_SIZE sizeof(struct block_meta)",
             "</pre>",
             "",
-            "It stores the size of the block, a pointer to the next block and a flag to mark wether it's free or not.",
+            "It stores the size of the block, a pointer to the next block and a flag to mark whether it's free or not.",
             "",
             "Then, a function to traverse the list of blocks and find if there is any freed block is needed:",
             "",

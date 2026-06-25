@@ -7,7 +7,7 @@ tags: go,json,db,generics
 
 # Using Go Generics to create a Single file JSON DB
 
-Let's start with an example use case: you have a multitenant web server that serves pages for various customers, you can know how to which page to serve based on `Host` header in the request.
+Let's start with an example use case: you have a multitenant web server that serves pages for various customers, you can know which page to serve based on `Host` header in the request.
 
 You can track each site in a struct like this:
 
@@ -121,7 +121,7 @@ func (db *DB[T]) Save(data T) error {
 
 You can get the `WriteFile` function [here](https://github.com/tailscale/tailscale/blob/main/atomicfile/atomicfile.go).
 
-This function writes the file atomically, which means is sucessfully written or not written at all.
+This function writes the file atomically, which means it is successfully written or not written at all.
 
 
 Finally we have to implement `Open` to instantiate our DB:
@@ -139,7 +139,7 @@ func Open[T any](filepath string) (db *DB[T], err error) {
 
 ## In praise of Go generics
 
-At the beginning I was a little sad about generics, go the simple language was at end becoming a huge complex beast. But overall if you don't over-abuse generics it feels natural and easy to use/understand.
+At the beginning I was a little sad about generics, Go, the simple language, was in the end becoming a huge complex beast. But overall if you don't over-abuse generics it feels natural and easy to use/understand.
 
 This still feels like the good old Go, but just a bit more power in the right way.
 

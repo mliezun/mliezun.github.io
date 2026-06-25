@@ -43,4 +43,4 @@ Seeing the landscape of what's out there I think we're missing a tool that has a
 
 The closest we have to this is Lovable, Replit and v0 from Vercel.
 
-But those platforms still rely on external services and are not open source. I think LLMs will work best when we're able to let them handle the full environment were our code lives and making them open source will enable people to trust them and run them on their own.
+But those platforms still rely on external services and are not open source. I think LLMs will work best when we're able to let them handle the full environment where our code lives and making them open source will enable people to trust them and run them on their own.

@@ -1,17 +1,17 @@
 ---
-title: "What happened in december 2025 or how I got a 40x speedup?"
-excerpt: "Im quite late to the discussion, but everyone has been saying that they have not written code since december. What happened? The release of Gemini 3 Pro, GPT-5.1 and Claude Opus 4.5 was a game changer. It was the first time that models were 'smart enough' to accomplish complex tasks."
+title: "What happened in December 2025 or how I got a 40x speedup?"
+excerpt: "I'm quite late to the discussion, but everyone has been saying that they have not written code since December. What happened? The release of Gemini 3 Pro, GPT-5.1 and Claude Opus 4.5 was a game changer. It was the first time that models were 'smart enough' to accomplish complex tasks."
 author: "Miguel Liezun"
 tags: rust,ai,speedup
 image: /assets/images/rust-and-gemini.png
 ai-assisted: false
 ---
 
-# What happened in december 2025 or how I got a 40x speedup?
+# What happened in December 2025 or how I got a 40x speedup?
 
 ![Rust and Gemini](/assets/images/rust-and-gemini.png)
 
-Im quite late to the discussion, but everyone has been saying that they have not written code since december.
+I'm quite late to the discussion, but everyone has been saying that they have not written code since December.
 
 ## What happened?
 
@@ -42,7 +42,7 @@ Keep iterating while there's still room for improvement.
 
 As you can see it was a very high level prompt where I didn't give it any instructions or guidance about the underlying codebase or how to integrate the profiler itself.
 
-Until November 2025 I will always hit a roadblock with this approach, where the model would not be able to figure out how to integrate the profiler or it would change the codebase in a way that broke all the tests and not be able to recover.
+Until November 2025 I would always hit a roadblock with this approach, where the model would not be able to figure out how to integrate the profiler or it would change the codebase in a way that broke all the tests and not be able to recover.
 
 But between November 30th and December 1st, armed with Cursor and Gemini 3 Pro, I finally got it working:
 
@@ -64,7 +64,7 @@ That's basically a 40x speedup. "User cpu" means the time that the program is ac
 The program used for integration testing, is this blog's engine, which is indeed written in Grotsky. The program takes plain markdown files and turns them into HTML.
 
 
-This is a testament of how poorly I had written the interpreter. There was a lot of low hanging fruit to be optimized. But also was the first time where I experienced how a powerful LLM with a tight agentic loop would actually compound and produce a virtous result.
+This is a testament of how poorly I had written the interpreter. There was a lot of low hanging fruit to be optimized. But it was also the first time when I experienced how a powerful LLM with a tight agentic loop would actually compound and produce a virtuous result.
 
 You could say that this was the point the LLMs surpassed human (me) abilities.
 

@@ -1,6 +1,6 @@
 ---
 title: "Serving Python apps using the Caddy web server"
-excerpt: "Caddy is an enterprise grade web server and reverse proxy. I recently released a new version of `caddysnake` a plugin to serve python apps more easily using Caddy without the need of installing another server like gunicorn, uvicorn, hypercorn or others."
+excerpt: "Caddy is an enterprise grade web server and reverse proxy. I recently released a new version of `caddysnake`, a plugin to serve python apps more easily using Caddy without the need of installing another server like gunicorn, uvicorn, hypercorn or others."
 author: "Miguel Liezun"
 tags: go,python,web,server,wsgi,asgi
 image: /assets/images/OIP-3356949409.jpg
@@ -10,7 +10,7 @@ ai-assisted: true
 
 # Serving Python apps using Caddy web server
 
-Caddy is an enterprise grade web server and reverse proxy. I recently released a new version of `caddysnake` a plugin to serve python apps more easily using Caddy without the need of installing another server like gunicorn, uvicorn, hypercorn or others.
+Caddy is an enterprise grade web server and reverse proxy. I recently released a new version of `caddysnake`, a plugin to serve python apps more easily using Caddy without the need of installing another server like gunicorn, uvicorn, hypercorn or others.
 
 ![Stock image of a server](/assets/images/OIP-3356949409.jpg)
 
@@ -18,7 +18,7 @@ In this latest release there are some new features to explore:
 
 - Distribution of a single caddy binary with bundled python.
 - Added `python-server` subcommand.
-- Multiple worker process.
+- Multiple worker processes.
 - Package in PyPI available for a quick way to install: `caddysnake`.
 
 ## Distribution of single binary
@@ -44,13 +44,13 @@ For example if you have `main.py` file with a Flask app inside you'll simply run
 caddy python-server -t wsgi -a main:app
 ```
 
-This will start serving request on http://localhost:9080/ by default.
+This will start serving requests on http://localhost:9080/ by default.
 
 See more settings with `caddy python-server --help`.
 
 ## Multiple worker processes
 
-Up until now caddysnake has been serving request from a single python processes, given that the GIL hasn't been removed yet that means we were not fully utilizing all the cores available.
+Up until now caddysnake has been serving requests from a single Python process, given that the GIL hasn't been removed yet that means we were not fully utilizing all the cores available.
 
 Now by default caddysnake starts as many processes as cores you have in your cpu, configurable with `--workers <n>`.
 

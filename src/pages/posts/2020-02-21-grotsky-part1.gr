@@ -54,7 +54,7 @@ let post = base.Post(
             "<li>Grouping with parentheses <span class=\"single-quote\">()</span></li>",
             "<li>Native support for python-like lists and dictionaries: <span class=\"single-quote\">[]</span>, <span class=\"single-quote\">{}</span></li>",
             "<li>Support for enhanced for loop: <span class=\"single-quote\">for i, el in array</span></li>",
-            "<li>Keywords and identifiers can only use alphabethic characters</li>",
+            "<li>Keywords and identifiers can only use alphabetic characters</li>",
             "",
             ""
         ]
@@ -195,7 +195,7 @@ let post = base.Post(
         [],
         [
             "",
-            "Let's build a syntax definition in backus naur format that will be easy to parse with a recursive descent parser.",
+            "Let's build a syntax definition in Backus-Naur format that will be easy to parse with a recursive descent parser.",
             "",
             ""
         ]
@@ -204,7 +204,7 @@ let post = base.Post(
         "h5",
         [],
         [
-            "Expresions"
+            "Expressions"
         ]
     ],
     [

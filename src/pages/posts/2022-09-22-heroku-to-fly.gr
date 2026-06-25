@@ -1,7 +1,7 @@
 let base = import("../base.gr")
 
 
-let firstParagraph = "A couple weeks ago Heroku announced the removal. I have plenty of projects running on free dynos.
+let firstParagraph = "A couple weeks ago Heroku announced the removal of free dynos. I have plenty of projects running on free dynos.
  I have taken some time to move my code to Fly.io. And also I've written a little tutorial of how to perform the migration."
 
 # Create new Post Object

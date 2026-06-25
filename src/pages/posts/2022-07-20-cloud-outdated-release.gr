@@ -48,7 +48,7 @@ let post = base.Post(
 		]],
 		["p", [], [
 			"On the hosting side we're using AWS Lambda. Taking advantage of the free compute time.",
-			"Helps mantaining the costs down.",
+			"Helps maintaining the costs down.",
 		]],
 		["h2", [], "Make webscraping reliable"],
 		["p", [], [
@@ -80,7 +80,7 @@ def aws_lambda_python():
 		]],
 		["p", [], [
 			"We pass poll functions through a polling class that handles all the errors and results.",
-			"When we detect an scraping error we have a special case. We send an email with the details",
+			"When we detect a scraping error we have a special case. We send an email with the details",
 			"of what happened. Because the problem is something that requires manual action. We receive",
 			"that email in our personal inboxes and fix the problem ASAP.",
 		]],
@@ -111,16 +111,16 @@ class PollService:
 			]],
 		]],
 		["p", [], [
-			"That's the hearth of Cloud Outdated.",
+			"That's the heart of Cloud Outdated.",
 			"After that we have to send notifications to subscribed users.",
 			"That part is trivial.",
 			"We send an email that contains the difference between what was last sent to a user and what we",
 			"have stored in the db at the moment.",
 		]],
-		["h2", [], "Last toughts"],
+		["h2", [], "Last thoughts"],
 		["p", [], [
 			"Having a side project is usually a good idea.",
-			"For us has been a journey were we got to know some new stuff (CockroachDB).",
+			"For us it has been a journey where we got to know some new stuff (CockroachDB).",
 			"We also learned about how to build a product and keep a MVP mentality.",
 			"The most difficult challenge we face is to bring more users to the platform.",
 		]],

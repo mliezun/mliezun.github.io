@@ -1,7 +1,7 @@
 let base = import("../base.gr")
 
 
-let firstParagraph = "Im rewriting Grotsky (my toy programming language) in Rust, the previous implementation
+let firstParagraph = "I'm rewriting Grotsky (my toy programming language) in Rust, the previous implementation
 was done in Go. The goal of the rewrite is to improve my Rust skills, and to improve the performance of Grotsky,
 by at least 10x."
 
@@ -22,7 +22,7 @@ let post = base.Post(
 			" I've outlined a plan to migrate Grotsky to a Rust based platform.",
 		]],
 		["p", [], [
-			"I was suposed to finish it more than a month ago :')."
+			"I was supposed to finish it more than a month ago :')."
 		]],
 		["p", [], [
 			"Of course, I wasn't able to do it."
@@ -36,17 +36,17 @@ let post = base.Post(
 		]],
 		["p", [], [
 			"The reason that is taking me so long is that I travel a lot. I've been a digital nomad for more than a year now.",
-			" And when I finish working I prefer to go outside and explore the place where Im staying.",
-			" I go to a lot of interesting places: at this time Im in Turkey and heading to Hong Kong, after that Im going to South Korea.",
-			" So, it makes sense to actually experience the places where Im staying than to stay inside writing code.",
+			" And when I finish working I prefer to go outside and explore the place where I'm staying.",
+			" I go to a lot of interesting places: at this time I'm in Turkey and heading to Hong Kong, after that I'm going to South Korea.",
+			" So, it makes sense to actually experience the places where I'm staying rather than stay inside writing code.",
 		]],
 		["p", [], [
-			"Im here to propose a new roadmap that is more achivable with the time I have to work on this.",
+			"I'm here to propose a new roadmap that is more achievable with the time I have to work on this.",
 			" And the idea is to finish it before the end of the year."
 		]],
 		["p", [], [
-			"Plus, I recently heard some advice that I think it's worth to try: Work on someone for 15 minutes every day.",
-			" I do have 15 minutes everyday where Im probably scrolling through social media or just consuming content.",
+			"Plus, I recently heard some advice that I think it's worth trying: Work on something for 15 minutes every day.",
+			" I do have 15 minutes every day where I'm probably scrolling through social media or just consuming content.",
 			" I can make better use of that time by putting it into this project."
 		]],
 		["h3", [], "Updated Roadmap"],
@@ -60,7 +60,7 @@ let post = base.Post(
 			]]
 		]],
 		["p", [], [
-			"This is gonna be rough, because of the traveling and being jetlaged all the time.",
+			"This is gonna be rough, because of the traveling and being jetlagged all the time.",
 			" But I think the roadmap is easy enough so I can do it."
 		]],
 		["p", [], [

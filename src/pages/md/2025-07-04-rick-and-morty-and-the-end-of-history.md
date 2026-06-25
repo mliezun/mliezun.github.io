@@ -38,21 +38,21 @@ But I just recently got recommended this video on youtube:
 
 ## Francis Fukuyama and the end of history
 
-The video explains how all others political ideologies have been defeated by liberalism. In modern times called neoliberalism.
+The video explains how all other political ideologies have been defeated by liberalism. In modern times called neoliberalism.
 
 It basically goes on to explain how starting from the 80s the western world has shifted from thinking of people as workers to calling them consumers.
 
-And this is because we know see everything through an economic lense, we think how much a person is worth in terms of money, we want to go to school to get better jobs to make more money instead of to just learn.
+And this is because we now see everything through an economic lens, we think how much a person is worth in terms of money, we want to go to school to get better jobs to make more money instead of to just learn.
 
 Consumerism is the perfection of slavery, because people are enslaved by money, but they have a sense of choice (car, school, house, etc.), they perceive themselves as free and have no reason to rebel.
 
 There's an [article published by Francis Fukuyama](https://pages.ucsd.edu/~bslantchev/courses/pdf/Fukuyama%20-%20End%20of%20History.pdf) where this is explained in more detail.
 
-It basically says that we have reached the end of history in terms of political ideology because we cannot escape liberalism. Is a system that within itself allows for contradiction and even then remains stable. Where individuals feel free and in control and have no reason to rebel.
+It basically says that we have reached the end of history in terms of political ideology because we cannot escape liberalism. It is a system that within itself allows for contradiction and even then remains stable. Where individuals feel free and in control and have no reason to rebel.
 
 What is more surprising is that he cites Hegel and Kojève as people that had already realized this was in motion in 1806 and 1930 respectively.
 
-For me this was eye-opening, I had never been exposed to this ideas, at least in such clear and distilled form. Something inside me tells me this is true, we're at the end of history. I don't think this is good or bad, but a powerful realization that allows me to see the world through a different lens.
+For me this was eye-opening, I had never been exposed to these ideas, at least in such clear and distilled form. Something inside me tells me this is true, we're at the end of history. I don't think this is good or bad, but a powerful realization that allows me to see the world through a different lens.
 
 ### EDIT
 
@@ -60,4 +60,4 @@ After posting this originally I found another video from Noam Chomsky which rein
 
 [Watch video](https://www.youtube.com/watch?v=iR1jzExZ9T0)
 
-He basically says that having a job is like surrendering yourself to a master that has control over you life even bigger than the state. As a "free" person in a liberal society you're free to have a job or starve to death. That job is basically a tyranny.
+He basically says that having a job is like surrendering yourself to a master that has control over your life even bigger than the state. As a "free" person in a liberal society you're free to have a job or starve to death. That job is basically a tyranny.
