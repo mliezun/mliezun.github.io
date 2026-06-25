@@ -635,6 +635,25 @@ article img {
     margin: 1.75em auto;
 }
 
+/* Transparent PNGs designed for a light canvas (diagrams, line art) */
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) article img[src*="branchable-mysql/"],
+    :root:not([data-theme="light"]) article img[src*="grotsky-part2/AST.png"] {
+        background-color: #FCFCFA;
+        padding: var(--space-2);
+        border-radius: 3px;
+        box-sizing: content-box;
+    }
+}
+
+:root[data-theme="dark"] article img[src*="branchable-mysql/"],
+:root[data-theme="dark"] article img[src*="grotsky-part2/AST.png"] {
+    background-color: #FCFCFA;
+    padding: var(--space-2);
+    border-radius: 3px;
+    box-sizing: content-box;
+}
+
 img {
     max-width: 100%;
     height: auto;
