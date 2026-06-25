@@ -18,6 +18,13 @@ class Web {
         return ""
     }
 
+    navLinkClass(active) {
+        if active {
+            return "sidebar-nav-link is-active"
+        }
+        return "sidebar-nav-link"
+    }
+
     head(url, metadata) {
         let og_image = metadata["image"]
         if og_image != "" and not u.startswith(og_image, "http") {
@@ -49,7 +56,7 @@ class Web {
 
             ["link", ["rel", "preconnect", "href", "https://fonts.googleapis.com"], []],
             ["link", ["rel", "preconnect", "href", "https://fonts.gstatic.com", "crossorigin", ""], []],
-            ["link", ["rel", "stylesheet", "href", "https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap"], []],
+            ["link", ["rel", "stylesheet", "href", "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap"], []],
 
             this.addIf(
                 metadata["content_type"],
@@ -79,9 +86,44 @@ class Web {
         ]]
     }
 
+    sidebar(metadata, url) {
+        let isHome = url == "/"
+        let isNow = url == "/now/index.html"
+
+        return ["aside", ["class", "site-sidebar"], [
+            ["div", ["class", "sidebar-inner"], [
+                ["a", ["href", "/", "class", "sidebar-title"], "Miguel's dev blog"],
+                ["p", ["class", "sidebar-bio"], "I'm Miguel. Here I write mainly about programming and side projects."],
+                ["nav", ["class", "sidebar-nav", "aria-label", "Site"], [
+                    ["a", ["href", "/", "class", this.navLinkClass(isHome)], "Home"],
+                    ["a", ["href", "/now/index.html", "class", this.navLinkClass(isNow)], "Now"],
+                ]],
+                ["div", ["class", "sidebar-footer"], [
+                    ["div", ["class", "sidebar-links"], [
+                        ["a", ["href", "https://github.com/mliezun/mliezun.com", "class", "sidebar-link", "target", "_blank"], "Source"],
+                        ["a", ["href", "/feed.xml", "class", "sidebar-link"], "RSS"],
+                    ]],
+                    ["div", ["class", "sidebar-socials"], [
+                        ["a", ["target", "_blank", "href", "https://github.com/mliezun"], [
+                            ["img", ["alt", "Github", "src", "/assets/images/socials/github.png", "width", "18", "height", "18"], []]
+                        ]],
+                        ["a", ["target", "_blank", "href", "https://x.com/migueliezun"], [
+                            ["img", ["alt", "X (Twitter)", "src", "/assets/images/socials/x.ico", "width", "18", "height", "18"], []]
+                        ]],
+                        ["a", ["target", "_blank", "href", "https://www.linkedin.com/in/miguel-liezun-8697a9168/"], [
+                            ["img", ["alt", "LinkedIn", "src", "/assets/images/socials/linkedin.png", "width", "18", "height", "18"], []]
+                        ]],
+                    ]],
+                    ["button", ["class", "theme-toggle", "id", "theme-toggle", "title", "Toggle theme"], [
+                        ["img", ["src", "/assets/images/circle-half.svg", "alt", "Toggle theme"], []],
+                    ]],
+                ]],
+            ]],
+        ]]
+    }
+
     footer() {
-        return ["footer", [], [
-            ["hr", [], []],
+        return ["footer", ["class", "site-footer"], [
             ["div", ["class", "footer-wrapper"], [
                 ["div", [], [
                     ["div", [], [
@@ -89,19 +131,19 @@ class Web {
                         ["a", ["target", "_blank", "href", "https://github.com/mliezun/grotsky"], "Grotsky"]
                     ]],
                     ["div", [], [
-                        "Blog",
+                        "Blog ",
                         ["a", ["target", "_blank", "href", "https://github.com/mliezun/mliezun.com"], "source code"]
                     ]]
                 ]],
                 ["div", ["class", "footer-socials"], [
                     ["a", ["target", "_blank", "href", "https://mliezun.com/feed.xml"], [
-                        ["img", ["alt", "RSS Feed", "src", "/assets/images/socials/rss.png", "width", "20", "height", "20", "style", "border-radius: 3px"], []]
+                        ["img", ["alt", "RSS Feed", "src", "/assets/images/socials/rss.png", "width", "20", "height", "20"], []]
                     ]],
                     ["a", ["target", "_blank", "href", "https://github.com/mliezun"], [
                         ["img", ["alt", "Github", "src", "/assets/images/socials/github.png", "width", "20", "height", "20"], []]
                     ]],
                     ["a", ["target", "_blank", "href", "https://x.com/migueliezun"], [
-                        ["img", ["alt", "X (Twitter)", "src", "/assets/images/socials/x.ico", "width", "20", "height", "20", "style", "border-radius: 5px"], []]
+                        ["img", ["alt", "X (Twitter)", "src", "/assets/images/socials/x.ico", "width", "20", "height", "20"], []]
                     ]],
                     ["a", ["target", "_blank", "href", "https://www.linkedin.com/in/miguel-liezun-8697a9168/"], [
                         ["img", ["alt", "LinkedIn", "src", "/assets/images/socials/linkedin.png", "width", "20", "height", "20"], []]
@@ -111,7 +153,7 @@ class Web {
         ]]
     }
 
-    body(content, metadata) {
+    body(content, metadata, url) {
         let hl = u.get(metadata, "needs_highlight", false)
         let mm = u.get(metadata, "needs_mermaid", false)
         let footer = [
@@ -119,10 +161,7 @@ class Web {
         ]
         if hl {
             footer = footer + [
-                ["link", ["rel", "stylesheet", "href", "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css", "media", "print", "onload", "this.media='all'"], []],
-                ["noscript", [], [
-                    ["link", ["rel", "stylesheet", "href", "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css"], []],
-                ]],
+                ["link", ["id", "hljs-theme", "rel", "stylesheet", "href", "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-light.min.css"], []],
                 ["script", ["defer", "", "src", "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"], []],
                 ["script", ["defer", "", "src", "/assets/js/highlight-init.js"], []],
             ]
@@ -134,19 +173,12 @@ class Web {
             ]
         }
         return ["body", [], [
-            ["div", ["class", "body-wrapper"], [
-                ["div", ["class", "body-content"], [
-                    ["div", ["class", "site-header"], [
-                        ["header", [], [
-                            ["a", ["href", "/", "style", "text-decoration: none !important"], "Miguel's dev blog"],
-                        ]],
-                        ["button", ["class", "theme-toggle", "id", "theme-toggle", "title", "Toggle theme"], [
-                            ["img", ["src", "/assets/images/circle-half.svg"], []],
-                        ]],
+            ["div", ["class", "split-layout"], [
+                this.sidebar(metadata, url),
+                ["main", ["class", "main-content"], [
+                    ["div", ["class", "main-inner"], content + [
+                        this.footer(),
                     ]],
-                    ["hr", [], []],
-                ] + content + [
-                    this.footer(),
                 ]],
             ]],
         ] + footer]
@@ -157,7 +189,7 @@ class Web {
             ["!DOCTYPE HTML"],
             ["html", ["lang", "en-US"], [
                 this.head(url, metadata),
-                this.body(body, metadata),
+                this.body(body, metadata, url),
             ]]
         ]
     }
