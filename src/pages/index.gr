@@ -1,26 +1,23 @@
 let u = import("../utils.gr")
 
 
-fn aboutme() {
-    return ["div", ["class", "aboutme"], [
-        ["p", [], "Hi folks!"],
-        ["p", [], "I'm Miguel. Here I write mainly about programming and side projects."],
-        ["p", [], [
-            "I've written my own programming language called Grotsky, and it's ",
-            ["a", ["href", "https://mliezun.com/2023/11/23/grotsky-rust-part3.html", "target", "_blank"], "implemented in Rust"],
-            ". This blog's engine is written with Grotksy and generates static HTML files."
-        ]]
-    ]]
+fn firstTag(tags) {
+    if tags == "" {
+        return "—"
+    }
+    let parts = strings.split(tags, ",")
+    if parts.length > 0 {
+        return parts[0]
+    }
+    return tags
 }
 
 fn group_by_year(posts) {
     let years = {}
-    # Fill years with empty lists
     for post in posts {
         let year = strings.split(post["date"], "-")[0]
         years[year] = []
     }
-    # Group by years now
     for post in posts {
         let year = strings.split(post["date"], "-")[0]
         years[year] = years[year] + [post]
@@ -28,38 +25,44 @@ fn group_by_year(posts) {
     return years
 }
 
+fn build_archive_row(postDict) {
+    let p = postDict["post_obj"]
+    let postUrl = postDict["url"]
+    let aiAssisted = u.get(postDict, "ai-assisted", false)
+    let aiTag = u.buildAITag(aiAssisted)
+    return [
+        "div", ["class", "archive-row"], [
+            ["a", ["href", postUrl, "class", "archive-post-title archive-col-title"], p.title],
+            ["span", ["class", "archive-post-date archive-col-date"], postDict["date"]],
+            ["span", ["class", "archive-post-tag archive-col-tag"], firstTag(p.tags)],
+            ["span", ["class", "archive-post-path archive-col-path"], postUrl],
+            aiTag[0],
+        ]
+    ]
+}
+
 fn build_index(posts) {
     let years = group_by_year(posts)
     let years_list = u.keys(years)
-    years_list = u.sortBy(years_list, fn (a, b) strings.compare(a, b))
-    
+    years_list = u.sortBy(years_list, fn (a, b) strings.compare(b, a))
+
     return [
-        aboutme(),
         [
-            "div", [],
+            "div", ["class", "post-archive"],
             u.foldr(u.map(years_list, fn (year) {
                 return [
-                    # Year heading
-                    ["h2", ["style", "font-size: 20pt; font-weight: bold; margin-top: 40px; margin-bottom: 20px; color: var(--text-heading);"], year],
-                    # Posts for this year
-                    ["div", [],
+                    ["h2", ["id", "year-" + year, "class", "archive-year-heading"], year],
+                    ["div", ["class", "archive-table"], [
+                        ["div", ["class", "archive-header"], [
+                            ["span", ["class", "archive-col-title"], "title"],
+                            ["span", ["class", "archive-col-date"], "date"],
+                            ["span", ["class", "archive-col-tag"], "tag"],
+                            ["span", ["class", "archive-col-path"], "path"],
+                        ]],
                         u.foldr(u.map(years[year], fn (postDict) {
-                            let p = postDict["post_obj"]
-                            let url = postDict["url"]
-                            let aiAssisted = u.get(postDict, "ai-assisted", false)
-                            let aiTag = u.buildAITag(aiAssisted)
-                            return [[
-                                "div", ["style", "margin-bottom: 16px;"], [
-                                    ["a", ["href", url, "style", "font-size: 13pt; text-decoration: none; color: var(--text-link); transition: color 0.2s ease; letter-spacing: -0.015em; line-height: 1.4;"], p.title],
-                                    ["span", ["style", "color: var(--text-secondary); margin-left: 8px; font-size: 10pt; letter-spacing: 0;"], [
-                                        ["span", ["style", "margin: 0 5px;"], " "],
-                                        postDict["date"]
-                                    ]],
-                                    aiTag[0]
-                                ]
-                            ]]
+                            return [build_archive_row(postDict)]
                         }), [], u.sum)
-                    ]
+                    ]]
                 ]
             }), [], u.sum)
         ]

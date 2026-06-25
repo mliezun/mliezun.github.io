@@ -18,6 +18,92 @@ class Web {
         return ""
     }
 
+    navLinkClass(active) {
+        if active {
+            return "cmd-btn is-active"
+        }
+        return "cmd-btn"
+    }
+
+    collectYears() {
+        let years = {}
+        for url, route in this.routes {
+            let metadata = u.get(route, "metadata", nil)
+            if metadata != nil and u.get(metadata, "content_type", nil) == "article" {
+                let date = metadata["date"]
+                if date != "" {
+                    let year = strings.split(date, "-")[0]
+                    years[year] = 1
+                }
+            }
+        }
+        let years_list = u.keys(years)
+        return u.sortBy(years_list, fn (a, b) strings.compare(b, a))
+    }
+
+    sidebarYears(years_list) {
+        return ["ul", ["class", "sidebar-year-list"],
+            u.foldr(u.map(years_list, fn (year) {
+                return [["li", [], [
+                    ["a", ["href", "/#year-" + year, "class", "sidebar-year-link"], year]
+                ]]]
+            }), [], u.sum)
+        ]
+    }
+
+    sidebar() {
+        let years_list = this.collectYears()
+        return ["aside", ["class", "panel-sidebar"], [
+            ["div", ["class", "sidebar-section"], [
+                ["span", ["class", "sidebar-label"], "bio"],
+                ["p", ["class", "sidebar-bio"], "I'm Miguel. Here I write mainly about programming and side projects."],
+            ]],
+            ["div", ["class", "sidebar-section"], [
+                ["span", ["class", "sidebar-label"], "archive"],
+                this.sidebarYears(years_list),
+            ]],
+            ["div", ["class", "sidebar-section"], [
+                ["span", ["class", "sidebar-label"], "status"],
+                ["div", ["class", "status-legend"], [
+                    ["div", ["class", "legend-item"], [
+                        ["span", ["class", "legend-swatch human-written"], []],
+                        ["span", [], "Human written"],
+                    ]],
+                    ["div", ["class", "legend-item"], [
+                        ["span", ["class", "legend-swatch ai-assisted"], []],
+                        ["span", [], "AI-assisted"],
+                    ]],
+                ]],
+            ]],
+            ["div", ["class", "sidebar-section"], [
+                ["span", ["class", "sidebar-label"], "feeds"],
+                ["div", ["class", "sidebar-links"], [
+                    ["a", ["href", "/feed.xml", "class", "sidebar-link"], "feed.xml"],
+                    ["a", ["target", "_blank", "href", "https://github.com/mliezun/mliezun.com", "class", "sidebar-link"], "source →"],
+                ]],
+            ]],
+        ]]
+    }
+
+    commandBar(url) {
+        let isHome = url == "/"
+        let isNow = url == "/now/index.html"
+
+        return ["header", ["class", "command-bar"], [
+            ["div", ["class", "command-bar-inner"], [
+                ["a", ["href", "/", "class", "command-brand"], "mliezun.com"],
+                ["nav", ["class", "command-nav", "aria-label", "Site"], [
+                    ["a", ["href", "/", "class", this.navLinkClass(isHome)], "home"],
+                    ["a", ["href", "/now/index.html", "class", this.navLinkClass(isNow)], "now"],
+                ]],
+                ["button", ["class", "cmd-btn theme-toggle", "id", "theme-toggle", "title", "Toggle theme"], [
+                    ["span", ["class", "cmd-theme-label"], "theme:auto"],
+                    ["img", ["src", "/assets/images/circle-half.svg", "alt", ""], []],
+                ]],
+            ]],
+        ]]
+    }
+
     head(url, metadata) {
         let og_image = metadata["image"]
         if og_image != "" and not u.startswith(og_image, "http") {
@@ -49,7 +135,7 @@ class Web {
 
             ["link", ["rel", "preconnect", "href", "https://fonts.googleapis.com"], []],
             ["link", ["rel", "preconnect", "href", "https://fonts.gstatic.com", "crossorigin", ""], []],
-            ["link", ["rel", "stylesheet", "href", "https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap"], []],
+            ["link", ["rel", "stylesheet", "href", "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap"], []],
 
             this.addIf(
                 metadata["content_type"],
@@ -80,28 +166,27 @@ class Web {
     }
 
     footer() {
-        return ["footer", [], [
-            ["hr", [], []],
+        return ["footer", ["class", "site-footer"], [
             ["div", ["class", "footer-wrapper"], [
-                ["div", [], [
+                ["div", ["class", "footer-meta"], [
                     ["div", [], [
-                        "This blog was made with ",
-                        ["a", ["target", "_blank", "href", "https://github.com/mliezun/grotsky"], "Grotsky"]
+                        "built with ",
+                        ["a", ["target", "_blank", "href", "https://github.com/mliezun/grotsky"], "grotsky"]
                     ]],
                     ["div", [], [
-                        "Blog",
-                        ["a", ["target", "_blank", "href", "https://github.com/mliezun/mliezun.com"], "source code"]
+                        "blog ",
+                        ["a", ["target", "_blank", "href", "https://github.com/mliezun/mliezun.com"], "source"]
                     ]]
                 ]],
                 ["div", ["class", "footer-socials"], [
                     ["a", ["target", "_blank", "href", "https://mliezun.com/feed.xml"], [
-                        ["img", ["alt", "RSS Feed", "src", "/assets/images/socials/rss.png", "width", "20", "height", "20", "style", "border-radius: 3px"], []]
+                        ["img", ["alt", "RSS Feed", "src", "/assets/images/socials/rss.png", "width", "20", "height", "20"], []]
                     ]],
                     ["a", ["target", "_blank", "href", "https://github.com/mliezun"], [
                         ["img", ["alt", "Github", "src", "/assets/images/socials/github.png", "width", "20", "height", "20"], []]
                     ]],
                     ["a", ["target", "_blank", "href", "https://x.com/migueliezun"], [
-                        ["img", ["alt", "X (Twitter)", "src", "/assets/images/socials/x.ico", "width", "20", "height", "20", "style", "border-radius: 5px"], []]
+                        ["img", ["alt", "X (Twitter)", "src", "/assets/images/socials/x.ico", "width", "20", "height", "20"], []]
                     ]],
                     ["a", ["target", "_blank", "href", "https://www.linkedin.com/in/miguel-liezun-8697a9168/"], [
                         ["img", ["alt", "LinkedIn", "src", "/assets/images/socials/linkedin.png", "width", "20", "height", "20"], []]
@@ -111,7 +196,7 @@ class Web {
         ]]
     }
 
-    body(content, metadata) {
+    body(content, metadata, url) {
         let hl = u.get(metadata, "needs_highlight", false)
         let mm = u.get(metadata, "needs_mermaid", false)
         let footer = [
@@ -119,10 +204,7 @@ class Web {
         ]
         if hl {
             footer = footer + [
-                ["link", ["rel", "stylesheet", "href", "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css", "media", "print", "onload", "this.media='all'"], []],
-                ["noscript", [], [
-                    ["link", ["rel", "stylesheet", "href", "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css"], []],
-                ]],
+                ["link", ["id", "hljs-theme", "rel", "stylesheet", "href", "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-light.min.css"], []],
                 ["script", ["defer", "", "src", "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"], []],
                 ["script", ["defer", "", "src", "/assets/js/highlight-init.js"], []],
             ]
@@ -134,19 +216,13 @@ class Web {
             ]
         }
         return ["body", [], [
-            ["div", ["class", "body-wrapper"], [
-                ["div", ["class", "body-content"], [
-                    ["div", ["class", "site-header"], [
-                        ["header", [], [
-                            ["a", ["href", "/", "style", "text-decoration: none !important"], "Miguel's dev blog"],
-                        ]],
-                        ["button", ["class", "theme-toggle", "id", "theme-toggle", "title", "Toggle theme"], [
-                            ["img", ["src", "/assets/images/circle-half.svg"], []],
-                        ]],
+            this.commandBar(url),
+            ["div", ["class", "panel-layout"], [
+                this.sidebar(),
+                ["main", ["class", "panel-main"], [
+                    ["div", ["class", "panel-main-inner"], content + [
+                        this.footer(),
                     ]],
-                    ["hr", [], []],
-                ] + content + [
-                    this.footer(),
                 ]],
             ]],
         ] + footer]
@@ -157,7 +233,7 @@ class Web {
             ["!DOCTYPE HTML"],
             ["html", ["lang", "en-US"], [
                 this.head(url, metadata),
-                this.body(body, metadata),
+                this.body(body, metadata, url),
             ]]
         ]
     }
