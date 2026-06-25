@@ -44,8 +44,8 @@ def check_html(path: str, html: str) -> list[str]:
             problems.append("missing <main> landmark")
         if "/assets/css/style.css" not in html and "google" not in path:
             problems.append("missing site stylesheet")
-        if "masthead-brand" not in html and "google" not in path:
-            problems.append("missing masthead branding")
+        if "masthead-title" not in html and "google" not in path:
+            problems.append("missing masthead title")
 
     if path == "/":
         entries = len(re.findall(r'class="archive-entry"', html))

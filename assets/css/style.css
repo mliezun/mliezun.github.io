@@ -135,41 +135,19 @@ body {
     margin-bottom: var(--space-3);
 }
 
-.masthead-brand {
-    display: inline-flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-2);
-    text-decoration: none;
-    color: inherit;
-}
-
-.masthead-logo {
-    display: block;
-    width: 2.75rem;
-    height: auto;
-    opacity: 0.92;
-    filter: invert(var(--invert-colors));
-    transition: opacity var(--transition-fast), transform var(--transition-fast);
-}
-
-.masthead-brand:hover .masthead-logo {
-    opacity: 1;
-    transform: translateY(-1px);
-}
-
 .masthead-title {
-    display: block;
+    display: inline-block;
     font-family: var(--font-serif);
     font-size: clamp(2rem, 5vw, 2.75rem);
     font-weight: 600;
     line-height: 1.12;
     letter-spacing: -0.025em;
     color: var(--text-primary);
+    text-decoration: none;
     transition: color var(--transition-fast);
 }
 
-.masthead-brand:hover .masthead-title {
+.masthead-title:hover {
     color: var(--accent);
 }
 
