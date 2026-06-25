@@ -188,6 +188,25 @@ fn keys(dict) {
     return keys
 }
 
+fn buildJournalMeta(aiAssisted) {
+    let tagText = ""
+    let tagClass = ""
+
+    if aiAssisted {
+        tagText = "AI-assisted"
+        tagClass = "journal-meta ai-assisted"
+    } else {
+        tagText = "Human-written"
+        tagClass = "journal-meta human-written"
+    }
+
+    return [
+        ["span", ["class", "journal-meta-wrap"], [
+            ["span", ["class", tagClass], tagText],
+        ]]
+    ]
+}
+
 fn buildAITag(aiAssisted) {
     let tagText = ""
     let popoverText = ""

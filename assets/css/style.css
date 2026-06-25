@@ -588,13 +588,10 @@ article a {
     white-space: nowrap;
 }
 
-.archive-entry-meta-sep {
-    font-family: var(--font-sans);
-    font-size: 0.6875rem;
-    color: var(--text-secondary);
+.archive-entry .journal-meta {
+    cursor: default;
 }
 
-/* ── Journal metadata (AI tags) ────────────────────────────── */
 
 .journal-meta-wrap {
     display: inline;
