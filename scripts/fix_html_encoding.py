@@ -5,12 +5,21 @@ from pathlib import Path
 
 
 def fix_mojibake(text: str) -> str:
-    if "Â" not in text and "â" not in text:
-        return text
-    try:
-        return text.encode("latin-1").decode("utf-8")
-    except (UnicodeEncodeError, UnicodeDecodeError):
-        return text
+    # Grotsky double-encodes some UTF-8 characters in HTML output. A full-file
+    # latin-1 roundtrip fails when pages contain emoji or other non-Latin-1 text,
+    # so apply targeted replacements instead.
+    replacements = (
+        ("Â·", "·"),
+        ("â€™", "'"),
+        ("â€œ", '"'),
+        ("â€\u009d", '"'),
+        ("â€”", "—"),
+        ("â€“", "–"),
+        ("â†’", "→"),
+    )
+    for old, new in replacements:
+        text = text.replace(old, new)
+    return text
 
 
 def main() -> None:
