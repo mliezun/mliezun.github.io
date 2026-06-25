@@ -1,4 +1,23 @@
-// Update button icon and tooltip
+const HLJS_BASE = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/';
+
+function isDarkTheme(theme) {
+    if (theme === 'dark') {
+        return true;
+    }
+    if (theme === 'light') {
+        return false;
+    }
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+}
+
+function updateHljsTheme(theme) {
+    const link = document.getElementById('hljs-theme');
+    if (!link) {
+        return;
+    }
+  link.href = HLJS_BASE + (isDarkTheme(theme) ? 'atom-one-dark.min.css' : 'atom-one-light.min.css');
+}
+
 function updateThemeToggle(theme) {
     const themeToggle = document.getElementById('theme-toggle');
     const img = themeToggle.querySelector('img');
@@ -19,14 +38,13 @@ function updateThemeToggle(theme) {
 const themes = ['auto', 'light', 'dark'];
 let currentThemeIndex = 0;
 
-// Get the theme from localStorage or default to 'auto'
 const savedTheme = localStorage.getItem('theme') || 'auto';
 document.documentElement.setAttribute('data-theme', savedTheme);
 currentThemeIndex = themes.indexOf(savedTheme);
 
 updateThemeToggle(themes[currentThemeIndex]);
+updateHljsTheme(savedTheme);
 
-// Theme toggle click handler
 const themeToggle = document.getElementById('theme-toggle');
 themeToggle.addEventListener('click', () => {
     currentThemeIndex = (currentThemeIndex + 1) % themes.length;
@@ -34,4 +52,11 @@ themeToggle.addEventListener('click', () => {
     document.documentElement.setAttribute('data-theme', newTheme);
     localStorage.setItem('theme', newTheme);
     updateThemeToggle(newTheme);
+    updateHljsTheme(newTheme);
+});
+
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+    if (document.documentElement.getAttribute('data-theme') === 'auto') {
+        updateHljsTheme('auto');
+    }
 });
