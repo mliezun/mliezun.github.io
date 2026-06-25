@@ -95,7 +95,7 @@ fn build_index(posts) {
     ] + featured + [
         [
             "div", ["class", "post-archive"],
-            u.foldr(u.map(years_list, fn (year) {
+            u.foldl(u.map(years_list, fn (year) {
                 return [
                     ["section", ["id", "year-" + year, "class", "archive-year-section"], [
                         ["div", ["class", "archive-year-header"], [
