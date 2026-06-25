@@ -111,9 +111,7 @@ fn get_routes(include_feed) {
         posts = posts + [p]
     })
 
-    posts = u.sortBy(posts, fn (pa, pb) {
-        return strings.compare(pa["url"], pb["url"])
-    })
+    posts = u.sortBy(posts, fn (pa, pb) strings.compare(pb["date"], pa["date"]))
 
     if include_feed {
         # Build rss feed
