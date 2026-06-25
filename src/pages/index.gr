@@ -1,14 +1,14 @@
 let u = import("../utils.gr")
 
 
-fn home_intro() {
-    return ["div", ["class", "home-intro"], [
-        ["p", ["class", "home-intro-lead"], "Hi folks!"],
-        ["p", ["class", "home-intro-text"], "I'm Miguel. Here I write mainly about programming and side projects."],
-        ["p", ["class", "home-intro-text"], [
-            "I've written my own programming language called Grotsky, and it's ",
-            ["a", ["href", "https://mliezun.com/2023/11/23/grotsky-rust-part3.html"], "implemented in Rust"],
-            ". This blog's engine is written with Grotsky and generates static HTML files."
+fn publisher_note() {
+    return ["div", ["class", "publisher-note"], [
+        ["p", ["class", "publisher-note-label"], "Publisher's note"],
+        ["p", ["class", "publisher-note-text"], [
+            "I'm Miguel Liezun. I write about programming, side projects, and the systems behind them. ",
+            "I've built ",
+            ["a", ["href", "https://mliezun.com/2023/11/23/grotsky-rust-part3.html"], "Grotsky"],
+            ", a toy language implemented in Rust. This site is generated with Grotsky as static HTML."
         ]]
     ]]
 }
@@ -26,13 +26,70 @@ fn group_by_year(posts) {
     return years
 }
 
+fn build_entry_meta(postDict) {
+    let aiAssisted = u.get(postDict, "ai-assisted", false)
+    let aiTag = u.buildAITag(aiAssisted)
+    return [
+        ["time", ["class", "archive-entry-date"], postDict["date"]],
+        ["span", ["class", "archive-entry-meta-sep"], " · "],
+        aiTag[0],
+    ]
+}
+
+fn build_archive_entry(postDict) {
+    let p = postDict["post_obj"]
+    let postUrl = postDict["url"]
+    return [[
+        "a", ["href", postUrl, "class", "archive-entry"], [
+            ["span", ["class", "archive-entry-title"], p.title],
+            ["span", ["class", "archive-entry-meta"],
+                build_entry_meta(postDict)
+            ],
+        ]
+    ]]
+}
+
+fn build_featured(postDict) {
+    let p = postDict["post_obj"]
+    let postUrl = postDict["url"]
+    let aiAssisted = u.get(postDict, "ai-assisted", false)
+    let aiTag = u.buildAITag(aiAssisted)
+    let dek = []
+    if p.excerpt != "" {
+        dek = [["p", ["class", "featured-dek"], p.excerpt]]
+    }
+    return ["section", ["class", "featured-section"], [
+        ["div", ["class", "section-label-row"], [
+            ["span", ["class", "section-label"], "Latest"],
+            ["span", ["class", "section-label-rule"], ""],
+        ]],
+        ["div", ["class", "featured-entry"], [
+            ["a", ["href", postUrl, "class", "featured-title"], p.title],
+            ["div", ["class", "featured-meta"], [
+                ["time", ["class", "featured-date"], postDict["date"]],
+                ["span", ["class", "featured-meta-sep"], " · "],
+                aiTag[0],
+            ]],
+        ] + dek],
+    ]]
+}
+
 fn build_index(posts) {
+    let sorted = u.sortBy(posts, fn (a, b) strings.compare(b["date"], a["date"]))
+    let latestUrl = ""
+    let featured = []
+    if sorted.length > 0 {
+        latestUrl = sorted[0]["url"]
+        featured = [build_featured(sorted[0])]
+    }
+
     let years = group_by_year(posts)
     let years_list = u.keys(years)
     years_list = u.sortBy(years_list, fn (a, b) strings.compare(b, a))
 
     return [
-        home_intro(),
+        publisher_note(),
+    ] + featured + [
         [
             "div", ["class", "post-archive"],
             u.foldr(u.map(years_list, fn (year) {
@@ -44,23 +101,10 @@ fn build_index(posts) {
                         ]],
                         ["div", ["class", "archive-year-posts"],
                             u.foldr(u.map(years[year], fn (postDict) {
-                                let p = postDict["post_obj"]
-                                let postUrl = postDict["url"]
-                                let aiAssisted = u.get(postDict, "ai-assisted", false)
-                                let aiTag = u.buildAITag(aiAssisted)
-                                let excerpt = p.excerpt
-                                let dek = []
-                                if excerpt != "" {
-                                    dek = [["p", ["class", "archive-entry-dek"], excerpt]]
+                                if postDict["url"] == latestUrl {
+                                    return []
                                 }
-                                return [[
-                                    "div", ["class", "archive-entry"], [
-                                        ["a", ["href", postUrl, "class", "archive-entry-title"], p.title],
-                                        ["time", ["class", "archive-entry-date"], postDict["date"]],
-                                    ] + dek + [
-                                        aiTag[0]
-                                    ]
-                                ]]
+                                return build_archive_entry(postDict)
                             }), [], u.sum)
                         ]
                     ]]

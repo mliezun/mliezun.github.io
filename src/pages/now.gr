@@ -1,67 +1,51 @@
 let u = import("../utils.gr")
 
 
-fn aboutme() {
-    return ["div", ["class", "aboutme"], [
-        ["p", [], "Hi folks!"],
-        ["p", [], "I'm Miguel. Here I write mainly about programming and side projects."],
-        ["p", [], [
-            "I've written my own programming language called Grotsky, and it's ",
-            ["a", ["href", "https://mliezun.com/2023/11/23/grotsky-rust-part3.html", "target", "_blank"], "implemented in Rust"],
-            ". This blog's engine is written with Grotksy and generates static HTML files."
-        ]]
-    ]]
-}
-
-fn now() {
+fn now_body() {
 	return [
-		["div", [], [
-			"Last updated on 2025-10-16.",
-			["ul", [], [
-				["li", [], [
-					"Working on ",
-					["a", ["href", "https://github.com/mliezun/caddy-snake", "target", "_blank"], [
-						"https://github.com/mliezun/caddy-snake",
-					]],
-					". A plugin for the Caddy proxy that embeds the Python interpreter.",
-				]],
-				["li", [], [
-					"Platform to run RISC-V CI/CD jobs. ",
-					["a", ["href", "https://www.riscvrunners.com", "target", "_blank"], [
-						"www.riscvrunners.com",
-					]],
-				]],
-				["li", [], [
-					"I've built Grotsky, a toy programming language made with Rust. Sometimes I still poke around with it.",
-				]],
-				["li", [], [
-					"Ran 42km marathon to raise money for Alzheimer's Research. I use a Coros watch, it's awesome.",
-				]],
-				["li", [], [
-					"Learning French and going to ",
-					["a", ["href", "https://www.bierecode.com/", "target", "_blank"], "Beer and Code meetup"],
-				]],
-				["li", [], [
-					"Working as a Software Engineer at Gencove, building the future of Genome Sequencing."
-				]],
+		["p", ["class", "journal-updated"], "Last updated on 2025-10-16."],
+		["ul", ["class", "journal-list"], [
+			["li", [], [
+				"Working on ",
+				["a", ["href", "https://github.com/mliezun/caddy-snake"], "caddy-snake"],
+				", a plugin for the Caddy proxy that embeds the Python interpreter.",
 			]],
-			["div", [], [
-				"See more about the /now project here:",
-				["a", ["href", "https://nownownow.com/", "target", "_blank"], [
-					"https://nownownow.com/",
-				]],
+			["li", [], [
+				"Platform to run RISC-V CI/CD jobs at ",
+				["a", ["href", "https://www.riscvrunners.com"], "riscvrunners.com"],
+				".",
 			]],
+			["li", [], [
+				"I've built Grotsky, a toy programming language made with Rust. Sometimes I still poke around with it.",
+			]],
+			["li", [], [
+				"Ran a 42km marathon to raise money for Alzheimer's Research. I use a Coros watch — it's awesome.",
+			]],
+			["li", [], [
+				"Learning French and going to the ",
+				["a", ["href", "https://www.bierecode.com/"], "Beer and Code meetup"],
+				".",
+			]],
+			["li", [], [
+				"Working as a Software Engineer at Gencove, building the future of genome sequencing."
+			]],
+		]],
+		["p", ["class", "journal-footnote"], [
+			"More about the ",
+			["a", ["href", "https://nownownow.com/"], "/now page"],
+			"."
 		]],
 	]
 }
 
 fn build_now() {
     return [
-        aboutme(),
-        [
-			"div",
-			[],
-			now()
-        ],
+        ["div", ["class", "journal-section"], [
+            ["div", ["class", "section-label-row"], [
+                ["span", ["class", "section-label"], "Current"],
+                ["span", ["class", "section-label-rule"], ""],
+            ]],
+            ["div", ["class", "journal-body"], now_body()],
+        ]],
     ]
 }

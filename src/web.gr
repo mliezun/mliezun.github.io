@@ -27,24 +27,13 @@ class Web {
 
     articleByline(metadata) {
         let tags = metadata["tags"]
-        return ["div", ["class", "article-byline"], [
-            ["span", ["class", "article-byline-item"], [
-                "Date ",
-                ["strong", [], metadata["date"]],
-            ]],
-            this.addIf(
-                metadata["author"] != "",
-                ["span", ["class", "article-byline-item"], [
-                    "Author ",
-                    ["strong", [], metadata["author"]],
-                ]],
-            ),
+        return ["p", ["class", "article-byline"], [
+            metadata["date"],
+            " · ",
+            metadata["author"],
             this.addIf(
                 tags != "",
-                ["span", ["class", "article-byline-item"], [
-                    "Tags ",
-                    ["strong", [], tags],
-                ]],
+                ["span", [], [" · ", tags]],
             ),
         ]]
     }
@@ -127,7 +116,9 @@ class Web {
             ["meta", ["property", "og:url", "content", "https://mliezun.com" + url], []],
             ["meta", ["property", "og:site_name", "content", "mliezun.com"], []],
             ["meta", ["property", "og:image", "content", og_image], []],
+            ["link", ["rel", "icon", "type", "image/png", "href", "/assets/images/favicon.png"], []],
             ["link", ["rel", "icon", "type", "image/x-icon", "href", "/assets/images/favicon.ico"], []],
+            ["link", ["rel", "apple-touch-icon", "href", "/assets/images/favicon.png"], []],
 
             ["link", ["rel", "preconnect", "href", "https://fonts.googleapis.com"], []],
             ["link", ["rel", "preconnect", "href", "https://fonts.gstatic.com", "crossorigin", ""], []],
@@ -167,17 +158,22 @@ class Web {
 
         return ["header", ["class", "journal-masthead"], [
             ["div", ["class", "masthead-inner"], [
-                ["div", ["class", "masthead-top"], [
-                    ["a", ["href", "/", "class", "masthead-title"], "Miguel's dev blog"],
-                    ["button", ["class", "theme-toggle", "id", "theme-toggle", "title", "Toggle theme"], [
-                        ["img", ["src", "/assets/images/circle-half.svg", "alt", "Toggle theme"], []],
-                    ]],
+                ["div", ["class", "masthead-rule-top"], []],
+                ["a", ["href", "/", "class", "masthead-brand"], [
+                    ["img", ["src", "/assets/images/logo.png", "alt", "", "class", "masthead-logo", "width", "44", "height", "44"], []],
+                    ["span", ["class", "masthead-title"], "Miguel's dev blog"],
                 ]],
-                ["p", ["class", "masthead-tagline"], "Programming &middot; Side Projects &middot; Software"],
+                ["p", ["class", "masthead-tagline"], "By Miguel Liezun · Programming & Side Projects"],
                 ["div", ["class", "masthead-rule"], []],
                 ["nav", ["class", "masthead-nav", "aria-label", "Site"], [
                     ["a", ["href", "/", "class", this.navLinkClass(isHome)], "Home"],
                     ["a", ["href", "/now/index.html", "class", this.navLinkClass(isNow)], "Now"],
+                    ["a", ["href", "/feed.xml", "class", "masthead-nav-link"], "Feed"],
+                ]],
+                ["div", ["class", "masthead-util"], [
+                    ["button", ["class", "theme-toggle", "id", "theme-toggle", "title", "Toggle theme"], [
+                        ["img", ["src", "/assets/images/circle-half.svg", "alt", "Toggle theme"], []],
+                    ]],
                 ]],
             ]],
         ]]
@@ -185,32 +181,24 @@ class Web {
 
     footer() {
         return ["footer", ["class", "site-footer"], [
-            ["div", ["class", "footer-wrapper"], [
-                ["div", ["class", "footer-meta"], [
-                    ["div", [], [
-                        "This blog was made with ",
-                        ["a", ["target", "_blank", "href", "https://github.com/mliezun/grotsky"], "Grotsky"]
-                    ]],
-                    ["div", [], [
-                        "Blog ",
-                        ["a", ["target", "_blank", "href", "https://github.com/mliezun/mliezun.com"], "source code"]
-                    ]]
+            ["div", ["class", "footer-rule"], []],
+            ["div", ["class", "footer-colophon"], [
+                ["p", ["class", "footer-line"], [
+                    "Published with ",
+                    ["a", ["target", "_blank", "href", "https://github.com/mliezun/grotsky"], "Grotsky"],
+                    " · ",
+                    ["a", ["target", "_blank", "href", "https://github.com/mliezun/mliezun.com"], "Source"],
+                    " · ",
+                    ["a", ["href", "/feed.xml"], "RSS"],
                 ]],
-                ["div", ["class", "footer-socials"], [
-                    ["a", ["target", "_blank", "href", "https://mliezun.com/feed.xml"], [
-                        ["img", ["alt", "RSS Feed", "src", "/assets/images/socials/rss.png", "width", "20", "height", "20"], []]
-                    ]],
-                    ["a", ["target", "_blank", "href", "https://github.com/mliezun"], [
-                        ["img", ["alt", "Github", "src", "/assets/images/socials/github.png", "width", "20", "height", "20"], []]
-                    ]],
-                    ["a", ["target", "_blank", "href", "https://x.com/migueliezun"], [
-                        ["img", ["alt", "X (Twitter)", "src", "/assets/images/socials/x.ico", "width", "20", "height", "20"], []]
-                    ]],
-                    ["a", ["target", "_blank", "href", "https://www.linkedin.com/in/miguel-liezun-8697a9168/"], [
-                        ["img", ["alt", "LinkedIn", "src", "/assets/images/socials/linkedin.png", "width", "20", "height", "20"], []]
-                    ]],
-                ]]
-            ]]
+                ["p", ["class", "footer-line footer-links"], [
+                    ["a", ["target", "_blank", "href", "https://github.com/mliezun"], "GitHub"],
+                    " · ",
+                    ["a", ["target", "_blank", "href", "https://x.com/migueliezun"], "X"],
+                    " · ",
+                    ["a", ["target", "_blank", "href", "https://www.linkedin.com/in/miguel-liezun-8697a9168/"], "LinkedIn"],
+                ]],
+            ]],
         ]]
     }
 

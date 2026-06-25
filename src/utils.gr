@@ -196,15 +196,15 @@ fn buildAITag(aiAssisted) {
     if aiAssisted {
         tagText = "AI-assisted"
         popoverText = "An AI tool was used to generate a part or all content of this post"
-        tagClass = "ai-tag"
+        tagClass = "journal-meta ai-assisted"
     } else {
-        tagText = "Human written"
+        tagText = "Human-written"
         popoverText = "This post was fully written by a human"
-        tagClass = "ai-tag human-tag"
+        tagClass = "journal-meta human-written"
     }
     
     return [
-        ["div", ["class", "ai-tag-container"], [
+        ["span", ["class", "journal-meta-wrap"], [
             ["span", ["class", tagClass], [
                 tagText,
                 ["span", ["class", "ai-tag-popover"], [
@@ -213,6 +213,6 @@ fn buildAITag(aiAssisted) {
                     ["a", ["href", "/2025/11/19/ai-blog.html", "class", "ai-tag-read-more"], "Read more"],
                 ]],
             ]],
-        ]],
+        ]]
     ]
 }
