@@ -34,7 +34,6 @@ fn build_entry_meta(postDict) {
     let aiTag = u.buildJournalMeta(aiAssisted)
     return [
         ["time", ["class", "archive-entry-date"], postDict["date"]],
-        ["span", ["class", "archive-entry-meta-sep"], " · "],
         aiTag[0],
     ]
 }
@@ -62,15 +61,11 @@ fn build_featured(postDict) {
         dek = [["p", ["class", "featured-dek"], p.excerpt]]
     }
     return ["section", ["class", "featured-section"], [
-        ["div", ["class", "section-label-row"], [
-            ["span", ["class", "section-label"], "Latest"],
-            ["span", ["class", "section-label-rule"], ""],
-        ]],
+        ["p", ["class", "section-label"], "Latest"],
         ["div", ["class", "featured-entry"], [
             ["a", ["href", postUrl, "class", "featured-title"], p.title],
             ["div", ["class", "featured-meta"], [
                 ["time", ["class", "featured-date"], postDict["date"]],
-                ["span", ["class", "featured-meta-sep"], " · "],
                 aiTag[0],
             ]],
         ] + dek],
@@ -98,10 +93,7 @@ fn build_index(posts) {
             u.foldl(u.map(years_list, fn (year) {
                 return [
                     ["section", ["id", "year-" + year, "class", "archive-year-section"], [
-                        ["div", ["class", "archive-year-header"], [
-                            ["span", ["class", "archive-year-label"], year],
-                            ["span", ["class", "archive-year-rule"], ""],
-                        ]],
+                        ["p", ["class", "archive-year-label"], year],
                         ["div", ["class", "archive-year-posts"],
                             u.foldl(u.map(years[year], fn (postDict) {
                                 if postDict["url"] == latestUrl {

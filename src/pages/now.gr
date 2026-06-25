@@ -41,10 +41,7 @@ fn now_body() {
 fn build_now() {
     return [
         ["div", ["class", "journal-section"], [
-            ["div", ["class", "section-label-row"], [
-                ["span", ["class", "section-label"], "Current"],
-                ["span", ["class", "section-label-rule"], ""],
-            ]],
+            ["p", ["class", "section-label"], "Current"],
             ["div", ["class", "journal-body"], now_body()],
         ]],
     ]

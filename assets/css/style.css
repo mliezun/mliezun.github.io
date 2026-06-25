@@ -118,7 +118,7 @@ body {
 /* ── Masthead ──────────────────────────────────────────────── */
 
 .journal-masthead {
-    padding: var(--space-5) var(--space-3) 0;
+    padding: var(--space-6) var(--space-3) var(--space-2);
     background: var(--bg-primary);
 }
 
@@ -126,13 +126,6 @@ body {
     max-width: 68ch;
     margin: 0 auto;
     text-align: center;
-}
-
-.masthead-rule-top {
-    height: 1px;
-    background: var(--rule-strong);
-    opacity: 0.35;
-    margin-bottom: var(--space-3);
 }
 
 .masthead-title {
@@ -158,25 +151,7 @@ body {
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--text-secondary);
-    margin: var(--space-2) 0 0;
-}
-
-.masthead-rule {
-    margin: var(--space-3) auto;
-    max-width: 100%;
-}
-
-.masthead-rule::before,
-.masthead-rule::after {
-    content: "";
-    display: block;
-    height: 1px;
-    background: var(--rule-strong);
-    opacity: 0.55;
-}
-
-.masthead-rule::after {
-    margin-top: 4px;
+    margin: var(--space-2) 0 var(--space-3);
 }
 
 .masthead-nav {
@@ -279,8 +254,6 @@ article h2 {
     font-size: clamp(1.35rem, 2.5vw, 1.65rem);
     margin-top: var(--space-5);
     margin-bottom: var(--space-2);
-    padding-top: var(--space-2);
-    border-top: 1px solid var(--rule-color);
     letter-spacing: -0.02em;
 }
 
@@ -343,6 +316,10 @@ article a {
 /* ── Article byline ────────────────────────────────────────── */
 
 .article-byline {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.65rem;
     font-family: var(--font-sans);
     font-size: 0.6875rem;
     font-weight: 500;
@@ -350,16 +327,10 @@ article a {
     text-transform: uppercase;
     color: var(--text-secondary);
     margin: 0 0 var(--space-4);
-    padding-bottom: var(--space-3);
-    border-bottom: 1px solid var(--rule-color);
 }
-
-/* ── Publisher's note ──────────────────────────────────────── */
 
 .publisher-note {
     margin-bottom: var(--space-5);
-    padding-bottom: var(--space-4);
-    border-bottom: 1px solid var(--rule-color);
 }
 
 .publisher-note-label {
@@ -385,14 +356,7 @@ article a {
     text-decoration-color: rgba(155, 34, 38, 0.35);
 }
 
-/* ── Featured / section labels ─────────────────────────────── */
-
-.section-label-row {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    margin-bottom: var(--space-2);
-}
+/* ── Publisher's note ──────────────────────────────────────── */
 
 .section-label {
     font-family: var(--font-sans);
@@ -401,19 +365,11 @@ article a {
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--accent);
-    flex-shrink: 0;
-}
-
-.section-label-rule {
-    flex: 1;
-    height: 1px;
-    background: var(--rule-color);
+    margin: 0 0 var(--space-2);
 }
 
 .featured-section {
     margin-bottom: var(--space-5);
-    padding-bottom: var(--space-4);
-    border-bottom: 1px solid var(--rule-color);
 }
 
 .featured-title {
@@ -438,7 +394,7 @@ article a {
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
-    gap: 0;
+    gap: 0.65rem;
     margin-bottom: var(--space-2);
 }
 
@@ -447,12 +403,6 @@ article a {
     font-size: 0.6875rem;
     font-weight: 500;
     letter-spacing: 0.06em;
-    color: var(--text-secondary);
-}
-
-.featured-meta-sep {
-    font-family: var(--font-sans);
-    font-size: 0.6875rem;
     color: var(--text-secondary);
 }
 
@@ -472,18 +422,11 @@ article a {
 }
 
 .archive-year-section {
-    margin-top: var(--space-6);
+    margin-top: var(--space-5);
 }
 
 .archive-year-section:first-child {
     margin-top: 0;
-}
-
-.archive-year-header {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    margin-bottom: var(--space-1);
 }
 
 .archive-year-label {
@@ -493,13 +436,7 @@ article a {
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--accent);
-    flex-shrink: 0;
-}
-
-.archive-year-rule {
-    flex: 1;
-    height: 1px;
-    background: var(--rule-color);
+    margin: 0 0 var(--space-1);
 }
 
 .archive-year-posts {
@@ -512,16 +449,11 @@ article a {
     justify-content: space-between;
     align-items: baseline;
     gap: var(--space-2);
-    padding: 0.75rem var(--space-1);
+    padding: 0.65rem var(--space-1);
     margin: 0 calc(-1 * var(--space-1));
-    border-bottom: 1px solid var(--rule-color);
     text-decoration: none;
     color: inherit;
     transition: background-color var(--transition-fast);
-}
-
-.archive-entry:last-child {
-    border-bottom: none;
 }
 
 .archive-entry:hover {
@@ -553,7 +485,7 @@ article a {
     flex-wrap: wrap;
     align-items: baseline;
     justify-content: flex-end;
-    gap: 0;
+    gap: 0.65rem;
     flex-shrink: 0;
 }
 
@@ -760,22 +692,6 @@ img {
 .site-footer {
     margin-top: var(--space-6);
     padding-top: var(--space-3);
-}
-
-.footer-rule {
-    height: 1px;
-    background: var(--rule-strong);
-    opacity: 0.35;
-    margin-bottom: 4px;
-}
-
-.footer-rule::after {
-    content: "";
-    display: block;
-    height: 1px;
-    background: var(--rule-strong);
-    opacity: 0.35;
-    margin-top: 4px;
 }
 
 .footer-colophon {

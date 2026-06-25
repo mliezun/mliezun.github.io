@@ -28,12 +28,11 @@ class Web {
     articleByline(metadata) {
         let tags = metadata["tags"]
         return ["p", ["class", "article-byline"], [
-            metadata["date"],
-            " · ",
-            metadata["author"],
+            ["span", ["class", "byline-date"], metadata["date"]],
+            ["span", ["class", "byline-author"], metadata["author"]],
             this.addIf(
                 tags != "",
-                ["span", [], [" · ", tags]],
+                ["span", ["class", "byline-tags"], tags],
             ),
         ]]
     }
@@ -158,10 +157,8 @@ class Web {
 
         return ["header", ["class", "journal-masthead"], [
             ["div", ["class", "masthead-inner"], [
-                ["div", ["class", "masthead-rule-top"], []],
                 ["a", ["href", "/", "class", "masthead-title"], "Miguel's dev blog"],
-                ["p", ["class", "masthead-tagline"], "By Miguel Liezun · Programming & Side Projects"],
-                ["div", ["class", "masthead-rule"], []],
+                ["p", ["class", "masthead-tagline"], "By Miguel Liezun, Programming & Side Projects"],
                 ["nav", ["class", "masthead-nav", "aria-label", "Site"], [
                     ["a", ["href", "/", "class", this.navLinkClass(isHome)], "Home"],
                     ["a", ["href", "/now/index.html", "class", this.navLinkClass(isNow)], "Now"],
@@ -178,21 +175,16 @@ class Web {
 
     footer() {
         return ["footer", ["class", "site-footer"], [
-            ["div", ["class", "footer-rule"], []],
             ["div", ["class", "footer-colophon"], [
                 ["p", ["class", "footer-line"], [
                     "Published with ",
                     ["a", ["target", "_blank", "href", "https://github.com/mliezun/grotsky"], "Grotsky"],
-                    " · ",
                     ["a", ["target", "_blank", "href", "https://github.com/mliezun/mliezun.com"], "Source"],
-                    " · ",
                     ["a", ["href", "/feed.xml"], "RSS"],
                 ]],
                 ["p", ["class", "footer-line footer-links"], [
                     ["a", ["target", "_blank", "href", "https://github.com/mliezun"], "GitHub"],
-                    " · ",
                     ["a", ["target", "_blank", "href", "https://x.com/migueliezun"], "X"],
-                    " · ",
                     ["a", ["target", "_blank", "href", "https://www.linkedin.com/in/miguel-liezun-8697a9168/"], "LinkedIn"],
                 ]],
             ]],
