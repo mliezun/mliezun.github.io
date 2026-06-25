@@ -23,6 +23,9 @@ fn group_by_year(posts) {
         let year = strings.split(post["date"], "-")[0]
         years[year] = years[year] + [post]
     }
+    for year in u.keys(years) {
+        years[year] = u.sortBy(years[year], fn (a, b) strings.compare(b["date"], a["date"]))
+    }
     return years
 }
 
@@ -100,7 +103,7 @@ fn build_index(posts) {
                             ["span", ["class", "archive-year-rule"], ""],
                         ]],
                         ["div", ["class", "archive-year-posts"],
-                            u.foldr(u.map(years[year], fn (postDict) {
+                            u.foldl(u.map(years[year], fn (postDict) {
                                 if postDict["url"] == latestUrl {
                                     return []
                                 }
