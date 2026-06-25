@@ -41,7 +41,12 @@ fn now_body() {
 fn build_now() {
     return [
         ["div", ["class", "journal-section"], [
-            ["p", ["class", "section-label"], "Current"],
+            ["p", ["class", "journal-intro"], [
+                "I'm Miguel Liezun. I write about programming, side projects, and the systems behind them. ",
+                "I've built ",
+                ["a", ["href", "https://mliezun.com/2023/11/23/grotsky-rust-part3.html"], "Grotsky"],
+                ", a toy language implemented in Rust. This site is generated with Grotsky as static HTML.",
+            ]],
             ["div", ["class", "journal-body"], now_body()],
         ]],
     ]

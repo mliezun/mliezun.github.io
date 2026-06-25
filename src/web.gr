@@ -157,18 +157,20 @@ class Web {
 
         return ["header", ["class", "journal-masthead"], [
             ["div", ["class", "masthead-inner"], [
-                ["a", ["href", "/", "class", "masthead-title"], "Miguel's dev blog"],
-                ["p", ["class", "masthead-tagline"], "By Miguel Liezun, Programming & Side Projects"],
-                ["nav", ["class", "masthead-nav", "aria-label", "Site"], [
-                    ["a", ["href", "/", "class", this.navLinkClass(isHome)], "Home"],
-                    ["a", ["href", "/now/index.html", "class", this.navLinkClass(isNow)], "Now"],
-                    ["a", ["href", "/feed.xml", "class", "masthead-nav-link"], "Feed"],
-                ]],
-                ["div", ["class", "masthead-util"], [
-                    ["button", ["class", "theme-toggle", "id", "theme-toggle", "title", "Toggle theme"], [
-                        ["img", ["src", "/assets/images/circle-half.svg", "alt", "Toggle theme"], []],
+                ["div", ["class", "masthead-top"], [
+                    ["a", ["href", "/", "class", "masthead-title"], "Miguel Liezun"],
+                    ["div", ["class", "masthead-nav-row"], [
+                        ["nav", ["class", "masthead-nav", "aria-label", "Site"], [
+                            ["a", ["href", "/", "class", this.navLinkClass(isHome)], "Home"],
+                            ["a", ["href", "/now/index.html", "class", this.navLinkClass(isNow)], "Now"],
+                            ["a", ["href", "/feed.xml", "class", "masthead-nav-link"], "Feed"],
+                        ]],
+                        ["button", ["class", "theme-toggle", "id", "theme-toggle", "title", "Toggle theme"], [
+                            ["img", ["src", "/assets/images/circle-half.svg", "alt", "Toggle theme"], []],
+                        ]],
                     ]],
                 ]],
+                ["p", ["class", "masthead-tagline"], "Programming & side projects"],
             ]],
         ]]
     }
