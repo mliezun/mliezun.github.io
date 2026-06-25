@@ -41,6 +41,12 @@ fn build_archive_row(postDict) {
     ]
 }
 
+fn build_archive_rows(posts) {
+    return u.foldr(u.map(posts, fn (postDict) {
+        return [build_archive_row(postDict)]
+    }), [], u.sum)
+}
+
 fn build_index(posts) {
     let years = group_by_year(posts)
     let years_list = u.keys(years)
@@ -58,11 +64,8 @@ fn build_index(posts) {
                             ["span", ["class", "archive-col-date"], "date"],
                             ["span", ["class", "archive-col-tag"], "tag"],
                             ["span", ["class", "archive-col-path"], "path"],
-                        ]],
-                        u.foldr(u.map(years[year], fn (postDict) {
-                            return [build_archive_row(postDict)]
-                        }), [], u.sum)
-                    ]]
+                        ]]
+                    ] + build_archive_rows(years[year])]
                 ]
             }), [], u.sum)
         ]
