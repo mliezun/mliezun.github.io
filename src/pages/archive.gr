@@ -53,10 +53,6 @@ fn build_archive(posts) {
 
     return [
         ["div", ["class", "archive-page"], [
-            ["p", ["class", "archive-intro"], [
-                "This blog is archived. Older posts remain available here. ",
-                "New writing will live elsewhere."
-            ]],
             ["div", ["class", "post-archive"],
                 u.foldl(u.map(years_list, fn (year) {
                     return [
